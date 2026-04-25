@@ -1,0 +1,3240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#020617">
+<meta name="author" content="Kotchami Ogougbe">
+<meta name="copyright" content="© 2026 Kotchami Ogougbe. Tous droits réservés.">
+<meta name="description" content="Science Quest — Plateforme éducative gamifiée. Sauver le monde par la connaissance.">
+<title>Science Quest — Mission Science</title>
+
+<!-- ====== Google Analytics — Mesure d'audience Science Quest ====== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SNCF3PF2JF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-SNCF3PF2JF', {
+    'anonymize_ip': true,
+    'page_title': 'Science Quest'
+  });
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  /* ====== POLICES : 100% SYSTÈME pour compatibilité maximale iOS/Android/desktop ====== */
+  :root {
+    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: "SF Mono", Menlo, Monaco, "Courier New", monospace;
+  }
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: var(--font-body);
+    background: #020617;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+  .font-display { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; }
+  .font-mono-sci { font-family: var(--font-mono); }
+
+  /* Atmosphère */
+  .bg-grain {
+    background-image:
+      radial-gradient(ellipse at top left, rgba(217, 119, 6, 0.12), transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(220, 38, 38, 0.08), transparent 50%);
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .anim-in { animation: fadeInUp 0.6s ease-out forwards; }
+  .delay-100 { animation-delay: 0.08s; opacity: 0; }
+  .delay-200 { animation-delay: 0.18s; opacity: 0; }
+  .delay-300 { animation-delay: 0.28s; opacity: 0; }
+  .delay-400 { animation-delay: 0.38s; opacity: 0; }
+  .delay-500 { animation-delay: 0.48s; opacity: 0; }
+
+  @keyframes megaPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7), 0 8px 32px rgba(217, 119, 6, 0.4); transform: scale(1); }
+    50% { box-shadow: 0 0 0 24px rgba(251, 191, 36, 0), 0 8px 40px rgba(217, 119, 6, 0.6); transform: scale(1.03); }
+  }
+  .mega-pulse { animation: megaPulse 1.8s infinite; }
+
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  .shimmer-text {
+    background: linear-gradient(90deg, #fbbf24 0%, #fef3c7 50%, #fbbf24 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 4s linear infinite;
+  }
+
+  .card-border {
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.85));
+    transition: border-color 0.2s ease;
+  }
+  .card-border:hover { border-color: rgba(251, 191, 36, 0.5); }
+
+  /* BOUTON PRIMAIRE — ultra visible, compatible partout */
+  .btn-mega {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fde047 100%);
+    color: #1c1917;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 1.1rem 2.5rem;
+    border-radius: 9999px;
+    border: 3px solid rgba(255, 240, 200, 0.5);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 32px rgba(217, 119, 6, 0.4);
+    font-family: var(--font-display);
+  }
+  .btn-mega:hover, .btn-mega:focus { transform: translateY(-3px) scale(1.03); }
+  .btn-mega:active { transform: translateY(0); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+    color: #0f172a;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(217, 119, 6, 0.3);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(217, 119, 6, 0.5);
+  }
+  .btn-primary:disabled { cursor: not-allowed; opacity: 0.4; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .btn-ghost:hover {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.7);
+  }
+
+  button { cursor: pointer; font-family: inherit; }
+  button:disabled { cursor: not-allowed; }
+
+  input[type="text"] {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: white;
+    padding: 0.875rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    width: 100%;
+    transition: border-color 0.2s ease;
+  }
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #fbbf24;
+  }
+
+  /* Barre de progression */
+  .progress-bar {
+    height: 4px;
+    background: rgba(251, 191, 36, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #d97706, #fbbf24);
+    transition: width 0.4s ease;
+  }
+
+  /* Locks on upcoming missions */
+  .mission-locked { opacity: 0.4; filter: grayscale(0.7); }
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<div id="root">
+  <!-- Fallback si JS ne charge pas : le bouton reste visible -->
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;">
+    <div>
+      <p style="color:#fbbf24;font-size:1.5rem;margin-bottom:1rem;">Chargement de Science Quest…</p>
+      <p style="color:#64748b;font-size:0.9rem;">Si cette page reste affichée plus de 10 secondes, vérifie ta connexion Internet et rafraîchis la page.</p>
+    </div>
+  </div>
+</div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ============================================================
+// SVG ICÔNES inline (aucune dépendance externe)
+// ============================================================
+const Icon = ({ name, size = 20, fill = "none", color = "currentColor" }) => {
+  const s = { width: size, height: size, viewBox: "0 0 24 24", fill: fill, stroke: color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", style: {display: 'inline-block', verticalAlign: 'middle'} };
+  const icons = {
+    play: <polygon points="6 3 20 12 6 21 6 3" fill={color} />,
+    heart: <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z" />,
+    flame: <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5Z" />,
+    award: <><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526" /><circle cx="12" cy="8" r="6" /></>,
+    bookOpen: <><path d="M12 7v14" /><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" /></>,
+    check: <><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></>,
+    x: <><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></>,
+    arrow: <><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></>,
+    chevron: <path d="m9 18 6-6-6-6" />,
+    dna: <><path d="M2 15c6.667-6 13.333 0 20-6" /><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993" /><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993" /><path d="m17 6-2.5-2.5" /><path d="m14 8-1-1" /><path d="m7 18 2.5 2.5" /><path d="m3.5 14.5.5.5" /><path d="m20 9 .5.5" /></>,
+    users: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></>,
+    sparkles: <path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5L12 2z" />,
+    target: <><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></>,
+    alert: <><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></>,
+    lock: <><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></>,
+    mail: <><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-10 5L2 7" /></>,
+    home: <><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></>,
+    info: <><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></>,
+    atom: <><circle cx="12" cy="12" r="1" /><path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z" /><path d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z" /></>,
+    flask: <><path d="M9 2v6l-4 9a2 2 0 0 0 1.8 2.9h10.4A2 2 0 0 0 19 17l-4-9V2" /><path d="M8 2h8" /></>,
+    zap: <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />,
+    shield: <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />,
+    compass: <><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></>,
+    globe: <><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></>
+  };
+  return <svg {...s}>{icons[name] || null}</svg>;
+};
+
+// ============================================================
+// STRUCTURE HIÉRARCHIQUE COMPLÈTE DU PROJET
+// Niveau → Matière → Thème → Chapitre → Mission
+// Prête pour 500+ missions à venir
+// ============================================================
+const CURRICULUM = {
+  terminaleD: {
+    name: "Terminale D",
+    subjects: [
+      {
+        id: 'svt',
+        name: "SVT — Le Code de la Vie",
+        icon: 'dna',
+        color: '#10b981',
+        role: "Détective / Enquêteur scientifique",
+        description: "Décoder le vivant, comprendre la vie",
+        parts: [
+          {
+            id: 'genetique-moleculaire',
+            name: "Génétique moléculaire et cellulaire",
+            themes: [
+              { id: 'theme1-support', name: "Thème 1 — Support de l'information génétique", chapters: [
+                { id: 'info-gen', name: "Notion de l'information génétique", mission: "Comprendre le code", power: "Vision génétique", locked: true },
+                { id: 'adn', name: "Nature chimique et structure de l'ADN", mission: "Déchiffrer le code secret de la vie", power: "Vision moléculaire", locked: true }
+              ]},
+              { id: 'theme2-transmission', name: "Thème 2 — Transmission de l'information génétique", chapters: [
+                { id: 'reproduction-conforme', name: "La reproduction conforme", mission: "Empêcher une erreur de copie", power: "Duplication parfaite", locked: true },
+                { id: 'cycle-cellulaire', name: "Cycle cellulaire et évolution de l'ADN", mission: "Maîtriser le cycle de la vie", power: "Vision cellulaire", locked: true }
+              ]},
+              { id: 'theme3-expression', name: "Thème 3 — Expression de l'information génétique", chapters: [
+                { id: 'proteines', name: "Protéines", mission: "Comprendre les bâtisseurs du vivant", power: "Architecte protéique", locked: true },
+                { id: 'synthese-prot', name: "Mécanismes d'expression : synthèse des protéines", mission: "Produire une protéine vitale", power: "Fabrication cellulaire", locked: true }
+              ]}
+            ]
+          },
+          {
+            id: 'reproduction-heredite',
+            name: "Reproduction et hérédité",
+            themes: [
+              { id: 'theme4-reproduction', name: "Thème 4 — Reproduction sexuée et brassage génétique", chapters: [
+                { id: 'reproduction-sexuee', name: "Reproduction sexuée", mission: "Le mystère du brassage", power: "Vision méiotique", locked: true },
+                { id: 'brassage-genes', name: "Brassage des gènes", mission: "Créer un individu génétiquement viable", power: "Mélange stratégique", locked: true }
+              ]},
+              { id: 'theme5-heredite', name: "Thème 5 · CAMPAGNE GENECODE — Hérédité et génétique humaine", chapters: [
+                // ─── MISSION TUTORIELLE (déjà jouable)
+                { id: 'drepanocytose', name: "🎓 Tuto — Le Secret du Sang (Drépanocytose)", mission: "Découvrir l'enquête génétique : famille Hassan", power: "Initiation à l'hérédité", locked: false },
+
+                // ─── ARC 1 · DÉCOUVERTE — Le langage du vivant
+                { id: 'gc-1-1', name: "🔤 Arc 1.1 — L'Alphabet du Généticien", mission: "Maîtriser tous les symboles conventionnels", power: "Lecteur de code génétique", locked: false },
+                { id: 'gc-1-2', name: "🌳 Arc 1.2 — Construire la mémoire d'une famille", mission: "Bâtir un pédigrée à partir d'un récit", power: "Cartographe familial", locked: false },
+
+                // ─── ARC 2 · ANALYSE — Mécanismes de l'hérédité
+                { id: 'gc-2-1', name: "🎭 Arc 2.1 — Le Masque et le Signal", mission: "Démasquer dominance et récessivité", power: "Démasque-allèle", locked: false },
+                { id: 'gc-2-2', name: "🧬 Arc 2.2 — Le Chromosome qui murmure", mission: "Localiser le gène : autosomal ou gonosomal", power: "Vision chromosomique", locked: false },
+                { id: 'gc-2-3', name: "🗺️ Arc 2.3 — Les 4 Modes — Tableau de Bord", mission: "Maîtriser AD, AR, X-récessif, X-dominant", power: "Synthèse mendelienne", locked: false },
+
+                // ─── ARC 3 · MAÎTRISE — Génotypes et Probabilités
+                { id: 'gc-3-1', name: "🔍 Arc 3.1 — L'Identité cachée", mission: "Déterminer les génotypes de toute une famille", power: "Vision génotypique", locked: false },
+                { id: 'gc-3-2', name: "🎲 Arc 3.2 — La Roue des Possibles", mission: "Construire un échiquier et calculer les risques", power: "Calculateur de risque", locked: false },
+                { id: 'gc-3-3', name: "🩸 Arc 3.3 — Le Détective du Sang", mission: "Maîtriser ABO, Rhésus, transfusions", power: "Vision sanguine", locked: false },
+
+                // ─── ARC 4 · EXPERTISE — Anomalies chromosomiques
+                { id: 'gc-4-1', name: "🔬 Arc 4.1 — Le Caryotype parle", mission: "Analyser un caryotype et identifier l'anomalie", power: "Lecteur de caryotype", locked: false },
+                { id: 'gc-4-2', name: "🔀 Arc 4.2 — Les Translocations silencieuses", mission: "Comprendre les anomalies de structure", power: "Détecteur de translocation", locked: false },
+                { id: 'gc-4-3', name: "🧩 Arc 4.3 — Syndromes et Identités", mission: "Identifier Turner, Klinefelter, Down, cri du chat", power: "Classificateur syndromique", locked: false },
+
+                // ─── ARC 5 · IMPACT RÉEL — Conseil génétique et Décision
+                { id: 'gc-5-1', name: "🏥 Arc 5.1 — La Consultation Ibrahim", mission: "Mener un conseil génétique complet", power: "Conseiller GENECODE", locked: false },
+                { id: 'gc-5-2', name: "📣 Arc 5.2 — Opération Sensibilisation", mission: "Transmettre un savoir scientifique au grand public", power: "Passeur de sciences", locked: false },
+
+                // ─── BOSS GLOBAL
+                { id: 'gc-boss', name: "🏆 BOSS — Le Dossier Ibrahim Complet", mission: "Mobiliser TOUTES les compétences acquises", power: "Directeur GENECODE — Rang 5", locked: false }
+              ]},
+            ]
+          },
+          {
+            id: 'physiologie-regulation',
+            name: "Physiologie et régulation",
+            themes: [
+              { id: 'theme6-communication', name: "Thème 6 — Communication par voie nerveuse et humorale", chapters: [
+                { id: 'tissu-nerveux', name: "Tissu nerveux et notions de réflexes", mission: "Réparer un système de communication", power: "Transmission ultra-rapide", locked: true },
+                { id: 'message-nerveux', name: "Messages nerveux", mission: "Décrypter les signaux du corps", power: "Vision neuronale", locked: true },
+                { id: 'glycemie', name: "La glycémie", mission: "Stabiliser un système vital", power: "Régulation métabolique", locked: true }
+              ]},
+              { id: 'theme7-genitaux', name: "Thème 7 — Fonctionnement des appareils génitaux et leur régulation", chapters: [
+                { id: 'appareils-genitaux', name: "Les appareils génitaux", mission: "Comprendre les fondations du vivant", power: "Vision anatomique", locked: true },
+                { id: 'regulation-genitaux', name: "Régulation du fonctionnement des organes génitaux", mission: "Stabiliser le système hormonal", power: "Régulation hormonale", locked: true },
+                { id: 'fecondation-nidation', name: "De la fécondation à la nidation", mission: "Le voyage de la vie", power: "Vision embryonnaire", locked: true }
+              ]},
+              { id: 'theme8-naissances', name: "Thème 8 — La régulation des naissances", chapters: [
+                { id: 'regulation-naissances', name: "Régulation des naissances", mission: "Choisir et planifier", power: "Vision familiale", locked: true }
+              ]}
+            ]
+          },
+          {
+            id: 'immunologie',
+            name: "Immunologie",
+            themes: [
+              { id: 'theme9-immunite', name: "Thème 9 — Mécanismes de l'immunité", chapters: [
+                { id: 'soi-non-soi', name: "Le soi et le non-soi", mission: "Reconnaître l'envahisseur", power: "Vision immunitaire", locked: true },
+                { id: 'reponses-immunitaires', name: "Les réponses immunitaires", mission: "Sauver un organisme attaqué", power: "Bouclier immunitaire", locked: true },
+                { id: 'vih-sida', name: "Dysfonctionnement du système immunitaire : VIH/SIDA", mission: "Comprendre l'invisible ennemi", power: "Vision virale", locked: true }
+              ]}
+            ]
+          }
+        ]
+      },
+      {
+        id: 'physique',
+        name: "Physique — Les Forces de l'Univers",
+        icon: 'atom',
+        color: '#3b82f6',
+        role: "Ingénieur / Pilote de l'Univers",
+        description: "Maîtriser les lois qui gouvernent le cosmos",
+        parts: [
+          {
+            id: 'mecanique',
+            name: "Mécanique",
+            themes: [
+              { id: 'cinematique', name: "Cinématique", chapters: [
+                { id: 'mouvement', name: "Vitesse et accélération", mission: "Sauver une fusée en dérive", power: "Calcul du mouvement", locked: true }
+              ]},
+              { id: 'forces', name: "Mouvement et forces", chapters: [
+                { id: 'chute', name: "Forces et poids", mission: "Stabiliser un objet en chute", power: "Contrôle des forces", locked: true }
+              ]}
+            ]
+          },
+          {
+            id: 'electromagnetisme',
+            name: "Électromagnétisme",
+            themes: [
+              { id: 'champE', name: "Champ électrique", chapters: [
+                { id: 'particules', name: "Particules chargées", mission: "Guider des particules chargées", power: "Manipulation invisible", locked: true }
+              ]},
+              { id: 'oscillateurs', name: "Oscillateurs", chapters: [
+                { id: 'vibrations', name: "Systèmes vibratoires", mission: "Stabiliser un système vibratoire", power: "Maîtrise des cycles", locked: true }
+              ]},
+              { id: 'ondes', name: "Ondes et interférences", chapters: [
+                { id: 'communication', name: "Propagation des ondes", mission: "Restaurer une communication", power: "Vision ondulatoire", locked: true }
+              ]},
+              { id: 'emag', name: "Électromagnétisme", chapters: [
+                { id: 'induction', name: "Induction électromagnétique", mission: "Créer une source d'énergie", power: "Générateur d'énergie", locked: true }
+              ]}
+            ]
+          },
+          {
+            id: 'moderne',
+            name: "Physique moderne",
+            themes: [
+              { id: 'quantique', name: "Effet photoélectrique et nucléaire", chapters: [
+                { id: 'photo', name: "Le monde quantique", mission: "Explorer l'invisible", power: "Vision quantique", locked: true }
+              ]}
+            ]
+          }
+        ]
+      },
+      {
+        id: 'chimie',
+        name: "Chimie — Transformer la Matière",
+        icon: 'flask',
+        color: '#8b5cf6',
+        role: "Alchimiste / Artisan moléculaire",
+        description: "Transformer la matière, créer l'utile",
+        parts: [
+          {
+            id: 'solutions',
+            name: "Solutions aqueuses",
+            themes: [
+              { id: 'concentration', name: "Analyse de solutions", chapters: [
+                { id: 'eau', name: "Concentrations", mission: "Analyser une eau inconnue", power: "Analyse chimique", locked: true }
+              ]},
+              { id: 'acidebase', name: "Acides et bases", chapters: [
+                { id: 'ph', name: "pH et neutralisation", mission: "Neutraliser une substance dangereuse", power: "Équilibre chimique", locked: true }
+              ]},
+              { id: 'tampon', name: "Solutions tampons", chapters: [
+                { id: 'equilibre', name: "Maintien du pH", mission: "Maintenir un équilibre vital", power: "Stabilité chimique", locked: true }
+              ]}
+            ]
+          },
+          {
+            id: 'organique',
+            name: "Chimie organique et cinétique",
+            themes: [
+              { id: 'orga', name: "Chimie organique", chapters: [
+                { id: 'synthese', name: "Alcools, acides, amines", mission: "Créer une molécule utile", power: "Synthèse moléculaire", locked: true }
+              ]},
+              { id: 'cinetique', name: "Cinétique chimique", chapters: [
+                { id: 'vitesse', name: "Vitesse de réaction", mission: "Accélérer ou ralentir une réaction", power: "Contrôle du temps chimique", locked: true }
+              ]}
+            ]
+          }
+        ]
+      },
+      {
+        id: 'maths',
+        name: "Mathématiques — L'Architecture des Solutions",
+        icon: 'compass',
+        color: '#ec4899',
+        role: "Stratège / Architecte des solutions",
+        description: "Résoudre des problèmes réels avec la puissance du raisonnement",
+        parts: [
+          {
+            id: 'algebre',
+            name: "Algèbre et analyse",
+            themes: [
+              { id: 'equations', name: "Équations, inéquations, polynômes", chapters: [
+                { id: 'eq_poly', name: "Résolution de systèmes", mission: "Débloquer une situation critique", power: "Résolution stratégique", locked: true }
+              ]},
+              { id: 'fonctions', name: "Généralités sur les fonctions numériques", chapters: [
+                { id: 'gen_fct', name: "Comportement d'une fonction", mission: "Analyser un phénomène", power: "Vision analytique", locked: true }
+              ]},
+              { id: 'limites', name: "Limites et continuité", chapters: [
+                { id: 'lim', name: "Limites aux bornes", mission: "Prévoir l'évolution d'un système", power: "Vision de l'infini", locked: true }
+              ]},
+              { id: 'derivation', name: "Dérivation", chapters: [
+                { id: 'deriv', name: "Dérivée et optimisation", mission: "Prendre la décision optimale", power: "Optimisation tactique", locked: true }
+              ]},
+              { id: 'etudes', name: "Études de fonctions numériques", chapters: [
+                { id: 'etude_fct', name: "Étude complète d'une fonction", mission: "Modéliser un système complexe", power: "Modélisation complète", locked: true }
+              ]},
+              { id: 'primitives', name: "Primitives", chapters: [
+                { id: 'prim', name: "Recherche de primitives", mission: "Remonter le temps d'un phénomène", power: "Reconstruction temporelle", locked: true }
+              ]},
+              { id: 'suites', name: "Suites numériques", chapters: [
+                { id: 'suites_num', name: "Suites et convergence", mission: "Prédire une évolution par étapes", power: "Vision séquentielle", locked: true }
+              ]}
+            ]
+          },
+          {
+            id: 'geometrie',
+            name: "Géométrie et trigonométrie",
+            themes: [
+              { id: 'scalaire', name: "Applications du produit scalaire et du barycentre", chapters: [
+                { id: 'scal_bary', name: "Produit scalaire et barycentre", mission: "Équilibrer un système géométrique", power: "Équilibre géométrique", locked: true }
+              ]},
+              { id: 'trigo', name: "Angles orientés et trigonométrie", chapters: [
+                { id: 'angles', name: "Cercle trigonométrique", mission: "Naviguer dans l'espace cyclique", power: "Maîtrise des angles", locked: true }
+              ]},
+              { id: 'transfo', name: "Transformations du plan", chapters: [
+                { id: 'transfoplan', name: "Translations, rotations, homothéties", mission: "Transformer l'espace", power: "Manipulation spatiale", locked: true }
+              ]}
+            ]
+          },
+          {
+            id: 'discret',
+            name: "Mathématiques discrètes et statistiques",
+            themes: [
+              { id: 'denombrement', name: "Dénombrement", chapters: [
+                { id: 'denomb', name: "Combinaisons et arrangements", mission: "Compter l'impossible", power: "Vision combinatoire", locked: true }
+              ]},
+              { id: 'stat', name: "Statistique", chapters: [
+                { id: 'statistiques', name: "Analyse de données", mission: "Extraire le sens d'un chaos", power: "Vision statistique", locked: true }
+              ]}
+            ]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+// ============================================================
+// MISSIONS_DATA — 14 missions GENECODE complètes (Arc 1 → BOSS)
+// Architecture data-driven : MissionPlayer joue n'importe quelle mission
+// ============================================================
+// ============================================================
+// MISSIONS_DATA — Définitions complètes des 14 missions GENECODE
+// Architecture data-driven : chaque mission est jouable par MissionPlayer
+// ============================================================
+const MISSIONS_DATA = {
+
+  // ═══════════════════════════════════════════════════════════
+  // ARC 1 — DÉCOUVERTE — Le langage du vivant
+  // Rang 0 → Rang 1 : Décodeur junior
+  // ═══════════════════════════════════════════════════════════
+
+  'gc-1-1': {
+    id: 'gc-1-1', arc: 1, arcTitle: 'DÉCOUVERTE', number: '1.1',
+    title: "L'Alphabet du Généticien",
+    subtitle: "Maîtriser le langage universel des symboles génétiques",
+    icon: '🔤',
+    rank: { from: 0, to: 1, name: 'Décodeur junior' },
+    power: 'Lecteur de code génétique',
+    signature: "Un rapport mal codé peut mener à un mauvais diagnostic.",
+    prologue: [
+      "Tu viens d'arriver au siège de GENECODE — l'Agence de Génétique Opérationnelle de l'Afrique de l'Ouest. Ton bureau est posé près d'une fenêtre qui donne sur Niamey.",
+      "Ta supérieure, Dr. Mariama, pose sur ton bureau une feuille froissée : un début d'arbre généalogique d'une famille du Sahel. Mais les symboles sont mal utilisés.",
+      "Elle te regarde et dit : « Apprends d'abord à écrire correctement avant d'analyser. Sans le langage des généticiens, tu ne peux rien lire. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Reconnaître instantanément □, ○, ■, ●, ◇ et leurs variantes",
+        "Distinguer vrais jumeaux et faux jumeaux sur un schéma",
+        "Identifier un mariage consanguin",
+        "Lire un numéro de génération (I₁, II₃…)"
+      ],
+      recompenses: { xp: 250, badge: 'Maîtrise des symboles', power: 'Lecteur de code génétique' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Le sexe et l'état",
+        question: "Tu reçois ce symbole : ■  Que représente-t-il ?",
+        options: ["Une femme saine", "Un homme atteint d'une maladie", "Un sexe non déterminé", "Un avortement"],
+        correctIdx: 1, xp: 80,
+        explain: "Le carré (□) représente le sexe masculin. Le remplissage plein (■) indique un individu atteint. Donc ■ = homme atteint. Pour la femme atteinte, on utilise ● (cercle plein)." },
+
+      { type: 'question',
+        title: "Phase 2 — Le sexe non spécifié",
+        question: "Tu vois ce symbole sur un pédigrée : ◇  Dans quelle situation l'utilise-t-on ?",
+        options: ["Pour un mort-né", "Pour un sexe inconnu ou non spécifié (ex : fœtus avant échographie)", "Pour un mariage consanguin", "Pour un porteur sain"],
+        correctIdx: 1, xp: 80,
+        explain: "Le losange (◇) sert quand on ne connaît pas le sexe : fœtus avant échographie, mort-né dont le sexe n'est pas mentionné, ou information manquante dans un dossier ancien." },
+
+      { type: 'question',
+        title: "Phase 3 — Les jumeaux",
+        question: "Sur un pédigrée, deux frères sont reliés à leurs parents par une ligne en V avec une barre horizontale commune. De quel type de jumeaux s'agit-il ?",
+        options: ["Faux jumeaux (dizygotes)", "Vrais jumeaux (monozygotes)", "Frères ordinaires", "Cousins"],
+        correctIdx: 1, xp: 100,
+        explain: "La barre horizontale commune représente l'œuf unique d'origine. Les vrais jumeaux (monozygotes) viennent d'un seul zygote qui s'est divisé. Les faux jumeaux (dizygotes) sont représentés par deux lignes en V séparées : deux ovules différents." },
+
+      { type: 'question',
+        title: "Phase 4 — Le mariage consanguin",
+        question: "Sur un arbre généalogique, deux personnes sont reliées par DEUX lignes horizontales parallèles ( ═ ) au lieu d'une seule. Que cela signifie-t-il ?",
+        options: ["Un divorce", "Un mariage consanguin (entre apparentés)", "Une union illégitime", "Un remariage"],
+        correctIdx: 1, xp: 100,
+        explain: "Le double trait ( ═ ) est le code universel pour un mariage entre personnes apparentées (cousins, par exemple). C'est crucial à repérer car la consanguinité augmente fortement le risque d'apparition de maladies récessives." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim",
+        question: "Le dossier Ibrahim mentionne « II₃ ». Que signifie cette notation ?",
+        options: ["L'individu né en deuxième position dans la troisième génération", "Le 3ème individu de la 2ème génération", "Le couple n°3 de la maison n°2", "Une notation médicale d'urgence"],
+        correctIdx: 1, xp: 140,
+        explain: "Le chiffre romain (II) indique la génération (en partant des plus anciens en haut : I, II, III…). Le chiffre arabe en indice (₃) indique le rang dans la génération (de gauche à droite). II₃ = troisième individu de la deuxième génération." }
+    ],
+    epilogue: {
+      titre: "Rang 1 débloqué : Décodeur junior",
+      message: "Tu maîtrises désormais l'alphabet du généticien. Sans cette base, aucune analyse n'est possible. Avec elle, tout devient lisible.",
+      conseilLabel: "Conseil de Dr. Mariama",
+      conseilTexte: "Garde toujours ce tableau de référence à portée. Les meilleurs généticiens du monde y reviennent encore après 30 ans de carrière.",
+      grimoire: "Symboles conventionnels en génétique humaine",
+      fragmentIbrahim: { numero: 1, texte: "Le grand-père Mamane Ibrahim (génération I) est décédé d'une maladie sanguine. Sa femme Aïcha est saine. Tu peux maintenant lire ce fragment correctement." },
+      philo: "L'hérédité n'est pas un destin. C'est une carte à décoder."
+    }
+  },
+
+  'gc-1-2': {
+    id: 'gc-1-2', arc: 1, arcTitle: 'DÉCOUVERTE', number: '1.2',
+    title: "Construire la mémoire d'une famille",
+    subtitle: "Bâtir un pédigrée à partir d'un récit oral",
+    icon: '🌳',
+    rank: { from: 1, to: 1, name: 'Décodeur junior — confirmé' },
+    power: 'Cartographe familial',
+    signature: "La mémoire d'une famille est une carte. Apprends à la dessiner.",
+    prologue: [
+      "Une mère, Madame Halima, arrive en larmes à l'agence GENECODE. Elle s'assoit en face de toi, les mains tremblantes.",
+      "« Plusieurs hommes de ma famille sont touchés par une maladie des yeux rare, dit-elle. Je n'ai aucun document. Juste ma mémoire. Aidez-moi à comprendre. »",
+      "Tu prends une feuille. Sa parole devient ta source. Tu vas reconstruire son arbre généalogique à partir de son récit, et en extraire les premières pistes."
+    ],
+    briefing: {
+      objectifs: [
+        "Transformer un récit oral en représentation graphique",
+        "Respecter la hiérarchie des générations (I, II, III...)",
+        "Placer correctement unions, enfants, sujets atteints, décès",
+        "Identifier les premières pistes du diagnostic"
+      ],
+      recompenses: { xp: 280, badge: 'Cartographe familial', power: 'Construction de pédigrée' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Le récit",
+        question: "Madame Halima dit : « Mes deux parents sont sains. J'ai un frère sain et un autre frère atteint. » Combien de générations vas-tu déjà tracer ?",
+        options: ["Une seule (I)", "Deux générations (I et II)", "Trois générations (I, II, III)", "Pas assez d'informations"],
+        correctIdx: 1, xp: 80,
+        explain: "Les parents = génération I. Madame Halima et ses frères = génération II. Donc deux générations à tracer. Si elle parlait de ses propres enfants, on ajouterait la génération III." },
+
+      { type: 'question',
+        title: "Phase 2 — Le frère atteint",
+        question: "Le frère atteint est un homme. Quel symbole vas-tu utiliser pour lui ?",
+        options: ["○ (cercle vide)", "● (cercle plein)", "□ (carré vide)", "■ (carré plein)"],
+        correctIdx: 3, xp: 80,
+        explain: "Carré = homme. Plein = atteint. Donc ■ = homme atteint. Pour la position dans le pédigrée, il sera dessiné comme enfant des parents en génération I, à la même ligne que sa sœur Halima et son autre frère sain." },
+
+      { type: 'question',
+        title: "Phase 3 — Une fille décédée",
+        question: "Madame Halima ajoute : « J'avais aussi une petite sœur qui est décédée à 6 mois. On ne sait pas si elle était malade. » Comment la représenter ?",
+        options: ["Ne pas la mentionner — pas assez d'info", "○ avec une barre oblique pour indiquer le décès", "■ pour indiquer atteinte", "↓ pour indiquer un avortement"],
+        correctIdx: 1, xp: 100,
+        explain: "Une fille décédée se représente par ○ (cercle pour femme) avec une barre oblique traversant le symbole pour indiquer le décès. Elle est INDISPENSABLE à mentionner — chaque membre de la famille compte, même décédé, car cela donne des indices essentiels (mortalité infantile suspecte, etc.)." },
+
+      { type: 'question',
+        title: "Phase 4 — Première hypothèse",
+        question: "Le récit révèle : seuls des HOMMES sont touchés. Les femmes sont toutes saines. Les parents sont sains. Quelle hypothèse formuler en premier ?",
+        options: ["Maladie autosomale dominante", "Maladie gonosomale liée à X récessive (transmise par les mères)", "Maladie purement environnementale", "Maladie consanguine"],
+        correctIdx: 1, xp: 140,
+        explain: "Seuls les hommes touchés + parents sains = signature classique d'une maladie gonosomale liée à X récessive. La mère (saine) est probablement conductrice. Elle transmet l'allèle malade à ses fils via son chromosome X. C'est exactement le profil de maladies comme l'hémophilie, le daltonisme, la myopathie de Duchenne." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Fragment 1",
+        question: "Tu reprends le dossier Ibrahim. Il révèle : « Le grand-père Mamane Ibrahim est décédé d'une maladie sanguine. Sa femme Aïcha est saine. Ils ont eu : 2 fils dont l'un est malade, 1 fille saine, 1 fille décédée à 6 mois. » Combien de symboles vas-tu placer en génération II ?",
+        options: ["3 symboles", "4 symboles", "5 symboles", "Aucun, je commence à la génération III"],
+        correctIdx: 1, xp: 140,
+        explain: "4 symboles : ■ (fils malade) + □ (fils sain) + ○ (fille saine) + ○ avec barre oblique (fille décédée). TOUS les enfants comptent, même celle décédée à 6 mois. Tu viens de construire la première génération du pédigrée Ibrahim." }
+    ],
+    epilogue: {
+      titre: "Rang 1 confirmé — Pédigrée Ibrahim Fragment 1/5",
+      message: "Tu sais maintenant transformer une parole en savoir scientifique. C'est la base du métier de généticien clinicien.",
+      conseilLabel: "Conseil de Dr. Mariama",
+      conseilTexte: "Au Niger, les maternités commencent à intégrer ces outils pour le dépistage de la drépanocytose. La compétence que tu acquiers ici a une valeur réelle dans nos hôpitaux.",
+      grimoire: "Construction de pédigrée à partir d'un récit",
+      fragmentIbrahim: { numero: 1, texte: "Génération I et II du dossier Ibrahim cartographiées. Grand-père Mamane (décédé), grand-mère Aïcha (saine), 4 enfants dont 1 fils malade et 1 fille décédée." },
+      philo: "Comprendre avant de mémoriser — construire sur du roc, pas sur du sable."
+    }
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // ARC 2 — ANALYSE — Mécanismes de l'hérédité
+  // Rang 1 → Rang 2 : Analyste
+  // ═══════════════════════════════════════════════════════════
+
+  'gc-2-1': {
+    id: 'gc-2-1', arc: 2, arcTitle: 'ANALYSE', number: '2.1',
+    title: "Le Masque et le Signal",
+    subtitle: "Démasquer dominance et récessivité",
+    icon: '🎭',
+    rank: { from: 1, to: 1, name: 'Analyste en formation' },
+    power: 'Démasque-allèle',
+    signature: "Quand les parents sains donnent un enfant malade, c'est qu'un allèle silencieux est passé entre eux.",
+    prologue: [
+      "Dossier Aminata sur ton bureau. Deux parents parfaitement sains ont un enfant drépanocytaire. La famille est sous le choc.",
+      "« Comment est-ce possible ? te demandent-ils. Personne dans la famille n'a jamais eu cette maladie. »",
+      "Tu sais. L'allèle malade était là — silencieux — depuis des générations. Aujourd'hui, par coïncidence, papa et maman l'ont tous les deux. Et il s'est révélé."
+    ],
+    briefing: {
+      objectifs: [
+        "Appliquer la règle : deux parents sains → enfant malade = allèle récessif",
+        "Comprendre la notion de porteur sain vs individu atteint",
+        "Identifier sans hésitation un allèle dominant",
+        "Formuler une explication claire pour une famille"
+      ],
+      recompenses: { xp: 320, badge: 'Démasque-allèle', power: 'Analyse de dominance' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — La règle d'or",
+        question: "Deux parents sains ont un enfant malade. Que peux-tu en déduire AVEC CERTITUDE ?",
+        options: ["L'allèle est dominant", "L'allèle est récessif et les deux parents sont porteurs sains", "C'est une mutation nouvelle", "Le diagnostic est faux"],
+        correctIdx: 1, xp: 100,
+        explain: "C'est LA règle de base. Si l'allèle malade était dominant, au moins un parent serait atteint. Comme aucun ne l'est, l'allèle est récessif (= il a besoin de 2 copies pour s'exprimer). Et comme l'enfant a 2 copies, il les a forcément reçues une de chaque parent. Donc les deux parents sont porteurs sains hétérozygotes." },
+
+      { type: 'question',
+        title: "Phase 2 — La signature de la dominance",
+        question: "Dans la famille Yacouba (brachydactylie), la maladie apparaît à CHAQUE génération, et un parent atteint est toujours présent quand un enfant est atteint. Que conclure ?",
+        options: ["Allèle récessif", "Allèle dominant", "Maladie consanguine", "Aucune conclusion possible"],
+        correctIdx: 1, xp: 100,
+        explain: "La signature classique de la dominance : transmission verticale, à chaque génération, un parent atteint à chaque cas. L'allèle dominant n'a besoin que d'1 copie pour s'exprimer. Donc tout porteur est forcément atteint. Pas de porteur sain dans la dominance." },
+
+      { type: 'question',
+        title: "Phase 3 — Le porteur sain",
+        question: "Un porteur sain de la drépanocytose a un génotype hétérozygote A/S. Pourquoi n'est-il PAS malade ?",
+        options: ["Il a peu d'allèles malades", "L'allèle normal A domine et compense l'allèle S", "Il est protégé par son régime alimentaire", "Le système immunitaire neutralise S"],
+        correctIdx: 1, xp: 120,
+        explain: "L'allèle A (normal) est dominant sur l'allèle S (drépanocytaire). Avec un seul allèle A, le porteur produit assez d'hémoglobine normale pour ne pas être malade. Mais il porte l'allèle S et peut le transmettre à ses enfants. C'est le mécanisme central des maladies récessives." },
+
+      { type: 'question',
+        title: "Phase 4 — Expliquer à la famille Aminata",
+        question: "Tu dois expliquer en UNE phrase à Madame Aminata pourquoi son enfant est malade. Quelle formulation choisis-tu ?",
+        options: ["« Vous avez fait une faute médicale »", "« Toi et ton mari portez chacun, sans le savoir, un allèle silencieux. Quand vous avez eu cet enfant, par hasard, il a reçu l'allèle silencieux de chacun de vous, et la maladie s'est exprimée. »", "« C'est une fatalité divine, on ne peut rien y faire »", "« C'est une mutation accidentelle »"],
+        correctIdx: 1, xp: 140,
+        explain: "Cette formulation est : (1) scientifiquement correcte, (2) sans culpabilisation, (3) compréhensible pour quelqu'un sans formation. Elle introduit le concept de « porteur silencieux » et explique le hasard de la transmission. C'est exactement ce qu'on apprend en consultation génétique." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Fragment 2",
+        question: "Le dossier Ibrahim révèle : génération III, deux fils sains de la génération II ont chacun un enfant malade. Aucun parent de génération II n'est atteint. Que conclure de la dominance ?",
+        options: ["Allèle dominant", "Allèle récessif (deux parents sains → enfants malades)", "Indéterminable", "Maladie environnementale"],
+        correctIdx: 1, xp: 160,
+        explain: "Application directe de la règle d'or. Les parents sains ne peuvent donner d'enfants malades que si l'allèle est récessif. Donc dans la famille Ibrahim, l'allèle de la maladie est RÉCESSIF. Mais nous ne savons pas encore si c'est autosomal ou gonosomal — c'est l'enjeu de la mission 2.2." }
+    ],
+    epilogue: {
+      titre: "Rang 2 en approche — Démasque-allèle débloqué",
+      message: "Tu sais désormais lire la signature d'un allèle dominant et démasquer les porteurs sains.",
+      conseilLabel: "Conseil de Dr. Fatima (superviseure analyse)",
+      conseilTexte: "Cette compétence sauve des couples. Au Niger, des centaines de mariages se font chaque année entre porteurs sains de la drépanocytose qui ne le savent pas. Ton savoir peut éclairer ces décisions.",
+      grimoire: "Mode de transmission : dominance vs récessivité",
+      fragmentIbrahim: { numero: 2, texte: "Maladie Ibrahim = RÉCESSIVE. Les parents de génération II portent l'allèle silencieux. À déterminer en mission 2.2 : autosomale ou gonosomale ?" },
+      philo: "Un allèle silencieux qui parle un jour, c'est un avertissement à toute une lignée."
+    }
+  },
+
+  'gc-2-2': {
+    id: 'gc-2-2', arc: 2, arcTitle: 'ANALYSE', number: '2.2',
+    title: "Le Chromosome qui murmure",
+    subtitle: "Localiser le gène : autosomal ou gonosomal ?",
+    icon: '🧬',
+    rank: { from: 1, to: 2, name: 'Analyste' },
+    power: 'Vision chromosomique',
+    signature: "La localisation chromosomique détermine qui sera touché — et qui ne le sera pas.",
+    prologue: [
+      "Dr. Fatima entre dans ton bureau, les bras croisés. « Tu sais maintenant qu'un allèle est récessif ou dominant. Bien. Mais tu n'as fait que la moitié du travail. »",
+      "Elle pose une question simple : « Sur quel chromosome ce gène est-il porté ? Autosome ? Gonosome X ? Gonosome Y ? »",
+      "Sans cette deuxième information, ton diagnostic est incomplet. Et un diagnostic incomplet peut conduire à un mauvais conseil."
+    ],
+    briefing: {
+      objectifs: [
+        "Test 1 : « Y a-t-il des filles malades ? » → exclure Y",
+        "Test 2 : « Père malade → fils malade ? » → exclure X si non",
+        "Identifier la signature mère→fils, père→filles (X-récessif)",
+        "Conclure autosomal si les deux sexes sont touchés également"
+      ],
+      recompenses: { xp: 380, badge: 'Vision chromosomique', power: 'Localisation génétique' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Le test du chromosome Y",
+        question: "Dans une famille, une FILLE est atteinte. Quel chromosome peux-tu IMMÉDIATEMENT exclure ?",
+        options: ["Le chromosome X", "Le chromosome Y (les filles n'en ont pas)", "Un autosome", "Aucune conclusion possible"],
+        correctIdx: 1, xp: 100,
+        explain: "Les filles ont XX, pas de chromosome Y. Donc si une fille est malade, le gène ne peut pas être porté par Y. C'est un raisonnement par exclusion fondamental, applicable en 2 secondes." },
+
+      { type: 'question',
+        title: "Phase 2 — La signature X-récessif",
+        question: "Dans une famille : grand-père hémophile, ses fils sont sains, son petit-fils (par sa fille) est hémophile. Quelle est la signature ?",
+        options: ["Maladie autosomale dominante", "Maladie gonosomale liée à X récessive (transmission père → filles conductrices → petits-fils)", "Maladie environnementale", "Coïncidence sans transmission"],
+        correctIdx: 1, xp: 140,
+        explain: "C'est LA signature emblématique de l'X récessif. Le grand-père malade (X^h Y) donne son X^h à toutes ses filles, qui deviennent conductrices saines. Ces filles ont 50% de risque de donner X^h à leurs fils, qui seront alors malades. Le saut de génération via les femmes est typique." },
+
+      { type: 'question',
+        title: "Phase 3 — Drépanocytose : autosomal, prouve-le",
+        question: "Une fille est atteinte de drépanocytose. Son père est SAIN. Pourquoi cela prouve-t-il que le gène n'est PAS sur X ?",
+        options: ["Parce que les femmes ne peuvent pas avoir de drépanocytose sur X", "Parce que si le gène était sur X récessif, la fille X^d X^d aurait dû recevoir X^d de son père, qui serait alors lui-même X^d Y donc atteint. Or il est sain.", "Parce que la drépanocytose est environnementale", "Parce que les autosomes sont plus communs"],
+        correctIdx: 1, xp: 160,
+        explain: "Raisonnement par l'absurde. Si le gène était sur X récessif, une fille atteinte serait X^d X^d. Elle aurait donc forcément un père X^d Y (= atteint). Mais le père est sain. Donc l'hypothèse X est fausse. Conclusion : le gène est autosomal. C'est exactement ce qu'on fait pour la drépanocytose." },
+
+      { type: 'question',
+        title: "Phase 4 — Les 4 modes en un coup d'œil",
+        question: "Quelle maladie illustre le mode AUTOSOMAL DOMINANT ?",
+        options: ["Drépanocytose", "Brachydactylie", "Hémophilie", "Daltonisme"],
+        correctIdx: 1, xp: 100,
+        explain: "Brachydactylie (doigts courts) = autosomal dominant. Drépanocytose = autosomal récessif. Hémophilie = X récessif. Daltonisme = X récessif. Rachitisme vitamino-résistant = X dominant. Ces 5 maladies couvrent les 4 grands modes — à mémoriser comme références." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Fragment 2",
+        question: "Dans le dossier Ibrahim, on découvre que TOUS les enfants malades sont des GARÇONS. Leurs mères sont saines. Les pères des garçons malades étaient sains aussi. Quelle est la localisation chromosomique ?",
+        options: ["Autosomal récessif", "Gonosomal lié à X récessif (mères conductrices, pères sains, fils atteints)", "Gonosomal lié à Y", "Autosomal dominant"],
+        correctIdx: 1, xp: 180,
+        explain: "Signature parfaite de l'X récessif : (1) seulement les garçons atteints — exclut autosomal, (2) mères saines — donc conductrices X^H X^h, (3) pères sains — l'allèle vient des mères. Conclusion FERME : la maladie Ibrahim est gonosomale liée à X récessive. Cette donnée change tout pour la suite (génotypes mission 3.1, calcul de risques mission 3.2, et le cas Klinefelter de l'arc 4)." }
+    ],
+    epilogue: {
+      titre: "RANG 2 ATTEINT : Analyste GENECODE",
+      message: "Tu maîtrises maintenant les 4 modes de transmission. Les dossiers simples sont derrière toi.",
+      conseilLabel: "Conseil de Dr. Fatima",
+      conseilTexte: "À partir de maintenant, les familles te poseront LA question : « Quel est le risque pour mes prochains enfants ? » Pour y répondre, il faut calculer. C'est l'enjeu de l'Arc 3.",
+      grimoire: "Localisation chromosomique : autosomal vs gonosomal X/Y",
+      fragmentIbrahim: { numero: 2, texte: "Maladie Ibrahim = X-récessive. Mères conductrices, fils atteints. Cette donnée prépare le calcul des génotypes (Mission 3.1)." },
+      philo: "Sur quel chromosome ce gène est-il porté ? La réponse change tout."
+    }
+  },
+
+  'gc-2-3': {
+    id: 'gc-2-3', arc: 2, arcTitle: 'ANALYSE', number: '2.3',
+    title: "Les 4 Modes — Tableau de Bord",
+    subtitle: "Maîtriser AD, AR, X-récessif, X-dominant",
+    icon: '🗺️',
+    rank: { from: 2, to: 2, name: 'Analyste confirmé' },
+    power: 'Synthèse mendelienne',
+    signature: "Une question simple, en 4 étapes, pour identifier n'importe quel mode.",
+    prologue: [
+      "Dr. Mariama organise une réunion plénière de GENECODE. Tous les analystes doivent présenter une synthèse des 4 modes de transmission.",
+      "Tu es désigné(e) pour représenter ton département. C'est le moment de montrer que tu as tout intégré.",
+      "Devant tes collègues, tu vas devoir identifier 5 cas en moins de 10 minutes."
+    ],
+    briefing: {
+      objectifs: [
+        "Reconnaître les 4 signatures visuelles en moins de 2 minutes",
+        "Citer une maladie emblématique pour chaque mode",
+        "Expliquer pourquoi X-dominant peut être létal pour les garçons",
+        "Distinguer porteur, conducteur, atteint, hémizygote"
+      ],
+      recompenses: { xp: 400, badge: 'Synthèse mendelienne', power: 'Identificateur de mode' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Cas 1 : transmission verticale",
+        question: "Famille A : maladie présente à CHAQUE génération, autant de filles que de garçons atteints, un parent atteint pour chaque enfant atteint. Mode ?",
+        options: ["Autosomal récessif", "Autosomal dominant", "X-récessif", "X-dominant"],
+        correctIdx: 1, xp: 80,
+        explain: "Transmission verticale (chaque génération) + parents/enfants atteints liés + égalité des sexes = AUTOSOMAL DOMINANT. Exemple : brachydactylie, chorée de Huntington, syndrome de Marfan." },
+
+      { type: 'question',
+        title: "Phase 2 — Cas 2 : saut de génération",
+        question: "Famille B : maladie absente en génération I, présente chez plusieurs enfants en génération II, parents apparentés. Mode ?",
+        options: ["Autosomal récessif (parents porteurs sains, consanguinité augmente le risque)", "Autosomal dominant", "X-dominant", "X-récessif"],
+        correctIdx: 0, xp: 100,
+        explain: "Saut de génération + consanguinité = AUTOSOMAL RÉCESSIF. La consanguinité augmente la probabilité que les deux parents portent le même allèle récessif rare. Exemples : drépanocytose, mucoviscidose, albinisme, phénylcétonurie." },
+
+      { type: 'question',
+        title: "Phase 3 — Cas 3 : sex-ratio biaisé",
+        question: "Famille C : seuls des hommes touchés, jamais de transmission père-fils, les femmes sont conductrices. Mode ?",
+        options: ["Autosomal dominant", "X-récessif (transmission par les mères, exprimée chez les fils)", "X-dominant", "Y-lié"],
+        correctIdx: 1, xp: 100,
+        explain: "Quasi exclusif aux hommes + transmission via les mères + jamais père-fils = X-RÉCESSIF. Les hommes XY n'ont qu'un X, donc un seul allèle malade suffit (= hémizygote). Les femmes XX ont 2 X, l'un peut compenser l'autre. Exemples : hémophilie, daltonisme, myopathie de Duchenne." },
+
+      { type: 'question',
+        title: "Phase 4 — Cas 4 : surtout des filles",
+        question: "Famille D : surtout des filles atteintes, fausses couches répétées de garçons, père atteint transmet à toutes ses filles. Mode ?",
+        options: ["Autosomal dominant", "X-récessif", "X-dominant (souvent létal pour les garçons)", "Mitochondrial"],
+        correctIdx: 2, xp: 140,
+        explain: "Excès de filles + fausses couches de garçons + père atteint → toutes filles atteintes = X-DOMINANT. Les garçons hémizygotes pour l'allèle dominant meurent souvent in utero (un seul X, pas de compensation possible). Exemples : Incontinentia pigmenti, syndrome de Rett, rachitisme vitamino-résistant." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Cas réel",
+        question: "Maladie Ibrahim : seulement garçons atteints, mères saines (conductrices), pères sains, saut de génération via les filles. Quel mode ?",
+        options: ["Autosomal récessif", "Autosomal dominant", "X-récessif (signature classique)", "Y-lié"],
+        correctIdx: 2, xp: 180,
+        explain: "Tu confirmes maintenant ce que les missions 2.1 et 2.2 avaient établi. Maladie Ibrahim = X-récessive avec certitude. Tu peux passer à l'Arc 3 où tu calculeras les génotypes et les risques pour la nouvelle grossesse en cours dans la famille Ibrahim." }
+    ],
+    epilogue: {
+      titre: "Rang 2 maîtrise complète — Tableau de bord acquis",
+      message: "Tu peux désormais identifier n'importe quel mode en moins de 4 questions. C'est la compétence de base de tout généticien.",
+      conseilLabel: "Conseil de Dr. Mariama",
+      conseilTexte: "Garde ce tableau toujours à l'esprit. Les médecins, sages-femmes et conseillers génétiques l'utilisent au quotidien. Au Niger, chaque test prénuptial pour la drépanocytose repose sur ces 4 modes.",
+      grimoire: "Tableau récapitulatif AD / AR / X-réc / X-dom",
+      fragmentIbrahim: { numero: 2, texte: "Mode Ibrahim CONFIRMÉ = X-récessif. Prêt pour Arc 3 — calcul des génotypes." },
+      philo: "Plusieurs maladies, un seul langage : celui des chromosomes."
+    }
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // ARC 3 — MAÎTRISE — Génotypes et Probabilités
+  // Rang 2 → Rang 3 : Expert
+  // ═══════════════════════════════════════════════════════════
+
+  'gc-3-1': {
+    id: 'gc-3-1', arc: 3, arcTitle: 'MAÎTRISE', number: '3.1',
+    title: "L'Identité cachée",
+    subtitle: "Déterminer les génotypes de toute une famille",
+    icon: '🔍',
+    rank: { from: 2, to: 2, name: 'Expert en formation' },
+    power: 'Vision génotypique',
+    signature: "Même les sains ont une identité génétique cachée. Apprends à la lire.",
+    prologue: [
+      "Une mère, Habsatou, vient avec 5 membres de sa famille. Elle pose une demande inhabituelle : « Je veux connaître le génotype de chacun. Même les sains. Je veux savoir qui est porteur. »",
+      "Tu prends son dossier. C'est la mission la plus importante de ton parcours : attribuer le bon génotype à chaque individu.",
+      "Une erreur ici, et tout le conseil génétique qui suivra sera faussé."
+    ],
+    briefing: {
+      objectifs: [
+        "Écrire le génotype d'un individu malade (toujours homozygote ou hémizygote)",
+        "Déduire le génotype des parents sains d'enfants malades (hétérozygotes)",
+        "Distinguer génotype CERTAIN vs PROBABLE",
+        "Utiliser la notation correcte : D/d, X^H/X^h, X^H/Y..."
+      ],
+      recompenses: { xp: 420, badge: 'Vision génotypique', power: 'Lecture des génotypes' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Le génotype du malade autosomal récessif",
+        question: "Issoufou est drépanocytaire. La drépanocytose est autosomale récessive. Quel est son génotype ?",
+        options: ["D/D", "D/d", "d/d (deux allèles malades, certain)", "X^d/Y"],
+        correctIdx: 2, xp: 100,
+        explain: "Une maladie récessive ne s'exprime que si les DEUX allèles sont malades (homozygote récessif). Donc Issoufou = d/d. C'est CERTAIN, sans aucune ambiguïté. Pour tout malade autosomal récessif, on peut écrire le génotype directement." },
+
+      { type: 'question',
+        title: "Phase 2 — Le génotype des parents sains d'un enfant malade",
+        question: "Issoufou (d/d) est drépanocytaire. Ses deux parents sont sains. Quel est OBLIGATOIREMENT leur génotype ?",
+        options: ["D/D et D/D (sains)", "D/d et D/d (porteurs sains hétérozygotes obligatoirement)", "Indéterminable", "D/d et d/d"],
+        correctIdx: 1, xp: 120,
+        explain: "Issoufou a reçu 1 allèle d de chaque parent. Donc chaque parent porte au moins un d. Mais comme ils sont sains, ils ont aussi au moins un D (sinon ils seraient malades). Donc D/d obligatoirement pour chacun. C'est CERTAIN dès qu'on a un enfant malade." },
+
+      { type: 'question',
+        title: "Phase 3 — Le génotype d'une fille hémophile (X-récessif)",
+        question: "L'hémophilie est X-récessive. Une fille atteinte (très rare). Quel est son génotype ?",
+        options: ["X^H X^h", "X^H Y", "X^h X^h (homozygote récessive sur X)", "X^h Y"],
+        correctIdx: 2, xp: 120,
+        explain: "Une fille a XX. Pour être atteinte d'une maladie X-récessive, elle doit avoir l'allèle malade sur ses 2 X. Donc X^h X^h. C'est très rare : il faut un père hémophile (X^h Y) ET une mère conductrice (X^H X^h). Reine Victoria avait des descendants dans ce cas." },
+
+      { type: 'question',
+        title: "Phase 4 — Génotype CERTAIN vs PROBABLE",
+        question: "Hassan, fils sain de deux parents porteurs (D/d × D/d). Quel est SON génotype ?",
+        options: ["D/D certainement", "D/d certainement", "1/3 chance D/D, 2/3 chance D/d", "d/d"],
+        correctIdx: 2, xp: 160,
+        explain: "Quand deux porteurs ont un enfant SAIN, son génotype est D/D ou D/d, mais on ne peut pas être certain duquel. Statistiquement : sur les enfants sains issus de D/d × D/d, 1/3 sont D/D et 2/3 sont D/d. C'est la distinction PROBABLE/CERTAIN, capitale en conseil génétique." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Génotypes des mères",
+        question: "Famille Ibrahim, maladie X-récessive. En génération II, deux femmes (mères) ont chacune un fils atteint. Quel est leur génotype OBLIGATOIRE ?",
+        options: ["X^H X^H (saines)", "X^H X^h (conductrices, certain)", "X^h X^h (atteintes)", "Indéterminable"],
+        correctIdx: 1, xp: 180,
+        explain: "Le fils est X^h Y (hémizygote atteint). Il a reçu Y de son père et X^h de sa mère. Donc la mère a forcément X^h. Comme elle est saine, elle a aussi X^H. Donc X^H X^h = conductrice. CERTAIN. Ces deux femmes Ibrahim sont des conductrices silencieuses — elles transmettront aussi à 50% des futures grossesses." }
+    ],
+    epilogue: {
+      titre: "Rang 3 en approche — Vision génotypique acquise",
+      message: "Tu sais désormais lire l'identité génétique cachée de chaque individu d'une famille. Même les sains parlent maintenant.",
+      conseilLabel: "Conseil de Dr. Fatima",
+      conseilTexte: "Cette compétence est la base du conseil prénuptial. Au Niger, savoir si une jeune femme est conductrice de la drépanocytose ou non peut orienter son choix de mariage et sauver des vies futures.",
+      grimoire: "Détermination des génotypes : règles d'écriture",
+      fragmentIbrahim: { numero: 3, texte: "Mères Ibrahim de génération II = conductrices certaines X^H X^h. Prêt pour le calcul du risque (Mission 3.2)." },
+      philo: "Chaque génotype est une histoire, et chaque histoire mérite d'être lue."
+    }
+  },
+
+  'gc-3-2': {
+    id: 'gc-3-2', arc: 3, arcTitle: 'MAÎTRISE', number: '3.2',
+    title: "La Roue des Possibles",
+    subtitle: "Construire un échiquier et calculer les risques",
+    icon: '🎲',
+    rank: { from: 2, to: 3, name: 'Expert' },
+    power: 'Calculateur de risque',
+    signature: "La probabilité est le seul outil honnête pour répondre à un couple — sans promettre, sans mentir.",
+    prologue: [
+      "Amadou et Maïmouna viennent de se marier. Ils ont fait le test prénuptial à l'hôpital national. Résultat : tous deux sont porteurs sains de la drépanocytose.",
+      "Ils veulent 4 enfants. Ils te regardent : « Combien seront malades ? Combien seront porteurs ? Combien seront complètement sains ? »",
+      "Tu prends une feuille. Tu vas construire l'échiquier de Punnett. C'est le seul outil scientifiquement honnête pour répondre."
+    ],
+    briefing: {
+      objectifs: [
+        "Identifier les gamètes possibles de chaque parent",
+        "Construire un échiquier 2×2 ou 4×4 complet et correct",
+        "Calculer les ratios phénotypiques (1/4, 1/2, 3/4...)",
+        "Traduire en pourcentage et en conseil pratique"
+      ],
+      recompenses: { xp: 450, badge: 'Calculateur de risque', power: 'Maîtrise des échiquiers' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les gamètes",
+        question: "Amadou est D/d (porteur sain). Quels gamètes peut-il produire et en quelles proportions ?",
+        options: ["100% gamètes D", "100% gamètes d", "50% D et 50% d (un allèle par gamète, ségrégation méiotique)", "25% D, 25% d, 50% Dd"],
+        correctIdx: 2, xp: 100,
+        explain: "Pendant la méiose, les chromosomes homologues se séparent. Donc chaque gamète reçoit UN seul allèle. Pour un parent D/d : moitié des gamètes portent D, l'autre moitié portent d. C'est la base de toute prédiction." },
+
+      { type: 'question',
+        title: "Phase 2 — L'échiquier 2×2",
+        question: "Amadou (D/d) × Maïmouna (D/d). Construis l'échiquier mentalement. Quels sont les 4 génotypes possibles d'un enfant ?",
+        options: ["Tous DD", "DD, DD, dd, dd", "DD, Dd, Dd, dd (1/4, 1/2, 1/4)", "Tous dd"],
+        correctIdx: 2, xp: 120,
+        explain: "Les 4 cases de l'échiquier : D×D=DD, D×d=Dd, d×D=Dd, d×d=dd. Donc 1 DD, 2 Dd, 1 dd. En proportions : 1/4 DD (sain non porteur), 2/4 Dd (porteur sain), 1/4 dd (malade). C'est la fameuse loi 1:2:1 de Mendel." },
+
+      { type: 'question',
+        title: "Phase 3 — Le risque par grossesse",
+        question: "Quelle est la probabilité, à CHAQUE grossesse, qu'Amadou et Maïmouna aient un enfant malade ?",
+        options: ["0%", "25% (1/4) à CHAQUE grossesse, indépendamment des grossesses précédentes", "50% car deux porteurs", "100% car deux porteurs"],
+        correctIdx: 1, xp: 140,
+        explain: "À CHAQUE grossesse, le risque est 1/4 = 25%. C'est INDÉPENDANT des grossesses précédentes. Un couple peut avoir 4 enfants sains de suite et le 5ème malade, ou inversement. La nature ne « se souvient pas ». C'est crucial à expliquer aux familles pour éviter les fausses interprétations." },
+
+      { type: 'question',
+        title: "Phase 4 — Le conseil pratique",
+        question: "Amadou et Maïmouna veulent vraiment 4 enfants. Comment formules-tu honnêtement le pronostic ?",
+        options: ["« Aucun de vos enfants ne sera malade »", "« En moyenne, sur 4 enfants : 1 sera malade, 2 seront porteurs sains, 1 sera complètement sain. Mais la nature ne respecte pas toujours la moyenne. Il est possible que vous ayez 0, 1, 2, 3 ou 4 enfants malades. »", "« Tous vos enfants seront malades »", "« Vous ne devriez pas avoir d'enfants »"],
+        correctIdx: 1, xp: 160,
+        explain: "C'est exactement le bon ton. Honnête sur la moyenne théorique. Honnête sur la variabilité statistique. Sans ordre moral. Sans interdiction. Le couple décide en connaissance de cause. C'est ça, le conseil génétique." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Risque Rh",
+        question: "Madame Ibrahim (enceinte) est de groupe A, Rh-. Son mari est de groupe B, Rh+. L'obstétricien est préoccupé par le facteur Rhésus. Quel est le risque ?",
+        options: ["Aucun risque", "Si le bébé est Rh+ (héritage du père), la mère Rh- peut développer des anticorps anti-Rh à l'accouchement, ce qui mettra en danger les FUTURES grossesses si non traitée par injection préventive (anti-D)", "Le bébé sera forcément Rh-", "Risque de drépanocytose"],
+        correctIdx: 1, xp: 180,
+        explain: "Le risque Rhésus est un classique de la maternité. Mère Rh- + bébé Rh+ → la mère développe des anticorps anti-D au contact du sang du bébé (à l'accouchement ou en cas de saignement). Pour la GROSSESSE EN COURS pas de problème. Mais pour les futures grossesses, ces anticorps traverseront le placenta et attaqueront un futur bébé Rh+. Solution préventive : injection de Rhophylac (anti-D) à 28 semaines et après accouchement." }
+    ],
+    epilogue: {
+      titre: "RANG 3 ATTEINT : Expert GENECODE",
+      message: "Tu maîtrises la prédiction probabiliste. Tu peux désormais répondre honnêtement à n'importe quel couple sur les risques de transmission.",
+      conseilLabel: "Conseil de Dr. Mariama",
+      conseilTexte: "Cette compétence sauve littéralement des vies au Niger. Le test prénuptial drépanocytose existe. Les couples qui te consultent te feront confiance avec leur futur. Tu portes une responsabilité humaine immense.",
+      grimoire: "Échiquier de Punnett et calcul de probabilités",
+      fragmentIbrahim: { numero: 4, texte: "Risque Rhésus dans la grossesse en cours = à surveiller. Injection anti-D à prévoir. Prêt pour Mission 3.3 : groupes sanguins ABO." },
+      philo: "Calculer une probabilité, c'est respecter à la fois la science et le mystère."
+    }
+  },
+
+  'gc-3-3': {
+    id: 'gc-3-3', arc: 3, arcTitle: 'MAÎTRISE', number: '3.3',
+    title: "Le Détective du Sang",
+    subtitle: "Maîtriser ABO, Rhésus, transfusions",
+    icon: '🩸',
+    rank: { from: 3, to: 3, name: 'Expert confirmé' },
+    power: 'Vision sanguine',
+    signature: "Une transfusion incompatible peut tuer en minutes. Une transfusion bien faite peut sauver une vie.",
+    prologue: [
+      "Trois patients arrivent aux urgences de l'Hôpital National de Niamey. Une transfusion est nécessaire pour deux d'entre eux.",
+      "La banque de sang dispose de trois poches : A+, B-, AB+. Toi seul peux déterminer qui peut recevoir quoi.",
+      "Le médecin urgentiste, Dr. Salamatou, te tend les fiches. « Tu as 5 minutes. Vie ou mort. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Lire un test sérologique (anti-A, anti-B) et déduire le groupe",
+        "Associer chaque groupe à ses génotypes possibles et anticorps",
+        "Appliquer les règles de compatibilité ABO et Rhésus",
+        "Calculer les groupes possibles dans la descendance"
+      ],
+      recompenses: { xp: 460, badge: 'Vision sanguine', power: 'Détective ABO/Rh' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Le test sérologique",
+        question: "Le sang d'Aminata : agglutiné par anti-A, NON agglutiné par anti-B. Groupe ?",
+        options: ["A (l'antigène A présent réagit avec anti-A)", "B", "AB", "O"],
+        correctIdx: 0, xp: 100,
+        explain: "Si le sérum anti-A agglutine = il y a antigène A à la surface des hématies. Si anti-B ne fait rien = pas d'antigène B. Donc groupe A. Génotypes possibles : A/A ou A/O." },
+
+      { type: 'question',
+        title: "Phase 2 — Le donneur universel",
+        question: "Quel groupe sanguin est appelé « donneur universel » et pourquoi ?",
+        options: ["AB+ car il a tout", "O- car ses hématies n'ont aucun antigène A, B ni Rh — donc aucun anticorps du receveur ne peut les attaquer", "A+ car le plus commun", "B- car rare"],
+        correctIdx: 1, xp: 120,
+        explain: "O- : pas d'antigène A, ni B, ni Rh. Donc son sang peut être donné à n'importe qui sans risque d'agglutination. Inversement, AB+ est le RECEVEUR universel : pas d'anticorps anti-A ni anti-B dans son plasma. En urgence vitale au Niger, on cherche en premier du O-." },
+
+      { type: 'question',
+        title: "Phase 3 — La règle de transfusion",
+        question: "Patient O- a besoin d'urgence d'une transfusion. Quelles poches peut-il recevoir parmi : A+, B-, AB+, O- ?",
+        options: ["Toutes", "Seulement O- (toutes les autres causeraient une agglutination par anti-A, anti-B ou anti-Rh)", "AB+ seulement", "A+ et B-"],
+        correctIdx: 1, xp: 140,
+        explain: "Patient O- : son plasma contient anti-A + anti-B + anti-Rh. Il refusera A+, B-, AB+. Seul O- est compatible. C'est pour ça que les groupes O- sont précieux dans les banques de sang — sauveurs universels mais receveurs très restreints." },
+
+      { type: 'question',
+        title: "Phase 4 — La descendance",
+        question: "Père B/O Rh+/Rh-. Mère A/O Rh+/Rh-. Quels groupes ABO sont possibles chez les enfants ?",
+        options: ["Seulement AB", "Seulement A et B", "AB, A, B et O — les 4 groupes possibles (échiquier ABO complet)", "Seulement O"],
+        correctIdx: 2, xp: 160,
+        explain: "Échiquier B/O × A/O : A/B (groupe AB), A/O (A), B/O (B), O/O (O). Donc les 4 groupes sont possibles, chacun à 25%. C'est le seul cas où un couple peut avoir des enfants des 4 groupes ABO. Pour Rh : 75% Rh+ (Rh+/Rh+ ou Rh+/Rh-) et 25% Rh-." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Compatibilité",
+        question: "Madame Ibrahim (A, Rh-) doit recevoir une transfusion d'urgence pendant l'accouchement. Quelles poches peut-elle recevoir ?",
+        options: ["A+, A-, B-, AB+", "A- et O- uniquement (compatible ABO + Rh- nécessaire car elle est Rh-)", "Toutes", "AB+ uniquement"],
+        correctIdx: 1, xp: 180,
+        explain: "Madame Ibrahim a le plasma anti-B (groupe A) et anti-Rh (Rh-). Donc on exclut tout sang B, AB et Rh+. Restent : A- et O-. C'est crucial à savoir avant l'accouchement — préparer 2-3 poches de A- ou O- en réserve sauve des vies en cas d'hémorragie post-partum." }
+    ],
+    epilogue: {
+      titre: "Rang 3 confirmé — Détective du Sang",
+      message: "Tu maîtrises maintenant ABO et Rhésus. Cette compétence sauve des vies aux urgences chaque jour.",
+      conseilLabel: "Conseil de Dr. Salamatou",
+      conseilTexte: "Combien de personnes au Niger ne connaissent pas leur groupe sanguin ? Trop. Une simple sensibilisation peut sauver des vies en cas d'accident. Toi, tu peux devenir cette voix.",
+      grimoire: "Système ABO et facteur Rhésus — règles complètes",
+      fragmentIbrahim: { numero: 4, texte: "Réserves transfusionnelles A- et O- préparées pour Madame Ibrahim. Risque maîtrisé. Prêt pour Arc 4 : anomalies chromosomiques." },
+      philo: "Une goutte de sang bien analysée vaut mille mots."
+    }
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // ARC 4 — EXPERTISE — Anomalies chromosomiques
+  // Rang 3 → Rang 4 : Conseiller
+  // ═══════════════════════════════════════════════════════════
+
+  'gc-4-1': {
+    id: 'gc-4-1', arc: 4, arcTitle: 'EXPERTISE', number: '4.1',
+    title: "Le Caryotype parle",
+    subtitle: "Analyser un caryotype et identifier l'anomalie",
+    icon: '🔬',
+    rank: { from: 3, to: 3, name: 'Conseiller en formation' },
+    power: 'Lecteur de caryotype',
+    signature: "Le caryotype est la photo d'identité génétique. Apprends à la lire en 60 secondes.",
+    prologue: [
+      "Un enfant de 2 ans est amené par sa mère, Halima, inquiète. Il crie comme un chat. Il marche tardivement. Il a un retard mental sévère.",
+      "Le caryotype est sur ton écran. 46 chromosomes. Mais quelque chose cloche.",
+      "Le pédiatre, Dr. Kotchami, t'attend pour ton diagnostic. L'anomalie est là — visible — si tu sais lire."
+    ],
+    briefing: {
+      objectifs: [
+        "Compter les chromosomes et les classer par paires",
+        "Identifier la paire concernée par l'anomalie",
+        "Distinguer trisomie, monosomie, délétion",
+        "Écrire la formule chromosomique : 2n = 44A + XY ou 46, XO..."
+      ],
+      recompenses: { xp: 480, badge: 'Lecteur de caryotype', power: 'Cytogénétique' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Le compte normal",
+        question: "Combien de chromosomes possède une cellule humaine normale ?",
+        options: ["23 chromosomes (un seul exemplaire de chaque)", "46 chromosomes (23 paires)", "44 chromosomes", "48 chromosomes"],
+        correctIdx: 1, xp: 80,
+        explain: "L'humain normal a 46 chromosomes = 23 paires. 22 paires d'autosomes + 1 paire de gonosomes (XX chez la femme, XY chez l'homme). C'est ce qu'on appelle 2n = 46 (diploïde). Les gamètes ont n = 23 (haploïdes)." },
+
+      { type: 'question',
+        title: "Phase 2 — La trisomie 21",
+        question: "Un caryotype montre 47 chromosomes, avec 3 chromosomes à la 21ème paire. Diagnostic ?",
+        options: ["Syndrome de Turner", "Trisomie 21 ou syndrome de Down", "Syndrome de Klinefelter", "Caryotype normal"],
+        correctIdx: 1, xp: 100,
+        explain: "Trisomie 21 = présence de 3 chromosomes 21 au lieu de 2. Formule : 47, +21. Cause : non-disjonction de la paire 21 lors de la méiose chez l'un des parents. Symptômes : retard mental, traits faciaux caractéristiques, malformations cardiaques fréquentes. Espérance de vie aujourd'hui ~60 ans avec bonne prise en charge." },
+
+      { type: 'question',
+        title: "Phase 3 — Le syndrome de Turner",
+        question: "Un caryotype montre 45 chromosomes, gonosome unique X. Diagnostic ?",
+        options: ["Syndrome de Klinefelter", "Trisomie 21", "Syndrome de Turner (45, XO) — fille avec un seul X", "Cri du chat"],
+        correctIdx: 2, xp: 100,
+        explain: "Syndrome de Turner = monosomie du chromosome X. Formule : 45, X (parfois noté 45, XO). Touche uniquement les filles. Symptômes : petite taille, stérilité, absence de développement des caractères sexuels secondaires, cou palmé. La cause : non-disjonction des gonosomes chez l'un des parents." },
+
+      { type: 'question',
+        title: "Phase 4 — Le cri du chat",
+        question: "L'enfant de Halima : 46 chromosomes, mais le bras court d'un chromosome 5 manque. Type d'anomalie ?",
+        options: ["Trisomie", "Monosomie totale", "Délétion (perte d'un fragment de chromosome) — anomalie de structure", "Translocation"],
+        correctIdx: 2, xp: 140,
+        explain: "Le nombre est normal (46) mais un fragment manque sur le chromosome 5 (le bras court, noté 5p-). C'est une DÉLÉTION = anomalie de STRUCTURE (et non de nombre). Le syndrome est appelé « cri du chat » à cause du miaulement caractéristique des nouveau-nés. Décrit par Lejeune en 1963." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Caryotype suspect",
+        question: "Caryotype d'urgence GENECODE : 46 chromosomes, paire 21 avec 3 chromosomes, gonosomes XX. Diagnostic ?",
+        options: ["Caryotype normal", "Trisomie 21 chez une fille — formule 47, +21, XX (sujet féminin)", "Cri du chat", "Klinefelter"],
+        correctIdx: 1, xp: 180,
+        explain: "Attention au piège : le total est en fait 47 (45 autosomes + 1 surnuméraire à 21 + XX = 47). Formule : 47, +21, XX. C'est une trisomie 21 chez une fille. Origine probable : non-disjonction lors de la méiose maternelle (60% des cas) ou paternelle (40%). Pour les deux parents normaux, c'est presque toujours un événement accidentel non héréditaire." }
+    ],
+    epilogue: {
+      titre: "Rang 3 confirmé — Lecteur de caryotype",
+      message: "Tu sais désormais lire la photo d'identité chromosomique d'un patient. Une compétence rare et essentielle.",
+      conseilLabel: "Conseil de Dr. Moustapha (cytogénéticien)",
+      conseilTexte: "Le diagnostic prénatal (amniocentèse) permet de détecter ces anomalies AVANT la naissance. Au Niger, ce diagnostic devient progressivement accessible. Tu pourrais y contribuer.",
+      grimoire: "Lecture de caryotype et formules chromosomiques",
+      fragmentIbrahim: { numero: 5, texte: "Aucune anomalie chromosomique chez Madame Ibrahim. Mais le fils aîné présente un caryotype atypique — à analyser en mission 4.3." },
+      philo: "Une photo de chromosomes vaut mille mots de dossier médical."
+    }
+  },
+
+  'gc-4-2': {
+    id: 'gc-4-2', arc: 4, arcTitle: 'EXPERTISE', number: '4.2',
+    title: "Les Translocations silencieuses",
+    subtitle: "Comprendre les anomalies de structure",
+    icon: '🔀',
+    rank: { from: 3, to: 4, name: 'Conseiller' },
+    power: 'Détecteur de translocation',
+    signature: "Un homme parfaitement sain peut porter en lui le secret d'enfants malades. La translocation est silencieuse.",
+    prologue: [
+      "Monsieur Boubacar est sain. Pas un symptôme. Mais il a eu 3 enfants atteints du syndrome de Down.",
+      "Comment est-ce possible ? Il a 46 chromosomes. Le caryotype semble normal au premier regard.",
+      "Dr. Moustapha, le cytogénéticien, t'invite à regarder de plus près. La réponse est dans une translocation robertsonienne silencieuse."
+    ],
+    briefing: {
+      objectifs: [
+        "Distinguer anomalie numérique vs anomalie structurale",
+        "Comprendre la translocation équilibrée (porteur sain)",
+        "Prévoir les 4 types de descendants d'un porteur",
+        "Expliquer les fausses couches répétées"
+      ],
+      recompenses: { xp: 480, badge: 'Détecteur de translocation', power: 'Anomalies de structure' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Numérique vs structural",
+        question: "Quelle est la différence entre anomalie NUMÉRIQUE et anomalie STRUCTURALE ?",
+        options: ["Aucune différence", "Numérique = nombre anormal de chromosomes (trisomie, monosomie). Structurale = nombre normal mais structure modifiée (délétion, translocation, inversion)", "Numérique = chez l'enfant, structural = chez l'adulte", "Numérique = bénin, structural = grave"],
+        correctIdx: 1, xp: 100,
+        explain: "Distinction fondamentale. Anomalies de NOMBRE : trisomie 21, Turner, Klinefelter. Anomalies de STRUCTURE : délétion (perte de fragment), translocation (échange entre chromosomes), inversion. Les structurales peuvent être ÉQUILIBRÉES (sans perte de matériel = porteur sain) ou DÉSÉQUILIBRÉES (avec perte = pathologique)." },
+
+      { type: 'question',
+        title: "Phase 2 — La translocation robertsonienne",
+        question: "Boubacar a 45 chromosomes visibles, dont un chromosome 14 plus long que la normale. Pourquoi est-il sain ?",
+        options: ["Coup de chance", "C'est une translocation robertsonienne ÉQUILIBRÉE : le chromosome 21 entier s'est greffé sur le 14. Le matériel génétique total est intact, juste réorganisé.", "Son régime le protège", "Il est traité"],
+        correctIdx: 1, xp: 140,
+        explain: "Robertsonienne = fusion de 2 chromosomes acrocentriques (13, 14, 15, 21, 22). Si tout le matériel est conservé (juste réorganisé), le porteur est ÉQUILIBRÉ et sain. Mais lors de la méiose, il produit des gamètes anormaux qui peuvent donner des enfants trisomiques. C'est le cas de Boubacar." },
+
+      { type: 'question',
+        title: "Phase 3 — Les 4 types de descendants",
+        question: "Boubacar (translocation 14/21) avec une femme normale. Quels types d'enfants peut-il avoir ?",
+        options: ["Tous normaux", "Tous trisomiques", "4 types possibles : (a) sain équilibré normal, (b) porteur de translocation sain comme lui, (c) trisomique 21, (d) monosomique 21 (non viable, fausse couche)", "Stérilité totale"],
+        correctIdx: 2, xp: 160,
+        explain: "Les 4 types de descendants d'un porteur de translocation. C'est crucial à expliquer aux familles : risque de trisomie 21 ~ 10-15% par grossesse (au lieu de 0,1% en population générale), plus risque élevé de fausses couches répétées (descendants monosomiques non viables). Le diagnostic prénatal est fortement recommandé." },
+
+      { type: 'question',
+        title: "Phase 4 — Les fausses couches expliquées",
+        question: "Pourquoi un porteur de translocation a-t-il SOUVENT des fausses couches répétées ?",
+        options: ["Stress conjugal", "Parce qu'environ 25% de ses descendants sont MONOSOMIQUES (chromosome 21 manquant), génétiquement non viables → arrêt précoce de la grossesse", "Mauvaise alimentation", "Aucune raison"],
+        correctIdx: 1, xp: 140,
+        explain: "Une monosomie autosomale (perte d'un autosome) est presque toujours létale au stade embryonnaire. Donc l'embryon s'arrête de se développer = fausse couche, souvent au premier trimestre. C'est un signe d'orientation diagnostique : 3 fausses couches répétées chez un couple → caryotype des deux parents systématique." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim — Sœur d'Hassan",
+        question: "Une sœur d'Hassan Ibrahim a eu 3 fausses couches. Son caryotype montre un chromosome 14 plus long que la normale. Que diagnostiquer ?",
+        options: ["Stérilité psychologique", "Translocation robertsonienne probable (chromosome 21 fusionné sur 14) — porteuse saine équilibrée mais à risque d'enfants trisomiques", "Trisomie 21 elle-même", "Aucune anomalie"],
+        correctIdx: 1, xp: 180,
+        explain: "C'est exactement le profil. Diagnostic : translocation robertsonienne 14;21 équilibrée. Conseil : analyse du caryotype de son mari, diagnostic prénatal systématique pour les futures grossesses, possibilité de fécondation in vitro avec sélection embryonnaire pour réduire le risque." }
+    ],
+    epilogue: {
+      titre: "RANG 4 ATTEINT : Conseiller GENECODE",
+      message: "Tu maîtrises les anomalies de structure. Tu peux maintenant expliquer pourquoi un parent sain peut transmettre une maladie chromosomique.",
+      conseilLabel: "Conseil de Dr. Moustapha",
+      conseilTexte: "Toujours penser à la translocation devant des fausses couches répétées. C'est le diagnostic oublié qui sauve des familles entières.",
+      grimoire: "Translocations équilibrées et déséquilibrées",
+      fragmentIbrahim: { numero: 5, texte: "Une sœur Ibrahim probablement porteuse de translocation. À tester. Cas du fils Klinefelter à analyser en mission 4.3." },
+      philo: "Le silence d'un chromosome peut crier dans la descendance."
+    }
+  },
+
+  'gc-4-3': {
+    id: 'gc-4-3', arc: 4, arcTitle: 'EXPERTISE', number: '4.3',
+    title: "Syndromes et Identités",
+    subtitle: "Identifier Turner, Klinefelter, Down, cri du chat",
+    icon: '🧩',
+    rank: { from: 4, to: 4, name: 'Conseiller confirmé' },
+    power: 'Classificateur syndromique',
+    signature: "Chaque syndrome a son visage. Apprends à les reconnaître pour mieux accompagner.",
+    prologue: [
+      "Trois nouveau-nés arrivent en pédiatrie. Chacun a un phénotype différent. Chacun mérite un diagnostic précis.",
+      "L'un est une fille stérile avec 45 chromosomes. L'autre est un garçon avec 47 chromosomes et des caractères féminins. Le troisième n'a que le bras court du chromosome 5 intact.",
+      "Tu dois nommer, diagnostiquer, expliquer. Et accompagner les parents avec respect."
+    ],
+    briefing: {
+      objectifs: [
+        "Mémoriser les formules : 45 XO, 47 XXY, délétion 5p, 47 +21",
+        "Associer chaque syndrome à ses symptômes cliniques",
+        "Expliquer l'origine par non-disjonction méiotique",
+        "Préciser quel parent et quelle division méiotique"
+      ],
+      recompenses: { xp: 500, badge: 'Classificateur syndromique', power: 'Diagnostic clinique' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Turner",
+        question: "Fille stérile, petite taille, 45 chromosomes, gonosome unique X. Symptômes additionnels typiques ?",
+        options: ["Retard mental sévère", "Pas de développement des caractères sexuels secondaires + cou palmé + malformations cardiaques + intelligence normale", "Trisomie 21", "Hémophilie"],
+        correctIdx: 1, xp: 120,
+        explain: "Turner (45, X) : développement intellectuel normal (différent de Down !), petite taille, infertilité, absence de puberté spontanée, cou palmé caractéristique, cardiopathies fréquentes (coarctation de l'aorte). Un traitement hormonal substitutif permet une vie quasi normale." },
+
+      { type: 'question',
+        title: "Phase 2 — Klinefelter",
+        question: "Garçon, 47 chromosomes (XXY), testicules atrophiés, présence de caractères féminins. Diagnostic et fertilité ?",
+        options: ["Klinefelter — fertile normalement", "Klinefelter (47, XXY) — STÉRILE en quasi-totalité, gynécomastie possible, intelligence normale ou légèrement diminuée", "Trisomie 21", "Turner masculin"],
+        correctIdx: 1, xp: 120,
+        explain: "Klinefelter (47, XXY) = gonosome X surnuméraire chez l'homme. Stérilité quasi constante (testicules atrophiés). Caractères sexuels secondaires souvent peu développés, gynécomastie (développement mammaire) possible. Souvent diagnostiqué tardivement, à l'âge adulte, lors d'un bilan d'infertilité." },
+
+      { type: 'question',
+        title: "Phase 3 — Origine méiotique",
+        question: "Trisomie 21 chez les deux parents normaux. Origine la plus probable ?",
+        options: ["Conscience environnementale", "Non-disjonction de la paire 21 lors de la méiose chez l'un des parents (anaphase I ou II), créant un gamète à 24 chromosomes au lieu de 23", "Mutation somatique", "Translocation héritée"],
+        correctIdx: 1, xp: 140,
+        explain: "Non-disjonction = défaut de séparation des chromosomes homologues lors de la méiose. Résultat : un gamète avec 24 chromosomes (2× chr 21) et un autre avec 22 (manque le chr 21). La fécondation entre un gamète à 24 (anormal) et un gamète à 23 (normal) donne un zygote à 47, +21. Risque augmenté avec l'âge maternel (>35 ans : risque ~1/300 ; >40 ans : ~1/100)." },
+
+      { type: 'question',
+        title: "Phase 4 — Le cas exceptionnel",
+        question: "Une femme atteinte du syndrome de Turner (45, X) est aussi DALTONIENNE (X-récessif). Aucun parent n'est daltonien. Comment est-ce possible ?",
+        options: ["Erreur de diagnostic", "Le seul X qu'elle possède vient de sa mère conductrice (X^N X^d) — elle a hérité X^d. Le père a eu une méiose anormale et n'a transmis aucun gonosome.", "Mutation spontanée", "Origine paternelle exclusive"],
+        correctIdx: 1, xp: 160,
+        explain: "Cas génial à comprendre. La fille a un seul X = celui qui porte d (daltonisme). La mère est X^N X^d (conductrice saine, vision normale). Le père X^N Y (vision normale). La fille a reçu X^d de sa mère. Et son père a produit un gamète anormal (sans gonosome) à cause d'une non-disjonction → elle n'a hérité aucun chromosome sexuel paternel. Donc 45, X^d." },
+
+      { type: 'question',
+        title: "Phase 5 — Le défi Ibrahim FINAL — Le fils Klinefelter",
+        question: "Le fils aîné Ibrahim (18 ans) présente : stérilité, testicules atrophiés, caryotype 47 XXY. La maladie X-récessive de la famille Ibrahim est-elle exprimée chez lui ? Comment savoir ?",
+        options: ["Forcément oui", "Forcément non", "Cela dépend : il a 2 chromosomes X. S'il a au moins un X^H, il est sain. Si ses 2 X portent X^h, il est atteint. Donc à analyser cas par cas — l'allèle X-récessif suit les règles habituelles indépendamment du Klinefelter.", "Diagnostic impossible"],
+        correctIdx: 2, xp: 200,
+        explain: "Question subtile et brillante de la pédagogie GENECODE. Le Klinefelter (XXY) ne change pas la règle : 2 X = comme une femme pour l'allèle X-récessif. S'il a un X^H et un X^h, il est conducteur SAIN (comme une femme conductrice). S'il a deux X^h, il est ATTEINT. Cela dépend de la mère (forcément X^H X^h car son fils est atteint) et du père (qui doit aussi avoir contribué un X^h pour que les 2 X du fils soient X^h). Il faut donc analyser les antécédents." }
+    ],
+    epilogue: {
+      titre: "Rang 4 confirmé — Dossier Ibrahim COMPLET",
+      message: "Tu as collecté les 5 fragments du dossier Ibrahim. Tu maîtrises maintenant les anomalies chromosomiques. L'Arc 5 t'attend : le conseil et la décision.",
+      conseilLabel: "Conseil de Dr. Mariama",
+      conseilTexte: "À partir de maintenant, tu n'analyseras plus seulement. Tu DÉCIDERAS. Et tes décisions auront des conséquences sur des vies. Sois prêt(e).",
+      grimoire: "Syndromes chromosomiques majeurs et leurs causes",
+      fragmentIbrahim: { numero: 5, texte: "DOSSIER IBRAHIM COMPLET. 5/5 fragments collectés. Préparation au BOSS final." },
+      philo: "Chaque chromosome est un destin partiel. La science les éclaire, la sagesse les accompagne."
+    }
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // ARC 5 — IMPACT RÉEL — Conseil génétique et Décision
+  // Rang 4 → Rang 5 : Directeur GENECODE
+  // ═══════════════════════════════════════════════════════════
+
+  'gc-5-1': {
+    id: 'gc-5-1', arc: 5, arcTitle: 'IMPACT RÉEL', number: '5.1',
+    title: "La Consultation Ibrahim",
+    subtitle: "Mener un conseil génétique complet",
+    icon: '🏥',
+    rank: { from: 4, to: 4, name: 'Conseiller — pratique' },
+    power: 'Conseiller GENECODE',
+    signature: "Tu n'analyses plus. Tu accompagnes.",
+    prologue: [
+      "Madame Ibrahim, enceinte de 5 mois, est assise en face de toi. Elle a parcouru tous les fragments du dossier — 5 générations, la maladie X-récessive, le Klinefelter du fils, le risque Rhésus.",
+      "Elle te regarde dans les yeux. « Je veux comprendre. Pour moi. Pour mon enfant à naître. Pour mes décisions. »",
+      "Tu as 30 minutes. Tu vas lui parler comme à une mère, pas comme à un dossier."
+    ],
+    briefing: {
+      objectifs: [
+        "Synthétiser un dossier multi-générationnel",
+        "Calculer le risque pour l'enfant à naître",
+        "Traduire en langage accessible et respectueux",
+        "Respecter l'autonomie décisionnelle de la mère"
+      ],
+      recompenses: { xp: 500, badge: 'Conseiller GENECODE', power: 'Communication thérapeutique' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — La synthèse",
+        question: "Tu dois résumer le dossier Ibrahim en UNE phrase pour Madame Ibrahim. Quelle formulation est la meilleure ?",
+        options: ["« Vous êtes conductrice d'une maladie grave »", "« Votre famille porte depuis plusieurs générations un caractère héréditaire transmis par les femmes aux fils. Vous-même êtes conductrice saine, et nous allons regarder précisément ce que cela signifie pour votre grossesse. »", "« Tout va bien »", "« C'est trop compliqué pour vous »"],
+        correctIdx: 1, xp: 120,
+        explain: "Bon ton : (1) factuel sans dramatisation, (2) inclut Madame Ibrahim dans son histoire familiale, (3) annonce qu'on va regarder précisément (= rassurant), (4) respecte son intelligence. Pas de jargon technique, pas de minimisation, pas de catastrophisme." },
+
+      { type: 'question',
+        title: "Phase 2 — Le risque pour la fille à naître",
+        question: "L'échographie indique une fille. Maladie X-récessive familiale. Quel est le risque pour cette fille ?",
+        options: ["Aucun risque (les filles ne sont pas concernées)", "Risque variable selon le génotype du père : si père X^H Y (sain) et mère X^H X^h (conductrice), la fille a 50% d'être X^H X^H (saine non conductrice) et 50% d'être X^H X^h (conductrice saine). Aucune chance d'être malade.", "100% malade", "100% conductrice"],
+        correctIdx: 1, xp: 160,
+        explain: "Échiquier : père X^H Y × mère X^H X^h. Filles possibles : X^H X^H (50%) ou X^H X^h (50%). Aucune fille n'aura les 2 X^h car le père donne X^H. Donc cette fille à naître ne peut pas être atteinte. Mais elle a 50% de risque d'être conductrice — information importante pour son propre futur (mariage, projets de grossesse)." },
+
+      { type: 'question',
+        title: "Phase 3 — La lettre médicale",
+        question: "Tu rédiges une lettre pour Madame Ibrahim. Quelle phrase d'ouverture choisis-tu ?",
+        options: ["« Madame Ibrahim, vous présentez un risque génétique »", "« Chère Madame Ibrahim, après l'analyse complète de votre dossier familial, voici ce que nous avons établi avec certitude et ce que nous savons à ce stade de votre grossesse... »", "« Voici les résultats »", "« Lisez attentivement »"],
+        correctIdx: 1, xp: 140,
+        explain: "« Chère Madame » + reconnaissance de l'analyse complète + distinction certitude/incertitude. C'est le ton du conseil génétique professionnel. La lettre sert à : (1) garantir la rigueur du dossier, (2) permettre à Madame Ibrahim de relire à tête reposée, (3) servir de référence pour son obstétricien." },
+
+      { type: 'question',
+        title: "Phase 4 — L'autonomie de décision",
+        question: "Madame Ibrahim te demande : « Que dois-je faire ? » Quelle est ta meilleure réponse ?",
+        options: ["« Vous devez interrompre la grossesse »", "« Vous devez la poursuivre »", "« Je vais vous expliquer toutes les options médicales et leurs implications, puis vous prendrez votre décision en accord avec votre conscience, votre famille, votre foi. Mon rôle est de vous éclairer, pas de décider à votre place. »", "« Je ne sais pas »"],
+        correctIdx: 2, xp: 160,
+        explain: "C'est le PRINCIPE D'AUTONOMIE en médecine. Tu informes complètement, tu n'imposes pas. Madame Ibrahim seule (avec son conjoint, sa famille, ses convictions) peut décider. Le conseiller génétique éthique respecte ce principe absolument. C'est ce qui sépare un bon professionnel d'un militant." },
+
+      { type: 'question',
+        title: "Phase 5 — Les questions à poser à l'obstétricien",
+        question: "Tu identifies 3 questions que Madame Ibrahim DEVRAIT poser à son obstétricien. Lesquelles ?",
+        options: ["Aucune, c'est inutile", "(1) Quel suivi spécialisé pour mon profil Rh- + fœtus possiblement Rh+ ? (2) Injection d'anti-D à 28 semaines à programmer ? (3) Diagnostic prénatal génétique disponible si je le souhaite ?", "Combien ça coûte ?", "Puis-je avoir d'autres enfants ?"],
+        correctIdx: 1, xp: 180,
+        explain: "Excellente liste. (1) Le risque Rh est urgent et nécessite une surveillance spécialisée. (2) L'anti-D protège les futures grossesses. (3) Le diagnostic prénatal (amniocentèse à 16 semaines, par exemple) permettrait de connaître le génotype du fœtus si la famille le souhaite. Ces 3 questions positionnent Madame Ibrahim comme actrice informée de sa propre santé." }
+    ],
+    epilogue: {
+      titre: "Rang 4 maîtrise — Conseiller en pratique",
+      message: "Tu sais désormais conduire une consultation complète, du diagnostic à l'accompagnement humain.",
+      conseilLabel: "Conseil de Dr. Mariama",
+      conseilTexte: "Cette compétence — traduire la science en mots humains — est la plus rare et la plus précieuse. Au Niger, elle manque cruellement dans nos services de génétique. Tu peux faire la différence.",
+      grimoire: "Conseil génétique : éthique et communication",
+      fragmentIbrahim: { numero: 5, texte: "Consultation Madame Ibrahim conduite. Lettre rédigée. Reste : sensibilisation communautaire (Mission 5.2), puis BOSS final." },
+      philo: "Le meilleur diagnostic n'est rien sans une bonne écoute."
+    }
+  },
+
+  'gc-5-2': {
+    id: 'gc-5-2', arc: 5, arcTitle: 'IMPACT RÉEL', number: '5.2',
+    title: "Opération Sensibilisation",
+    subtitle: "Transmettre un savoir scientifique au grand public",
+    icon: '📣',
+    rank: { from: 4, to: 4, name: 'Conseiller — passeur' },
+    power: 'Passeur de sciences',
+    signature: "Le savoir qui ne circule pas est un trésor enterré.",
+    prologue: [
+      "GENECODE lance une campagne de sensibilisation à Niamey sur la drépanocytose. Tu es désigné(e) pour coordonner la mission dans ton quartier.",
+      "Objectif : que 10 personnes de ton entourage comprennent ce qu'est un porteur sain — avant la fin de la semaine.",
+      "Cette mission va sortir du jeu. Elle va entrer dans la vraie vie."
+    ],
+    briefing: {
+      objectifs: [
+        "Adapter le langage à l'interlocuteur (enfant, adulte, grand-parent)",
+        "Utiliser des métaphores et exemples locaux",
+        "Répondre aux objections avec honnêteté et précision",
+        "Mesurer l'impact réel de ta transmission"
+      ],
+      recompenses: { xp: 520, badge: 'Passeur de sciences', power: 'Transmission communautaire' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — La métaphore du porteur sain",
+        question: "Comment expliquer « porteur sain » à ton voisin qui n'a jamais étudié la biologie ?",
+        options: ["« C'est trop compliqué, lis un livre »", "« Imagine que tu portes dans ton sac un message secret écrit à l'encre invisible. Tu ne le sais pas. Tu vis normalement. Mais si ton conjoint porte le même message secret, et que vous avez un enfant, l'enfant pourrait recevoir le message en double — et alors, le message devient visible : c'est la maladie. »", "« Lis le dictionnaire médical »", "« Demande à ton médecin »"],
+        correctIdx: 1, xp: 140,
+        explain: "Excellente métaphore : (1) image concrète (sac, encre invisible), (2) ne fait pas peur, (3) explique le mécanisme (besoin des deux côtés), (4) accessible à tout adulte. C'est exactement le type d'analogie qu'on utilise en éducation pour la santé." },
+
+      { type: 'question',
+        title: "Phase 2 — L'objection courante",
+        question: "Un ami te dit : « Pourquoi se faire tester si on est sains tous les deux ? » Réponse ?",
+        options: ["« Tu as raison, c'est inutile »", "« Justement parce que vous êtes sains. Sain ne veut pas dire non-porteur. Vous pouvez tous les deux porter sans le savoir. Le test prend 5 minutes et il révèle ce que vos yeux ne peuvent pas voir : si vos enfants seront à risque ou non. »", "« C'est obligatoire »", "« Pour faire plaisir au médecin »"],
+        correctIdx: 1, xp: 140,
+        explain: "Réponse parfaite : (1) reconnaît la logique apparente de l'ami, (2) recadre le malentendu (sain ≠ non-porteur), (3) donne le bénéfice concret (information pour les enfants), (4) sans pression, sans culpabilisation. C'est la pédagogie d'engagement." },
+
+      { type: 'question',
+        title: "Phase 3 — Adapter pour un grand-parent",
+        question: "Comment expliquer la même notion à ta grand-mère qui parle haoussa ou zarma plus que français ?",
+        options: ["« Je ne peux pas »", "Utiliser des analogies de la vie quotidienne (par exemple les graines : deux parents qui plantent une graine — chacun apporte la moitié — si les deux apportent une graine fragile, l'enfant qui pousse sera fragile). Si possible, faire l'effort de traduire dans sa langue maternelle.", "Lui donner un livre", "Renoncer"],
+        correctIdx: 1, xp: 140,
+        explain: "L'analogie agricole (graines) parle à toutes les cultures du Sahel. Et l'effort de traduction dans la langue maternelle — même imparfait — montre le respect et améliore énormément la compréhension. C'est pourquoi Science Quest est conçu pour être traduit en haoussa, zarma, bambara, wolof à terme." },
+
+      { type: 'question',
+        title: "Phase 4 — La preuve d'impact",
+        question: "Tu as expliqué la drépanocytose à 5 personnes cette semaine. Comment vérifier que ton message est passé ?",
+        options: ["Demander si elles ont aimé ton explication", "Leur demander de TE reformuler avec leurs propres mots ce qu'elles ont compris. Si elles peuvent reformuler, le message est passé. Si elles répètent juste tes mots sans pouvoir reformuler, c'est de la mémoire, pas de la compréhension.", "Leur faire un quiz", "Leur faire signer un papier"],
+        correctIdx: 1, xp: 160,
+        explain: "Le test de la reformulation est le meilleur indicateur de la compréhension. C'est ce que les enseignants efficaces font : « Reformule-moi avec tes mots. » Si l'autre peut reformuler, il a compris. Si ce n'est qu'un perroquet, il faut réexpliquer autrement. Cette compétence (la métacompréhension) s'apprend." },
+
+      { type: 'question',
+        title: "Phase 5 — Mission Vie Réelle (à accomplir DANS LA VIE)",
+        question: "Quelle est la VRAIE mission qui te sera donnée à la fin de cet exercice ?",
+        options: ["Apprendre par cœur", "Expliquer cette semaine à AU MOINS UNE personne réelle de ton entourage (parent, voisin, ami) ce qu'est un porteur sain de la drépanocytose, et lui demander de te reformuler avec ses mots. Note ce qu'elle a appris, ce qui t'a surpris, ce que tu as appris en expliquant.", "Refaire la mission", "Lire d'autres documents"],
+        correctIdx: 1, xp: 200,
+        explain: "C'est ÇA, la véritable mission. Le savoir qui reste dans le jeu est mort. Le savoir qui sort, qui se transmet, qui éclaire au moins une personne — voilà la vraie victoire. C'est le cercle vertueux : plus tu expliques, plus tu comprends. Plus tu transmets, plus tu apprends." }
+    ],
+    epilogue: {
+      titre: "Rang 4 plénitude — Passeur de sciences",
+      message: "Tu n'es plus seulement un analyste. Tu es devenu un passeur. La connaissance que tu portes est désormais partagée.",
+      conseilLabel: "Conseil de Kotchami Ogougbe",
+      conseilTexte: "Comprendre, c'est bien. Transmettre, c'est devenir utile. Sur cette chaîne — Science Quest — je ne te donne pas des formules. Je te donne une nouvelle façon de voir le monde. Et maintenant, à ton tour de la donner.",
+      grimoire: "Pédagogie du transfert et sensibilisation communautaire",
+      fragmentIbrahim: { numero: 5, texte: "Toutes les compétences acquises. Le BOSS final t'attend : Dossier Ibrahim Complet." },
+      philo: "Comprendre, ça se transmet. À très vite."
+    }
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // BOSS GLOBAL — Le Dossier Ibrahim Complet
+  // Rang 4 → Rang 5 : Directeur GENECODE
+  // ═══════════════════════════════════════════════════════════
+
+  'gc-boss': {
+    id: 'gc-boss', arc: 'BOSS', arcTitle: 'BOSS GLOBAL', number: '∞',
+    title: "Le Dossier Ibrahim Complet",
+    subtitle: "Mobiliser TOUTES les compétences acquises",
+    icon: '🏆',
+    rank: { from: 4, to: 5, name: 'Directeur GENECODE' },
+    power: 'Direction GENECODE — Rang 5 ultime',
+    signature: "C'est le moment de tout assembler. Toutes les compétences. Toutes les missions. Tout ce que tu as appris.",
+    prologue: [
+      "L'Agence GENECODE est en alerte rouge. Le dossier Ibrahim atteint son point critique : Madame Ibrahim accouche dans 4 mois. Les décisions médicales doivent être prises maintenant.",
+      "Dr. Mariama, Dr. Fatima, Dr. Salamatou, Dr. Moustapha — tous tes mentors sont rassemblés autour de toi. C'est ton dernier examen.",
+      "Tu vas devoir mobiliser tout : pédigrée, dominance, localisation, génotypes, échiquier, ABO, Rhésus, anomalies chromosomiques, conseil, communication. Tout."
+    ],
+    briefing: {
+      objectifs: [
+        "Synthétiser le dossier sur 4 générations",
+        "Calculer le risque pour la fille à naître (X-récessif + Rh)",
+        "Analyser le cas du fils Klinefelter (XXY + maladie X-récessive)",
+        "Évaluer le risque transfusionnel et préparer la maternité",
+        "Rédiger la lettre de consultation finale"
+      ],
+      recompenses: { xp: 1000, badge: 'Directeur GENECODE — Rang 5', power: 'Direction Stratégique' }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Le mode de transmission Ibrahim",
+        question: "Synthèse en 4 étapes : Mode de transmission de la maladie Ibrahim ?",
+        options: ["Autosomal récessif", "Autosomal dominant", "GONOSOMAL X-RÉCESSIF — (1) parents sains→enfants malades = récessif, (2) seulement garçons atteints = exclut autosomal, (3) mères saines conductrices = signature X, (4) jamais transmission père→fils confirmée.", "Indéterminable"],
+        correctIdx: 2, xp: 200,
+        explain: "Synthèse parfaite des 4 missions de l'Arc 2. Mode = X-récessif avec certitude. Cette conclusion détermine tout le reste : génotypes, calcul de risques, et même la lecture du cas Klinefelter." },
+
+      { type: 'question',
+        title: "Phase 2 — Risque pour la fille à naître",
+        question: "Père sain (X^H Y), mère conductrice (X^H X^h). Fille à naître. Quels génotypes possibles et quels risques ?",
+        options: ["50% atteinte, 50% saine", "100% saine", "50% X^H X^H (saine non conductrice) + 50% X^H X^h (conductrice saine). AUCUNE chance d'être atteinte. 50% chance d'être conductrice — information à transmettre quand elle sera adulte.", "Risque indéterminable"],
+        correctIdx: 2, xp: 200,
+        explain: "Échiquier maître. Cette fille ne peut pas être atteinte (le père donne forcément X^H). Mais elle peut être conductrice (50%). Information à conserver dans son dossier médical pour quand elle sera en âge de procréer — afin de pouvoir faire un test prénuptial à son tour." },
+
+      { type: 'question',
+        title: "Phase 3 — Le fils Klinefelter et la maladie",
+        question: "Fils aîné Ibrahim : caryotype 47 XXY, atteint de la maladie Ibrahim. Comment expliquer ?",
+        options: ["Impossible, contradiction", "Il a 2 chromosomes X. Pour être ATTEINT d'une maladie X-récessive, ses 2 X portent obligatoirement X^h. Donc il est X^h X^h Y. Sa mère lui a donné X^h (elle est conductrice X^H X^h). Son père lui a donné X^h Y (= il avait X^h Y, donc le père était lui-même atteint OU il y a eu une non-disjonction maternelle qui a transmis 2 X dont un X^h)", "Le caryotype est faux", "La maladie n'est pas réellement X-récessive"],
+        correctIdx: 2, xp: 250,
+        explain: "Question synthèse extraordinaire. Il y a deux scénarios : (a) père atteint X^h Y → contribution X^h, mère conductrice X^H X^h → contribution X^h + non-disjonction donnant 2 X. (b) père sain X^H Y, mère conductrice → non-disjonction maternelle aboutissant à un gamète X^H X^h ; combiné au Y du père donne X^H X^h Y, MAIS dans ce cas le fils ne serait PAS atteint (X^H suffit à compenser). Donc scénario (a) — le père était lui-même atteint. À vérifier dans le dossier familial." },
+
+      { type: 'question',
+        title: "Phase 4 — La lettre finale",
+        question: "Tu dois rédiger la lettre de consultation finale à Madame Ibrahim. Quels 4 éléments doivent y figurer absolument ?",
+        options: ["Le diagnostic, la cause, le traitement, le pronostic", "(1) Synthèse du dossier familial, (2) Risque scientifiquement calculé pour la fille à naître, (3) Recommandations médicales concrètes (anti-D, suivi, banque de sang), (4) Reconnaissance de son autonomie de décision et liste des questions à poser à son obstétricien", "Les chiffres bruts seulement", "Le coût des soins"],
+        correctIdx: 1, xp: 200,
+        explain: "Structure parfaite d'une lettre de conseil génétique : SYNTHÈSE → RISQUE → RECOMMANDATIONS → AUTONOMIE. C'est ce que les conseillers génétiques certifiés font dans le monde entier. Tu viens de produire l'équivalent professionnel." },
+
+      { type: 'question',
+        title: "Phase 5 — L'action communautaire",
+        question: "À partir de ce dossier, quelle action de prévention concrète GENECODE pourrait-il mener au Niger ?",
+        options: ["Aucune", "Lancer un programme de dépistage prénuptial systématique pour les maladies X-récessives ET pour la drépanocytose, en partenariat avec les centres de santé maternelle et infantile et les leaders religieux. Sensibiliser via les radios communautaires en haoussa et zarma. Former 50 sages-femmes par an aux 4 modes de transmission.", "Distribuer un dépliant", "Faire payer les analyses"],
+        correctIdx: 1, xp: 250,
+        explain: "Vision systémique parfaite. (a) Action préventive en amont (dépistage prénuptial), (b) Partenariat avec acteurs locaux (centres de santé, leaders religieux pour acceptabilité culturelle), (c) Communication adaptée (radios, langues locales), (d) Multiplication des compétences (formation sages-femmes). C'est exactement l'approche qu'utilise OMS pour la drépanocytose en Afrique." }
+    ],
+    epilogue: {
+      titre: "🏆 RANG 5 ATTEINT : DIRECTEUR GENECODE",
+      message: "Tu as terminé la campagne complète Hérédité et Génétique humaine. Tu n'es plus un élève. Tu es devenu un Décodeur de Vie capable de comprendre, de calculer, de conseiller et d'agir.",
+      conseilLabel: "Mot final de Kotchami Ogougbe",
+      conseilTexte: "Ce que tu viens de vivre ici, ce n'est pas un jeu. C'est une transformation. La science que tu portes maintenant peut éclairer des familles, sauver des grossesses, orienter des vies. Sors. Transmets. Sois utile. C'est ça, devenir un passeur de sciences.",
+      grimoire: "MAÎTRISE COMPLÈTE — Hérédité humaine et conseil génétique",
+      fragmentIbrahim: { numero: 5, texte: "DOSSIER IBRAHIM CLOS. Famille accompagnée. Madame Ibrahim a pris sa décision en pleine connaissance. La fille à naître sera suivie. Tu peux passer aux Thèmes suivants — la communication nerveuse, l'immunité, et bien plus." },
+      philo: "Je suis Kotchami Ogougbe et sur Science Quest, je ne t'apporte pas des formules. Je te propose une nouvelle façon de voir le monde. Cette nouvelle façon — une fois que tu l'as acquise — personne ne pourra jamais te l'enlever."
+    }
+  }
+
+};
+
+
+// ============================================================
+// TEXTES (i18n ready)
+// ============================================================
+const txt = {
+  fr: {
+    brand: "Kotchami Ogougbe",
+    appName: "Science Quest",
+    tagline: "Académie des Sciences Avancées",
+    motto: "Sauver le monde par la connaissance",
+
+    welcomeTitle: "Bienvenue, agent",
+    welcomeSubtitle: "Pour commencer ta formation à l'Académie, entre ton prénom d'agent.",
+    welcomePlaceholder: "Ton prénom",
+    welcomeStart: "Entrer à l'Académie",
+
+    homeHello: "Bienvenue, Agent",
+    homeIntro: "Chaque mission = un défi scientifique critique à résoudre. Chaque chapitre débloque un nouveau pouvoir. Tu es prêt ?",
+    homeCTA: "Commencer ma première mission",
+    homeProgress: "Ta progression",
+    homeMissions: "Missions disponibles",
+    homeLocked: "Verrouillé",
+
+    contactTitle: "Contact",
+    contactText: "Pour toute question, retour ou suggestion :",
+    contactName: "Kotchami Ogougbe",
+    contactEmail: "kotchamiogougbe@gmail.com",
+    contactBack: "Retour à l'Académie",
+
+    missionSubtitle: "Hérédité et génétique humaine • Terminale D",
+    missionIntro: "Une famille te consulte. Un mystère à résoudre. Cinq étapes pour devenir détective de la génétique humaine.",
+    missionStart: "Lancer la mission",
+    missionSignature: "La science ne change pas le monde. Elle change le regard qu'on pose sur lui. Et ce nouveau regard, personne ne pourra jamais te l'enlever.",
+
+    prologueTitle: "Prologue",
+    prologueP1: "C'est un vendredi soir à Niamey. Ta cousine Fatouma vient chez toi, les yeux rouges. Elle porte son fils Idrissa, 4 ans, dans les bras. Il a encore fait une crise cette semaine.",
+    prologueP2: "Les médecins de l'hôpital national ont confirmé le diagnostic : drépanocytose. Un mot que personne dans la famille n'avait jamais entendu. Fatouma ne comprend pas. Son mari Abdoulaye non plus. Aucun des deux n'est malade.",
+    prologueP3: "« Toi qui étudies la science, lui dit-elle, peux-tu nous aider à comprendre ? Nous voulons un autre enfant, mais nous avons peur. »",
+    prologueP4: "Tu prends une grande respiration. Tu connais la génétique mendélienne. Tu vas mener l'enquête.",
+
+    briefingTitle: "Briefing de mission",
+    briefingObjective: "Objectif",
+    briefingObjectiveText: "Déterminer le mode de transmission de la drépanocytose dans la famille de Fatouma et calculer le risque pour un prochain enfant.",
+    briefingReward: "Pouvoir à débloquer",
+    briefingPower: "Vision héréditaire",
+    briefingRules: "Règles",
+    briefingRulesText: "Tu as 3 vies. Chaque mauvaise réponse t'en coûte une, mais la bonne réponse te sera toujours expliquée pour que tu apprennes.",
+
+    phase1Title: "Phase 1 — Enquête familiale",
+    phase1Intro: "Examine chaque membre de la famille pour recueillir son phénotype. Clique sur chaque personne.",
+    phase1Continue: "J'ai tous les éléments",
+
+    phase2Title: "Phase 2 — Autosomal ou gonosomal ?",
+    phase2Q: "La drépanocytose touche Idrissa (un garçon). Pour déterminer si le gène est porté par un chromosome sexuel ou un autosome, quel indice est décisif ?",
+    phase2A: "Idrissa est un garçon, donc le gène est forcément sur le chromosome Y.",
+    phase2B: "Les deux parents sont sains mais ont un enfant malade : cela est compatible avec une hérédité autosomale récessive.",
+    phase2C: "Aïcha est saine, donc le gène est dominant.",
+    phase2Explain: "Quand deux parents sains ont un enfant malade, l'allèle responsable est nécessairement récessif, porté par les deux parents à l'état hétérozygote. La distribution équilibrée entre garçons et filles confirme qu'il s'agit d'un autosome.",
+
+    phase3Title: "Phase 3 — Dominant ou récessif ?",
+    phase3Q: "Fatouma et Abdoulaye sont tous les deux sains. Idrissa est malade. Que peut-on conclure sur l'allèle S de la drépanocytose ?",
+    phase3A: "S est dominant : il s'exprime même en un seul exemplaire.",
+    phase3B: "S est récessif : il ne s'exprime que lorsqu'il est présent en deux exemplaires (homozygote SS).",
+    phase3C: "S est codominant avec l'allèle normal A.",
+    phase3Explain: "L'allèle S est récessif. Les parents sont sains parce qu'ils ne portent qu'un seul exemplaire de S (génotype AS) — l'allèle normal A masque l'expression de S. Idrissa a hérité d'un S de chaque parent : il est SS, donc malade.",
+
+    phase4Title: "Phase 4 — Pedigree",
+    phase4Intro: "Tu as identifié le mode de transmission : autosomal récessif. Attribue maintenant le génotype à chaque membre en cliquant sur chaque personne.",
+    phase4Check: "Vérifier mes réponses",
+    phase4Success: "Pedigree complété !",
+    phase4Error: "Revois ta logique : les parents d'un enfant SS doivent être AS.",
+
+    phase5Title: "Phase 5 — Calcul du risque",
+    phase5Intro: "Fatouma et Abdoulaye sont tous deux AS. Construis l'échiquier de croisement et calcule la probabilité que leur prochain enfant soit malade.",
+    phase5Q: "Probabilité que l'enfant soit SS (malade) ?",
+    phase5A: "1/4 (25 %)",
+    phase5B: "1/2 (50 %)",
+    phase5C: "3/4 (75 %)",
+    phase5D: "0 % — ils ont déjà eu un enfant malade",
+    phase5Explain: "À chaque grossesse, la probabilité d'avoir un enfant SS est de 1/4, indépendamment des enfants précédents. Le hasard n'a pas de mémoire.",
+
+    epilogueTitle: "Mission accomplie",
+    epilogueMsg: "Tu as résolu le mystère de la famille de Fatouma. Grâce à toi, elle comprend maintenant ce qui s'est passé, et peut prendre ses décisions avec sa tête et son cœur.",
+    epilogueConseil: "Ton conseil à Fatouma",
+    epilogueConseilText: "Fatouma et Abdoulaye sont tous deux porteurs sains. Chaque grossesse comporte 1 chance sur 4 que l'enfant soit atteint. Un conseil génétique médical et, en cas de nouvelle grossesse, un diagnostic prénatal peuvent les accompagner.",
+    epiloguePhilo: "Comprendre avant de mémoriser — construire sur du roc, pas sur du sable.",
+    epilogueMVR: "Mission Vie Réelle — à faire dans les 7 jours",
+    epilogueMVRText: "Trouve une personne autour de toi (famille, voisin, ami) qui connaît quelqu'un touché par la drépanocytose. Explique-lui, avec tes mots, ce que tu as compris aujourd'hui. Deviens toi aussi passeur de science.",
+
+    correct: "Correct",
+    wrong: "À revoir",
+    continue: "Continuer",
+    confirm: "Valider",
+    backHome: "Retour à l'Académie",
+    replay: "Rejouer"
+  }
+};
+const T = (k) => txt.fr[k] || k;
+
+// ============================================================
+// FAMILLE
+// ============================================================
+const FAMILY = [
+  { id: 'gpP', name: "Grand-père paternel", role: "Décédé il y a 2 ans", pheno: "Sain toute sa vie", sex: 'M', affected: false, expected: 'AAorAS', gen: 1 },
+  { id: 'gmP', name: "Grand-mère paternelle", role: "68 ans", pheno: "Saine", sex: 'F', affected: false, expected: 'AAorAS', gen: 1 },
+  { id: 'gpM', name: "Grand-père maternel", role: "72 ans", pheno: "Sain", sex: 'M', affected: false, expected: 'AAorAS', gen: 1 },
+  { id: 'gmM', name: "Grand-mère maternelle", role: "65 ans", pheno: "Saine", sex: 'F', affected: false, expected: 'AAorAS', gen: 1 },
+  { id: 'abd', name: "Abdoulaye", role: "Père, 35 ans", pheno: "Sain — aucun symptôme", sex: 'M', affected: false, expected: 'AS', gen: 2 },
+  { id: 'fat', name: "Fatouma", role: "Mère, 32 ans", pheno: "Saine — aucun symptôme", sex: 'F', affected: false, expected: 'AS', gen: 2 },
+  { id: 'aic', name: "Aïcha", role: "Fille aînée, 8 ans", pheno: "Saine — aucun symptôme", sex: 'F', affected: false, expected: 'AAorAS', gen: 3 },
+  { id: 'idr', name: "Idrissa", role: "Fils, 4 ans", pheno: "Drépanocytose confirmée — crises fréquentes", sex: 'M', affected: true, expected: 'SS', gen: 3 }
+];
+
+// ============================================================
+// ICÔNE PERSONNAGE (pedigree)
+// ============================================================
+function CharIcon({ sex, affected, size = 40, selected, error }) {
+  let stroke = affected ? '#dc2626' : '#fbbf24';
+  if (error) stroke = '#ef4444';
+  if (selected) stroke = '#fde047';
+  const fill = affected ? '#dc2626' : 'transparent';
+  const sw = (selected || error) ? 3 : 2;
+  if (sex === 'M') {
+    return <svg width={size} height={size} viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill={fill} stroke={stroke} strokeWidth={sw} rx="1" /></svg>;
+  }
+  return <svg width={size} height={size} viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill={fill} stroke={stroke} strokeWidth={sw} /></svg>;
+}
+
+// ============================================================
+// PERSISTENCE (in-memory only dans ce prototype)
+// ============================================================
+function useGameState() {
+  const [state, setState] = useState({
+    playerName: '',
+    country: '',
+    xp: 0,
+    lives: 3,
+    completedMissions: [],
+    grimoireEntries: []
+  });
+  return [state, setState];
+}
+
+// ============================================================
+// MISSION PLAYER — Moteur générique data-driven
+// Joue n'importe quelle mission de MISSIONS_DATA via une seule interface
+// Architecture : intro → prologue → briefing → phases[] → epilogue
+// ============================================================
+
+function MissionPlayer({ missionId, state, setState, onExit }) {
+  const mission = MISSIONS_DATA[missionId];
+  if (!mission) {
+    return (
+      <div className="text-center py-20">
+        <p className="text-red-400">Mission introuvable : {missionId}</p>
+        <button onClick={onExit} className="mt-6 btn-primary px-6 py-2 rounded-full">Retour à l'Académie</button>
+      </div>
+    );
+  }
+
+  const [step, setStep] = React.useState('intro'); // intro | prologue | briefing | phaseN | epilogue
+  const [currentPhaseIdx, setCurrentPhaseIdx] = React.useState(0);
+  const [missionXP, setMissionXP] = React.useState(0);
+  const [phaseAnswered, setPhaseAnswered] = React.useState({});
+  const [missionLives, setMissionLives] = React.useState(3);
+
+  const totalPhases = mission.phases.length;
+
+  // Navigation
+  const allSteps = ['intro', 'prologue', 'briefing', ...mission.phases.map((_, i) => `phase${i}`), 'epilogue'];
+  const currentStepIdx = allSteps.indexOf(step);
+  const progress = (currentStepIdx / (allSteps.length - 1)) * 100;
+
+  const goNext = () => {
+    if (step === 'intro') setStep('prologue');
+    else if (step === 'prologue') setStep('briefing');
+    else if (step === 'briefing') { setCurrentPhaseIdx(0); setStep('phase0'); }
+    else if (step.startsWith('phase')) {
+      const idx = parseInt(step.replace('phase', ''));
+      if (idx + 1 < totalPhases) { setCurrentPhaseIdx(idx + 1); setStep(`phase${idx + 1}`); }
+      else setStep('epilogue');
+    }
+  };
+
+  const goPrevious = () => {
+    if (currentStepIdx > 0) setStep(allSteps[currentStepIdx - 1]);
+  };
+
+  const onPhaseCorrect = (xp) => {
+    setMissionXP(x => x + xp);
+    setPhaseAnswered(p => ({ ...p, [step]: { correct: true, xp } }));
+  };
+
+  const onPhaseWrong = () => {
+    setMissionLives(l => Math.max(0, l - 1));
+    setPhaseAnswered(p => ({ ...p, [step]: { correct: false, xp: 0 } }));
+  };
+
+  const completeMission = () => {
+    setState(s => ({
+      ...s,
+      xp: s.xp + missionXP,
+      completedMissions: [...new Set([...s.completedMissions, missionId])],
+      grimoireEntries: [...new Set([...s.grimoireEntries, mission.epilogue.grimoire])],
+      ibrahimFragments: mission.epilogue.fragmentIbrahim
+        ? [...new Set([...(s.ibrahimFragments || []), mission.epilogue.fragmentIbrahim.numero])]
+        : (s.ibrahimFragments || []),
+      currentRank: Math.max(s.currentRank || 0, mission.rank.to)
+    }));
+    onExit();
+  };
+
+  const phaseLabel = (s) => {
+    if (s === 'intro') return 'Intro';
+    if (s === 'prologue') return 'Prologue';
+    if (s === 'briefing') return 'Briefing';
+    if (s === 'epilogue') return 'Épilogue';
+    if (s.startsWith('phase')) {
+      const i = parseInt(s.replace('phase', ''));
+      return `Phase ${i + 1}/${totalPhases}`;
+    }
+    return s;
+  };
+
+  return (
+    <div>
+      {/* Barre de progression + retour */}
+      {step !== 'intro' && step !== 'epilogue' && (
+        <div className="mb-6 anim-in">
+          <div className="flex items-center justify-between mb-2 gap-3">
+            <button
+              onClick={goPrevious}
+              className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 shrink-0"
+              style={{opacity: 1, visibility: 'visible'}}
+              title={`Retour à : ${phaseLabel(allSteps[currentStepIdx - 1])}`}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              <span>Retour</span>
+            </button>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 text-center flex-1">
+              Mission {mission.number} — {phaseLabel(step)}
+            </p>
+            <div className="text-xs text-amber-400 font-mono-sci tabular-nums shrink-0" style={{minWidth: '70px', textAlign: 'right'}}>
+              +{missionXP} XP
+            </div>
+          </div>
+          <div className="progress-bar"><div className="progress-bar-fill" style={{width: `${progress}%`}}></div></div>
+        </div>
+      )}
+
+      {/* Contenus selon l'étape */}
+      {step === 'intro' && <MissionIntroV2 mission={mission} onStart={goNext} onBack={onExit} />}
+      {step === 'prologue' && <MissionPrologue mission={mission} onNext={goNext} />}
+      {step === 'briefing' && <MissionBriefing mission={mission} onNext={goNext} />}
+      {step.startsWith('phase') && (
+        <MissionPhaseQuestion
+          phase={mission.phases[currentPhaseIdx]}
+          phaseIdx={currentPhaseIdx}
+          totalPhases={totalPhases}
+          answered={phaseAnswered[step]}
+          onCorrect={onPhaseCorrect}
+          onWrong={onPhaseWrong}
+          onNext={goNext}
+          missionLives={missionLives}
+        />
+      )}
+      {step === 'epilogue' && (
+        <MissionEpilogue
+          mission={mission}
+          missionXP={missionXP}
+          state={state}
+          onComplete={completeMission}
+        />
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// MISSION INTRO V2 — pour les missions GENECODE
+// ============================================================
+function MissionIntroV2({ mission, onStart, onBack }) {
+  return (
+    <div className="text-center" style={{paddingTop: '2vh', paddingBottom: '4vh'}}>
+      <button
+        onClick={onBack}
+        className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 mb-6"
+        style={{opacity: 1, visibility: 'visible'}}
+      >
+        ← Retour à l'Académie
+      </button>
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
+        <span style={{fontSize: '20px'}}>{mission.icon}</span>
+        <span>Arc {mission.arc} · {mission.arcTitle} · Mission {mission.number}</span>
+      </div>
+      <h1 className="anim-in delay-100 font-display text-3xl md:text-5xl mb-3 leading-[1.1]">
+        <span className="shimmer-text">{mission.title}</span>
+      </h1>
+      <p className="anim-in delay-200 text-amber-200/70 text-xs md:text-sm tracking-widest uppercase font-bold mb-6">
+        {mission.subtitle}
+      </p>
+      <p className="anim-in delay-300 font-display italic text-base md:text-lg text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed px-2">
+        « {mission.signature} »
+      </p>
+      <div className="anim-in delay-400 inline-flex flex-col gap-2 mb-8">
+        <div className="card-border rounded-xl px-5 py-3 text-left">
+          <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold mb-0.5">Pouvoir à débloquer</p>
+          <p className="text-amber-100 font-display text-base">⚡ {mission.power}</p>
+        </div>
+        <div className="card-border rounded-xl px-5 py-3 text-left">
+          <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold mb-0.5">Récompenses</p>
+          <p className="text-slate-200 text-sm">+ {mission.briefing.recompenses.xp} XP · Badge "{mission.briefing.recompenses.badge}"</p>
+        </div>
+      </div>
+      <button
+        onClick={onStart}
+        className="btn-primary px-10 py-4 rounded-full text-base font-bold inline-flex items-center gap-3 mt-2"
+        style={{
+          opacity: 1, visibility: 'visible', display: 'inline-flex',
+          background: 'linear-gradient(135deg, #d4a017, #f59e0b)',
+          color: '#020617', textTransform: 'uppercase', letterSpacing: '0.1em'
+        }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        <span>LANCER LA MISSION</span>
+      </button>
+    </div>
+  );
+}
+
+// ============================================================
+// PROLOGUE
+// ============================================================
+function MissionPrologue({ mission, onNext }) {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
+        <span style={{fontSize: '16px'}}>📜</span> <span>Prologue</span>
+      </div>
+      <h2 className="anim-in delay-100 font-display text-2xl md:text-3xl mb-8 text-amber-100">{mission.title}</h2>
+      <div className="space-y-6 mb-10">
+        {mission.prologue.map((paragraph, i) => (
+          <p key={i} className={`anim-in delay-${(i+2)*100} text-slate-200 leading-relaxed text-base md:text-lg`}>
+            {paragraph}
+          </p>
+        ))}
+      </div>
+      <div className="text-center">
+        <button
+          onClick={onNext}
+          className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2"
+          style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}
+        >
+          Accepter la mission →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// BRIEFING
+// ============================================================
+function MissionBriefing({ mission, onNext }) {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
+        <span style={{fontSize: '16px'}}>🎯</span> <span>Briefing GENECODE</span>
+      </div>
+      <h2 className="anim-in delay-100 font-display text-2xl md:text-3xl mb-2 text-amber-100">Tes objectifs</h2>
+      <p className="anim-in delay-200 text-slate-400 text-sm mb-6">À la fin de cette mission, tu seras capable de :</p>
+      <div className="space-y-3 mb-8">
+        {mission.briefing.objectifs.map((obj, i) => (
+          <div key={i} className={`anim-in delay-${(i+3)*100} card-border rounded-lg p-4 flex items-start gap-3`}>
+            <span className="text-amber-400 font-mono-sci text-sm shrink-0 mt-0.5">{(i+1).toString().padStart(2, '0')}</span>
+            <p className="text-slate-200 text-sm md:text-base">{obj}</p>
+          </div>
+        ))}
+      </div>
+      <div className="card-border rounded-xl p-5 mb-8 text-center" style={{background: 'rgba(217, 119, 6, 0.05)'}}>
+        <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold mb-2">Récompenses</p>
+        <p className="text-amber-100 text-lg font-display">+ {mission.briefing.recompenses.xp} XP · ⚡ {mission.briefing.recompenses.power}</p>
+        <p className="text-slate-400 text-xs mt-1">+ Badge "{mission.briefing.recompenses.badge}"</p>
+      </div>
+      <div className="text-center">
+        <button
+          onClick={onNext}
+          className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2"
+          style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}
+        >
+          Commencer →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PHASE QUESTION — Composant générique
+// Affiche bonne réponse et explication même quand on se trompe (philosophie Kotchami)
+// ============================================================
+function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrect, onWrong, onNext, missionLives }) {
+  const [selectedIdx, setSelectedIdx] = React.useState(null);
+  const [submitted, setSubmitted] = React.useState(false);
+
+  // Reset à chaque phase
+  React.useEffect(() => {
+    setSelectedIdx(null);
+    setSubmitted(false);
+  }, [phaseIdx]);
+
+  const handleSubmit = () => {
+    if (selectedIdx === null) return;
+    setSubmitted(true);
+    if (selectedIdx === phase.correctIdx) onCorrect(phase.xp);
+    else onWrong();
+  };
+
+  const isCorrect = selectedIdx === phase.correctIdx;
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-4">
+        <span>🧪</span> <span>{phase.title}</span>
+      </div>
+      <h2 className="anim-in delay-100 font-display text-xl md:text-2xl mb-8 text-amber-100 leading-snug">
+        {phase.question}
+      </h2>
+
+      <div className="space-y-3 mb-8">
+        {phase.options.map((opt, i) => {
+          const isSelected = selectedIdx === i;
+          const isCorrectAnswer = i === phase.correctIdx;
+          let extraClasses = "";
+          let extraStyle = {};
+          if (submitted) {
+            if (isCorrectAnswer) {
+              extraStyle = { borderColor: '#10b981', background: 'rgba(16,185,129,0.08)' };
+            } else if (isSelected) {
+              extraStyle = { borderColor: '#ef4444', background: 'rgba(239,68,68,0.08)' };
+            }
+          } else if (isSelected) {
+            extraStyle = { borderColor: '#f59e0b', background: 'rgba(245,158,11,0.08)' };
+          }
+          return (
+            <button
+              key={i}
+              onClick={() => !submitted && setSelectedIdx(i)}
+              disabled={submitted}
+              className={`anim-in delay-${(i+2)*100} w-full text-left p-4 rounded-lg border-2 transition-all ${submitted ? 'cursor-default' : 'cursor-pointer hover:border-amber-500/50'}`}
+              style={{
+                borderColor: '#334155',
+                background: 'rgba(15, 23, 42, 0.4)',
+                opacity: 1,
+                ...extraStyle
+              }}
+            >
+              <div className="flex items-start gap-3">
+                <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-mono-sci text-sm border-2 ${submitted && isCorrectAnswer ? 'border-emerald-400 text-emerald-400' : submitted && isSelected ? 'border-red-400 text-red-400' : isSelected ? 'border-amber-400 text-amber-400' : 'border-slate-600 text-slate-500'}`}>
+                  {String.fromCharCode(65 + i)}
+                </span>
+                <span className="text-slate-200 text-sm md:text-base flex-1">{opt}</span>
+                {submitted && isCorrectAnswer && <span className="text-emerald-400 text-lg">✓</span>}
+                {submitted && isSelected && !isCorrectAnswer && <span className="text-red-400 text-lg">✗</span>}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {!submitted && (
+        <div className="text-center">
+          <button
+            onClick={handleSubmit}
+            disabled={selectedIdx === null}
+            className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{opacity: selectedIdx !== null ? 1 : 0.4, visibility: 'visible', display: 'inline-flex'}}
+          >
+            Valider ma réponse
+          </button>
+        </div>
+      )}
+
+      {submitted && (
+        <div className="anim-in card-border rounded-xl p-5 mb-6" style={{background: isCorrect ? 'rgba(16,185,129,0.05)' : 'rgba(245,158,11,0.05)', borderColor: isCorrect ? '#10b981' : '#f59e0b'}}>
+          <div className="flex items-start gap-3">
+            <span className="text-2xl shrink-0">{isCorrect ? '✓' : '💡'}</span>
+            <div className="flex-1">
+              <p className="font-display text-base mb-2" style={{color: isCorrect ? '#10b981' : '#f59e0b'}}>
+                {isCorrect ? `Excellent ! +${phase.xp} XP` : 'Pas tout à fait — voici l\'explication :'}
+              </p>
+              <p className="text-slate-300 text-sm leading-relaxed">{phase.explain}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {submitted && (
+        <div className="text-center">
+          <button
+            onClick={onNext}
+            className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2"
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}
+          >
+            {phaseIdx + 1 < totalPhases ? 'Phase suivante →' : 'Voir l\'épilogue →'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// EPILOGUE — Avec système d'engagement-échange
+// ============================================================
+function MissionEpilogue({ mission, missionXP, state, onComplete }) {
+  const [showEngagement, setShowEngagement] = React.useState(false);
+  return (
+    <div className="max-w-2xl mx-auto" style={{paddingTop: '2vh'}}>
+      <div className="anim-in text-center mb-8">
+        <p className="text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-3">Mission accomplie</p>
+        <h1 className="font-display text-3xl md:text-4xl mb-3"><span className="shimmer-text">{mission.epilogue.titre}</span></h1>
+        <p className="text-amber-200 text-base mt-3">{mission.epilogue.message}</p>
+      </div>
+
+      <div className="anim-in delay-200 card-border rounded-xl p-5 mb-5 text-center" style={{background: 'rgba(217, 119, 6, 0.05)'}}>
+        <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold mb-2">XP gagnés</p>
+        <p className="font-display text-4xl text-amber-100">+ {missionXP}</p>
+      </div>
+
+      <div className="anim-in delay-300 card-border rounded-xl p-5 mb-5">
+        <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold mb-2">📖 Grimoire enrichi</p>
+        <p className="text-amber-100 font-display text-base">+ {mission.epilogue.grimoire}</p>
+      </div>
+
+      {mission.epilogue.fragmentIbrahim && (
+        <div className="anim-in delay-400 card-border rounded-xl p-5 mb-5" style={{borderColor: '#dc2626', background: 'rgba(220, 38, 38, 0.04)'}}>
+          <p className="text-[10px] uppercase tracking-wider font-bold mb-2" style={{color: '#fca5a5'}}>🔍 Dossier Ibrahim — Fragment {mission.epilogue.fragmentIbrahim.numero}/5</p>
+          <p className="text-slate-200 text-sm leading-relaxed">{mission.epilogue.fragmentIbrahim.texte}</p>
+        </div>
+      )}
+
+      <div className="anim-in delay-500 card-border rounded-xl p-5 mb-8" style={{background: 'rgba(15, 23, 42, 0.6)'}}>
+        <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold mb-2">{mission.epilogue.conseilLabel}</p>
+        <p className="text-slate-200 text-sm leading-relaxed italic">« {mission.epilogue.conseilTexte} »</p>
+      </div>
+
+      <p className="anim-in delay-600 font-display italic text-center text-amber-200/70 text-sm mb-8 px-4">
+        — {mission.epilogue.philo} —
+      </p>
+
+      {/* Bouton pour révéler le système d'engagement */}
+      {!showEngagement && (
+        <div className="text-center mb-6">
+          <button
+            onClick={() => setShowEngagement(true)}
+            className="btn-ghost px-6 py-3 rounded-full inline-flex items-center gap-2 text-sm"
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}
+          >
+            🎁 Débloquer des récompenses bonus
+          </button>
+        </div>
+      )}
+
+      {/* Système d'engagement-échange (4 mécaniques) */}
+      {showEngagement && <EngagementEchange missionTitle={mission.title} />}
+
+      <div className="text-center mt-8">
+        <button
+          onClick={onComplete}
+          className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2"
+          style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}
+        >
+          Retourner à l'Académie →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// SYSTÈME D'ENGAGEMENT-ÉCHANGE
+// 4 mécaniques : Mission Vie Réelle, Témoignage, Invitation, Bug/Amélioration
+// ============================================================
+function EngagementEchange({ missionTitle }) {
+  const [activeTab, setActiveTab] = React.useState(null);
+  const [submitted, setSubmitted] = React.useState({});
+
+  const mecaniques = [
+    {
+      id: 'vieReelle',
+      icon: '❤️',
+      titre: 'Mission Vie Réelle',
+      sousTitre: 'Gagne 1 cœur supplémentaire',
+      description: "Cette semaine, parle à 3 personnes de ton entourage de ce que tu as appris dans cette mission. Reviens valider quand c'est fait.",
+      action: "J'accepte cette mission",
+      reward: '+ 1 cœur'
+    },
+    {
+      id: 'temoignage',
+      icon: '✍️',
+      titre: 'Témoignage qualité',
+      sousTitre: 'Débloque 100 XP bonus',
+      description: "Écris en 3 phrases ce que tu as appris dans cette mission et pourquoi c'est important pour toi. Ton témoignage aide à améliorer Science Quest.",
+      input: true,
+      placeholder: "Ce que j'ai appris...",
+      action: "Envoyer mon témoignage",
+      reward: '+ 100 XP'
+    },
+    {
+      id: 'invitation',
+      icon: '👥',
+      titre: 'Invite tes amis',
+      sousTitre: 'Débloque une mission bonus',
+      description: "Partage Science Quest avec 2 amis. Ils peuvent jouer aussi, et tu débloques une mission bonus exclusive.",
+      action: "Partager le lien",
+      reward: '+ Mission bonus',
+      shareText: `Je viens de terminer "${missionTitle}" sur Science Quest 🧬 — la plateforme éducative du Niger qui transforme la science en aventure. Rejoins-moi : `
+    },
+    {
+      id: 'bug',
+      icon: '🐛',
+      titre: 'Améliore Science Quest',
+      sousTitre: 'Gagne 50 XP bonus',
+      description: "Tu as remarqué un bug, une coquille, ou tu as une suggestion ? Signale-le directement à Kotchami par e-mail et gagne 50 XP.",
+      action: "Envoyer un signalement",
+      contactEmail: 'kotchamiogougbe@gmail.com',
+      subject: `[Science Quest] Suggestion / Bug - Mission "${missionTitle}"`,
+      reward: '+ 50 XP'
+    }
+  ];
+
+  const handleAction = (mec) => {
+    setSubmitted(s => ({ ...s, [mec.id]: true }));
+    if (mec.id === 'invitation') {
+      const url = window.location.href;
+      const text = mec.shareText + url;
+      if (navigator.share) {
+        navigator.share({ title: 'Science Quest', text: text, url: url }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => alert('Lien copié ! Colle-le dans WhatsApp.')).catch(() => {});
+      }
+    }
+    if (mec.id === 'bug') {
+      window.location.href = `mailto:${mec.contactEmail}?subject=${encodeURIComponent(mec.subject)}&body=${encodeURIComponent('Bonjour Kotchami,\n\n[Décris ici ton bug ou ta suggestion]\n\nMerci.')}`;
+    }
+  };
+
+  return (
+    <div className="anim-in card-border rounded-xl p-5 mb-6" style={{background: 'rgba(217, 119, 6, 0.04)'}}>
+      <p className="text-center text-xs uppercase tracking-[0.3em] text-amber-400 font-bold mb-1">🎁 Récompenses Bonus</p>
+      <p className="text-center text-slate-400 text-xs mb-5">Choisis un défi pour gagner plus</p>
+
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        {mecaniques.map(mec => (
+          <button
+            key={mec.id}
+            onClick={() => setActiveTab(activeTab === mec.id ? null : mec.id)}
+            className="card-border rounded-lg p-3 text-left transition-all"
+            style={{
+              opacity: 1, visibility: 'visible',
+              borderColor: activeTab === mec.id ? '#f59e0b' : '#334155',
+              background: activeTab === mec.id ? 'rgba(245, 158, 11, 0.08)' : 'rgba(15, 23, 42, 0.4)'
+            }}
+          >
+            <div className="text-xl mb-1">{mec.icon}</div>
+            <p className="text-amber-100 font-bold text-xs leading-tight">{mec.titre}</p>
+            <p className="text-amber-400/70 text-[10px] mt-1">{mec.reward}</p>
+          </button>
+        ))}
+      </div>
+
+      {activeTab && (() => {
+        const mec = mecaniques.find(m => m.id === activeTab);
+        const isSubmitted = submitted[mec.id];
+        return (
+          <div className="anim-in card-border rounded-lg p-4" style={{background: 'rgba(15, 23, 42, 0.6)'}}>
+            <h3 className="font-display text-base text-amber-100 mb-2">{mec.icon} {mec.titre}</h3>
+            <p className="text-slate-300 text-sm mb-4 leading-relaxed">{mec.description}</p>
+            {mec.input && !isSubmitted && (
+              <textarea
+                placeholder={mec.placeholder}
+                rows={3}
+                className="w-full mb-3 p-3 rounded-lg text-sm"
+                style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fff'}}
+              />
+            )}
+            {!isSubmitted ? (
+              <button
+                onClick={() => handleAction(mec)}
+                className="btn-primary px-5 py-2 rounded-full text-sm inline-flex items-center gap-2"
+                style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}
+              >
+                {mec.action}
+              </button>
+            ) : (
+              <p className="text-emerald-400 text-sm">✓ Action enregistrée. Récompense : {mec.reward}</p>
+            )}
+            {mec.id === 'bug' && (
+              <p className="text-[11px] text-slate-500 mt-3">Contact direct : kotchamiogougbe@gmail.com</p>
+            )}
+          </div>
+        );
+      })()}
+    </div>
+  );
+}
+
+
+// ============================================================
+// APP
+// ============================================================
+function App() {
+  const [screen, setScreen] = useState('welcome');
+  const [missionPhase, setMissionPhase] = useState('intro');
+  const [state, setState] = useGameState();
+  const [nameInput, setNameInput] = useState('');
+  const [countryInput, setCountryInput] = useState('');
+  const [activeGenecodeMission, setActiveGenecodeMission] = useState(null);
+
+  const [missionData, setMissionData] = useState({
+    seenCharacters: new Set(),
+    selectedChar: null,
+    genotypes: {},
+    pedigreeChecked: false,
+    pedigreeErrors: [],
+    phase2Answered: false, phase2Correct: null,
+    phase3Answered: false, phase3Correct: null,
+    phase5Answered: false, phase5Correct: null,
+    punnettCells: {},
+    missionXP: 0
+  });
+
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [screen, missionPhase, activeGenecodeMission]);
+
+  const startMission = (missionId) => {
+    // Si c'est une mission GENECODE, route vers MissionPlayer
+    if (missionId && typeof missionId === 'string' && missionId.startsWith('gc-')) {
+      setActiveGenecodeMission(missionId);
+      setScreen('genecode-mission');
+      return;
+    }
+    // Sinon, ancienne logique pour la mission tutorielle drépanocytose
+    setMissionPhase('intro');
+    setMissionData({
+      seenCharacters: new Set(), selectedChar: null, genotypes: {},
+      pedigreeChecked: false, pedigreeErrors: [],
+      phase2Answered: false, phase2Correct: null,
+      phase3Answered: false, phase3Correct: null,
+      phase5Answered: false, phase5Correct: null,
+      punnettCells: {}, missionXP: 0
+    });
+    setState(s => ({ ...s, lives: 3 }));
+    setScreen('mission');
+  };
+
+  const completeMission = () => {
+    setState(s => ({
+      ...s,
+      xp: s.xp + missionData.missionXP,
+      completedMissions: [...new Set([...s.completedMissions, 'drepanocytose'])],
+      grimoireEntries: [...new Set([...s.grimoireEntries, 'Hérédité autosomale récessive'])]
+    }));
+    setScreen('home');
+  };
+
+  const exitGenecodeMission = () => {
+    setActiveGenecodeMission(null);
+    setScreen('home');
+  };
+
+  const loseLife = () => setState(s => ({ ...s, lives: Math.max(0, s.lives - 1) }));
+  const addXP = (n) => setMissionData(d => ({ ...d, missionXP: d.missionXP + n }));
+
+  return (
+    <div className="min-h-screen w-full text-white relative overflow-x-hidden" style={{background: '#020617'}}>
+      <div className="absolute inset-0 bg-grain pointer-events-none"></div>
+
+      {/* Header global (sauf welcome) */}
+      {screen !== 'welcome' && (
+        <div className="relative z-20 border-b border-amber-500/10 sticky top-0" style={{background: 'rgba(2, 6, 23, 0.92)', backdropFilter: 'blur(10px)'}}>
+          <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <button onClick={() => setScreen('home')} className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors">
+              <Icon name="dna" size={22} />
+              <span className="font-display text-amber-100 text-base">Science Quest</span>
+            </button>
+            <div className="flex items-center gap-3 text-sm">
+              <div className="flex items-center gap-1.5 text-amber-400">
+                <Icon name="sparkles" size={16} />
+                <span className="font-mono-sci text-amber-300 tabular-nums text-xs md:text-sm">{state.xp + missionData.missionXP}</span>
+              </div>
+              <div className="flex items-center gap-0.5">
+                {[0,1,2].map(i => (
+                  <span key={i}><Icon name="heart" size={16} fill={i < state.lives ? '#ef4444' : 'none'} color={i < state.lives ? '#ef4444' : '#334155'} /></span>
+                ))}
+              </div>
+              <button onClick={() => setScreen('contact')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Contact">
+                <Icon name="info" size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="relative z-10 max-w-4xl mx-auto px-5 py-8 md:py-12">
+
+        {/* ========== WELCOME ========== */}
+        {screen === 'welcome' && (
+          <WelcomeScreen
+            nameInput={nameInput} setNameInput={setNameInput}
+            countryInput={countryInput} setCountryInput={setCountryInput}
+            onStart={() => {
+              if (nameInput.trim()) {
+                setState(s => ({ ...s, playerName: nameInput.trim(), country: countryInput.trim() }));
+                setScreen('home');
+              }
+            }} />
+        )}
+
+        {/* ========== HOME (Académie) ========== */}
+        {screen === 'home' && (
+          <HomeScreen
+            state={state}
+            onStartMission={startMission}
+            onContact={() => setScreen('contact')}
+          />
+        )}
+
+        {/* ========== CONTACT ========== */}
+        {screen === 'contact' && (
+          <ContactScreen onBack={() => setScreen('home')} />
+        )}
+
+        {/* ========== MISSION ========== */}
+        {screen === 'mission' && (
+          <MissionFlow
+            phase={missionPhase}
+            setPhase={setMissionPhase}
+            state={state}
+            missionData={missionData}
+            setMissionData={setMissionData}
+            addXP={addXP}
+            loseLife={loseLife}
+            onComplete={completeMission}
+          />
+        )}
+
+        {/* ========== MISSIONS GENECODE (Arc 1 → BOSS, data-driven) ========== */}
+        {screen === 'genecode-mission' && activeGenecodeMission && (
+          <MissionPlayer
+            missionId={activeGenecodeMission}
+            state={state}
+            setState={setState}
+            onExit={exitGenecodeMission}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// WELCOME SCREEN
+// ============================================================
+function WelcomeScreen({ nameInput, setNameInput, countryInput, setCountryInput, onStart }) {
+  const handleKey = (e) => { if (e.key === 'Enter' && nameInput.trim()) onStart(); };
+  return (
+    <div className="text-center max-w-md mx-auto" style={{paddingTop: '6vh'}}>
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
+        <Icon name="dna" size={16} />
+        <span>Académie des Sciences Avancées</span>
+      </div>
+
+      <h1 className="anim-in delay-100 font-display text-5xl md:text-6xl mb-4 leading-[1]">
+        <span className="shimmer-text">Science Quest</span>
+      </h1>
+
+      <p className="anim-in delay-200 text-amber-200/70 text-sm tracking-widest uppercase font-bold mb-10">
+        Sauver le monde par la connaissance
+      </p>
+
+      <p className="anim-in delay-300 text-slate-300 text-base mb-8">{T('welcomeSubtitle')}</p>
+
+      <div className="anim-in delay-400 mb-4">
+        <input
+          type="text"
+          value={nameInput}
+          onChange={e => setNameInput(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder={T('welcomePlaceholder')}
+          maxLength={20}
+          autoFocus
+        />
+      </div>
+
+      <div className="anim-in delay-400 mb-6">
+        <input
+          type="text"
+          value={countryInput}
+          onChange={e => setCountryInput(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder="Ton pays (optionnel)"
+          maxLength={40}
+        />
+        <p className="text-[11px] text-slate-500 mt-2 italic">Nous utiliserons cette information pour adapter les missions à ta réalité.</p>
+      </div>
+
+      <button
+        onClick={onStart}
+        disabled={!nameInput.trim()}
+        className="btn-mega mega-pulse"
+        style={{
+          opacity: !nameInput.trim() ? 0.4 : 1,
+          animation: !nameInput.trim() ? 'none' : undefined,
+          visibility: 'visible',
+          display: 'inline-flex'
+        }}
+      >
+        <Icon name="play" size={20} fill="currentColor" />
+        {T('welcomeStart')}
+      </button>
+
+      <p className="anim-in delay-500 mt-16 text-xs text-slate-600 tracking-[0.25em] uppercase">
+        {T('brand')}
+      </p>
+    </div>
+  );
+}
+
+// ============================================================
+// HOME (Académie - carte des missions)
+// ============================================================
+function HomeScreen({ state, onStartMission, onContact }) {
+  const terminaleD = CURRICULUM.terminaleD;
+  const totalMissions = terminaleD.subjects.reduce((sum, sub) =>
+    sum + sub.parts.reduce((s, p) => s + p.themes.reduce((t, th) => t + th.chapters.length, 0), 0), 0
+  );
+  const completedCount = state.completedMissions.length;
+  const progressPct = (completedCount / totalMissions) * 100;
+
+  return (
+    <div>
+      {/* Hero */}
+      <div className="anim-in text-center mb-10">
+        <p className="text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-3">Agent {state.playerName}</p>
+        <h1 className="font-display text-4xl md:text-5xl mb-3"><span className="shimmer-text">Mission Science</span></h1>
+        <p className="text-slate-400 max-w-xl mx-auto">{T('homeIntro')}</p>
+      </div>
+
+      {/* Progression */}
+      <div className="anim-in delay-100 card-border rounded-2xl p-5 mb-8">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold">{T('homeProgress')}</p>
+          <p className="font-mono-sci text-amber-300 text-sm">{completedCount} / {totalMissions}</p>
+        </div>
+        <div className="progress-bar"><div className="progress-bar-fill" style={{width: `${progressPct}%`}}></div></div>
+        <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
+          <span><Icon name="sparkles" size={12} color="#fbbf24" /> {state.xp} XP</span>
+          <span><Icon name="bookOpen" size={12} color="#fbbf24" /> {state.grimoireEntries.length} entrées</span>
+        </div>
+      </div>
+
+      {/* CTA principal — Mission débloquée (toujours visible tant que non terminée) */}
+      {!state.completedMissions.includes('drepanocytose') && (
+        <div className="anim-in delay-200 card-border rounded-2xl p-5 md:p-6 mb-8" style={{borderColor: 'rgba(251, 191, 36, 0.5)', background: 'linear-gradient(145deg, rgba(217, 119, 6, 0.12), rgba(15, 23, 42, 0.9))'}}>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{background: '#10b98122', border: '1px solid #10b98155', color: '#10b981'}}>
+              <Icon name="dna" size={20} />
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold">Mission disponible</p>
+              <p className="font-display text-lg text-amber-100">Le Secret du Sang</p>
+            </div>
+          </div>
+          <p className="text-sm text-slate-300 mb-4 leading-relaxed">
+            Une famille te consulte. Un enfant malade, des parents sains. Deviens <span className="text-emerald-300 font-semibold">Détective génétique</span> et résous ce mystère.
+          </p>
+          <div className="flex justify-center">
+            <button onClick={onStartMission} className="btn-mega mega-pulse">
+              <Icon name="play" size={20} fill="currentColor" />
+              {T('homeCTA')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {state.completedMissions.includes('drepanocytose') && (
+        <div className="anim-in delay-200 card-border rounded-2xl p-5 mb-8 text-center" style={{borderColor: 'rgba(16, 185, 129, 0.4)', background: 'rgba(16, 185, 129, 0.05)'}}>
+          <div className="flex justify-center mb-2 text-emerald-400"><Icon name="check" size={24} /></div>
+          <p className="text-emerald-200 font-bold">Mission "Le Secret du Sang" accomplie !</p>
+          <p className="text-xs text-slate-400 mt-1">Pouvoir débloqué : Vision héréditaire</p>
+          <button onClick={onStartMission} className="mt-4 btn-ghost px-5 py-2 rounded-full text-sm inline-flex items-center gap-2">
+            <Icon name="play" size={14} /> Rejouer
+          </button>
+        </div>
+      )}
+
+      {/* Matières */}
+      <div className="anim-in delay-300 space-y-5 mb-10">
+        <h2 className="font-display text-2xl text-amber-100 mb-3">Terminale D — Matières</h2>
+        {terminaleD.subjects.map((subject, idx) => (
+          <SubjectCard key={subject.id} subject={subject} onStartMission={onStartMission} completedMissions={state.completedMissions} delay={0.05 + idx * 0.08} />
+        ))}
+      </div>
+
+      {/* Footer contact */}
+      <div className="anim-in delay-500 text-center border-t border-amber-500/10 pt-8">
+        <button onClick={onContact} className="btn-ghost px-6 py-2.5 rounded-full text-sm inline-flex items-center gap-2">
+          <Icon name="mail" size={16} /> Contact
+        </button>
+        <p className="mt-6 text-[10px] tracking-[0.3em] uppercase text-slate-700">{T('brand')}</p>
+      </div>
+    </div>
+  );
+}
+
+function SubjectCard({ subject, onStartMission, completedMissions, delay }) {
+  const [expanded, setExpanded] = useState(false);
+  const allChapters = subject.parts.flatMap(p => p.themes.flatMap(t => t.chapters));
+  const unlocked = allChapters.filter(c => !c.locked).length;
+  const total = allChapters.length;
+  return (
+    <div className="anim-in" style={{animationDelay: `${delay}s`}}>
+      <button onClick={() => setExpanded(!expanded)} className="w-full card-border rounded-2xl p-5 text-left hover:border-amber-400/40 transition-all">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{background: `${subject.color}22`, border: `1px solid ${subject.color}44`, color: subject.color}}>
+            <Icon name={subject.icon} size={22} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-display text-xl text-amber-100 mb-0.5">{subject.name}</h3>
+            <p className="text-xs text-slate-400">{subject.description}</p>
+            {subject.role && (
+              <p className="text-[11px] mt-1 font-semibold" style={{color: subject.color}}>
+                Rôle : {subject.role}
+              </p>
+            )}
+          </div>
+          <div className="text-right shrink-0">
+            <p className="font-mono-sci text-amber-300 text-sm">{unlocked}/{total}</p>
+            <Icon name="chevron" size={16} color="#fbbf24" />
+          </div>
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="mt-3 ml-4 space-y-2 anim-in">
+          {subject.parts.map(part => (
+            <div key={part.id}>
+              <p className="text-[10px] uppercase tracking-wider text-slate-500 mt-3 mb-2">{part.name}</p>
+              {part.themes.map(theme => (
+                <div key={theme.id} className="mb-3">
+                  <p className="text-xs text-amber-200/80 font-semibold mb-1.5 pl-3 border-l-2 border-amber-500/30">{theme.name}</p>
+                  {theme.chapters.map(chap => {
+                    const isCompleted = completedMissions.includes(chap.id);
+                    return (
+                      <button
+                        key={chap.id}
+                        onClick={() => { if (!chap.locked) onStartMission(chap.id); }}
+                        disabled={chap.locked}
+                        className={`w-full text-left p-3 rounded-xl mb-1.5 flex items-center gap-3 transition-all ${chap.locked ? 'mission-locked bg-slate-900/40 border border-slate-800 cursor-not-allowed' : 'card-border hover:border-amber-400/60'}`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${chap.locked ? 'bg-slate-800' : isCompleted ? 'bg-emerald-500/20' : 'bg-amber-500/15'}`}>
+                          <Icon name={chap.locked ? 'lock' : isCompleted ? 'check' : 'play'} size={14} color={chap.locked ? '#64748b' : isCompleted ? '#10b981' : '#fbbf24'} fill={!chap.locked && !isCompleted ? '#fbbf24' : 'none'} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-amber-100 truncate">{chap.name}</p>
+                          <p className="text-[11px] text-slate-500 truncate">« {chap.power} »</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// CONTACT SCREEN
+// ============================================================
+function ContactScreen({ onBack }) {
+  return (
+    <div className="max-w-xl mx-auto text-center" style={{paddingTop: '5vh'}}>
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
+        <Icon name="mail" size={16} />
+        <span>{T('contactTitle')}</span>
+      </div>
+      <h1 className="anim-in delay-100 font-display text-4xl md:text-5xl mb-6"><span className="shimmer-text">Contact</span></h1>
+      <p className="anim-in delay-200 text-slate-300 mb-10">{T('contactText')}</p>
+
+      <div className="anim-in delay-300 card-border rounded-2xl p-6 md:p-8 mb-8 text-left">
+        <div className="mb-5">
+          <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold mb-1">Créateur</p>
+          <p className="font-display text-xl text-amber-100">{T('contactName')}</p>
+        </div>
+        <div>
+          <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold mb-1">E-mail</p>
+          <a href={`mailto:${T('contactEmail')}`} className="font-mono-sci text-amber-300 hover:text-amber-200 transition-colors text-base break-all">
+            {T('contactEmail')}
+          </a>
+        </div>
+      </div>
+
+      <button onClick={onBack} className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2">
+        <Icon name="home" size={16} /> {T('contactBack')}
+      </button>
+      <p className="anim-in delay-500 mt-16 text-[10px] tracking-[0.3em] uppercase text-slate-700">{T('brand')}</p>
+    </div>
+  );
+}
+
+// ============================================================
+// MISSION FLOW
+// ============================================================
+function MissionFlow({ phase, setPhase, state, missionData, setMissionData, addXP, loseLife, onComplete }) {
+  const phases = ['intro', 'prologue', 'briefing', 'p1', 'p2', 'p3', 'p4', 'p5', 'epilogue'];
+  const currentIdx = phases.indexOf(phase);
+  const progress = ((currentIdx) / (phases.length - 1)) * 100;
+
+  const goPrevious = () => {
+    if (currentIdx > 0) setPhase(phases[currentIdx - 1]);
+  };
+
+  const phaseLabels = {
+    intro: 'Intro', prologue: 'Prologue', briefing: 'Briefing',
+    p1: 'Enquête', p2: 'Analyse 1', p3: 'Analyse 2',
+    p4: 'Pedigree', p5: 'Calcul', epilogue: 'Épilogue'
+  };
+
+  return (
+    <div>
+      {phase !== 'intro' && phase !== 'epilogue' && (
+        <div className="mb-8 anim-in">
+          <div className="flex items-center justify-between mb-2 gap-3">
+            <button
+              onClick={goPrevious}
+              className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 shrink-0"
+              style={{opacity: 1, visibility: 'visible'}}
+              title={`Retour à : ${phaseLabels[phases[currentIdx - 1]]}`}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display: 'inline-block', verticalAlign: 'middle'}}>
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              <span>Retour</span>
+            </button>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 text-center flex-1">Phase {currentIdx} / {phases.length - 2} — {phaseLabels[phase]}</p>
+            <div style={{width: '70px'}}></div>
+          </div>
+          <div className="progress-bar"><div className="progress-bar-fill" style={{width: `${progress}%`}}></div></div>
+        </div>
+      )}
+
+      {phase === 'intro' && <MissionIntro onStart={() => setPhase('prologue')} />}
+      {phase === 'prologue' && <Prologue onNext={() => setPhase('briefing')} />}
+      {phase === 'briefing' && <Briefing onNext={() => setPhase('p1')} />}
+
+      {phase === 'p1' && <Phase1Investigation
+        seen={missionData.seenCharacters}
+        selected={missionData.selectedChar}
+        onSelect={(c) => setMissionData(d => ({...d, selectedChar: c, seenCharacters: new Set([...d.seenCharacters, c.id])}))}
+        onNext={() => setPhase('p2')} />}
+
+      {phase === 'p2' && <QuestionPhase
+        title={T('phase2Title')} question={T('phase2Q')}
+        options={[T('phase2A'), T('phase2B'), T('phase2C')]} correctIdx={1}
+        explain={T('phase2Explain')}
+        onCorrect={() => addXP(100)} onWrong={loseLife}
+        onNext={() => setPhase('p3')} />}
+
+      {phase === 'p3' && <QuestionPhase
+        title={T('phase3Title')} question={T('phase3Q')}
+        options={[T('phase3A'), T('phase3B'), T('phase3C')]} correctIdx={1}
+        explain={T('phase3Explain')}
+        onCorrect={() => addXP(100)} onWrong={loseLife}
+        onNext={() => setPhase('p4')} />}
+
+      {phase === 'p4' && <Phase4Pedigree
+        data={missionData} setData={setMissionData}
+        onCorrect={() => addXP(150)} onWrong={loseLife}
+        onNext={() => setPhase('p5')} />}
+
+      {phase === 'p5' && <Phase5Punnett
+        data={missionData} setData={setMissionData}
+        onCorrect={() => addXP(150)} onWrong={loseLife}
+        onNext={() => setPhase('epilogue')} />}
+
+      {phase === 'epilogue' && <Epilogue xp={missionData.missionXP} onComplete={onComplete} />}
+    </div>
+  );
+}
+
+// ============================================================
+// MISSION INTRO
+// ============================================================
+function MissionIntro({ onStart }) {
+  return (
+    <div className="text-center" style={{paddingTop: '2vh', paddingBottom: '4vh'}}>
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
+        <Icon name="dna" size={16} /> <span>Mission #1</span>
+      </div>
+      <h1 className="anim-in delay-100 font-display text-4xl md:text-6xl mb-4 leading-[1.05]">
+        <span className="shimmer-text">Le Secret du Sang</span>
+      </h1>
+      <p className="anim-in delay-200 text-amber-200/70 text-xs md:text-sm tracking-widest uppercase font-bold mb-6">
+        {T('missionSubtitle')}
+      </p>
+      <p className="anim-in delay-300 font-display italic text-base md:text-lg text-slate-300 max-w-2xl mx-auto mb-6 leading-relaxed px-2">
+        « {T('missionSignature')} »
+      </p>
+      <p className="anim-in delay-400 text-slate-400 max-w-xl mx-auto mb-8 text-sm md:text-base px-2">{T('missionIntro')}</p>
+
+      {/* BOUTON DE LANCEMENT — FORCÉMENT VISIBLE, sans animation qui pourrait le cacher */}
+      <div style={{marginTop: '2rem', marginBottom: '2rem', textAlign: 'center', opacity: 1, display: 'block'}}>
+        <button
+          onClick={onStart}
+          className="btn-mega mega-pulse"
+          style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}
+        >
+          <Icon name="play" size={20} fill="currentColor" />
+          {T('missionStart')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PROLOGUE
+// ============================================================
+function Prologue({ onNext }) {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <p className="anim-in text-xs uppercase tracking-[0.3em] text-amber-400/60 mb-6 text-center">— {T('prologueTitle')} —</p>
+      <div className="space-y-5 text-lg leading-relaxed text-slate-200">
+        <p className="anim-in delay-100">{T('prologueP1')}</p>
+        <p className="anim-in delay-200">{T('prologueP2')}</p>
+        <p className="anim-in delay-300 italic text-amber-200/90 border-l-2 border-amber-500/50 pl-5">{T('prologueP3')}</p>
+        <p className="anim-in delay-400">{T('prologueP4')}</p>
+      </div>
+      <div className="mt-10 flex justify-center" style={{marginTop: '2rem', marginBottom: '2rem', opacity: 1}}>
+        <button onClick={onNext} className="btn-primary px-8 py-3.5 rounded-full inline-flex items-center gap-3"
+          style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+          Accepter la mission <Icon name="arrow" size={16} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// BRIEFING
+// ============================================================
+function Briefing({ onNext }) {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <h2 className="anim-in font-display text-3xl md:text-4xl text-center mb-8"><span className="shimmer-text">{T('briefingTitle')}</span></h2>
+
+      <div className="anim-in delay-100 card-border rounded-2xl p-5 mb-4">
+        <div className="flex items-start gap-4">
+          <div className="text-amber-400 shrink-0 mt-1"><Icon name="target" size={22} /></div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold mb-1">{T('briefingObjective')}</p>
+            <p className="text-slate-200">{T('briefingObjectiveText')}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="anim-in delay-200 card-border rounded-2xl p-5 mb-4">
+        <div className="flex items-start gap-4">
+          <div className="text-amber-400 shrink-0 mt-1"><Icon name="sparkles" size={22} /></div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold mb-1">{T('briefingReward')}</p>
+            <p className="text-amber-100 font-display text-lg">« {T('briefingPower')} »</p>
+            <p className="text-xs text-slate-400 mt-1">+ 500 XP • Badge : Détective de la Drépanocytose</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="anim-in delay-300 card-border rounded-2xl p-5 mb-8">
+        <div className="flex items-start gap-4">
+          <div className="text-red-400 shrink-0 mt-1"><Icon name="heart" size={22} /></div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-red-400/80 font-bold mb-1">{T('briefingRules')}</p>
+            <p className="text-slate-200">{T('briefingRulesText')}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-center" style={{marginTop: '2rem', marginBottom: '2rem', opacity: 1}}>
+        <button onClick={onNext} className="btn-primary px-8 py-3.5 rounded-full inline-flex items-center gap-3"
+          style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+          Commencer <Icon name="arrow" size={16} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PHASE 1 — Investigation
+// ============================================================
+function Phase1Investigation({ seen, selected, onSelect, onNext }) {
+  return (
+    <div>
+      <div className="anim-in text-center mb-8">
+        <p className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/60 mb-3"><Icon name="users" size={14} /> {T('phase1Title')}</p>
+        <p className="text-slate-400 max-w-xl mx-auto">{T('phase1Intro')}</p>
+      </div>
+
+      <div className="anim-in delay-100 mb-5 flex justify-center">
+        <div className="card-border rounded-full px-4 py-1.5 text-sm">
+          <span className="text-slate-400">Examinés : </span>
+          <span className="font-mono-sci text-amber-300">{seen.size} / {FAMILY.length}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {FAMILY.map((char, i) => {
+          const isSeen = seen.has(char.id);
+          const isSel = selected?.id === char.id;
+          return (
+            <button key={char.id} onClick={() => onSelect(char)}
+              className={`card-border rounded-xl p-3 text-center transition-all anim-in ${isSeen ? 'opacity-70' : ''}`}
+              style={{animationDelay: `${0.05 * i + 0.15}s`, borderColor: isSel ? '#fbbf24' : undefined}}>
+              <div className="flex justify-center mb-2"><CharIcon sex={char.sex} affected={char.affected} size={36} /></div>
+              <p className="text-xs font-bold text-amber-100 mb-0.5 leading-tight">{char.name}</p>
+              <p className="text-[10px] text-slate-500 leading-tight">{char.role}</p>
+              {isSeen && <div className="mt-1.5"><Icon name="check" size={12} color="#10b981" /></div>}
+            </button>
+          );
+        })}
+      </div>
+
+      {selected && (
+        <div className="card-border rounded-2xl p-5 mb-6 anim-in">
+          <div className="flex items-start gap-4">
+            <CharIcon sex={selected.sex} affected={selected.affected} size={48} />
+            <div className="flex-1">
+              <h3 className="font-display text-xl text-amber-100">{selected.name}</h3>
+              <p className="text-sm text-slate-400 mb-2">{selected.role}</p>
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-slate-900/50 border border-slate-800">
+                <span className={selected.affected ? 'text-red-400' : 'text-emerald-400'}><Icon name="alert" size={16} /></span>
+                <p className="text-sm text-slate-200">{selected.pheno}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-center" style={{marginTop: '1.5rem', marginBottom: '1.5rem'}}>
+        <button onClick={onNext} disabled={seen.size < FAMILY.length}
+          className={`px-8 py-3.5 rounded-full inline-flex items-center gap-3 ${seen.size < FAMILY.length ? 'bg-slate-800 text-slate-500' : 'btn-primary'}`}
+          style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+          {seen.size < FAMILY.length ? <><Icon name="lock" size={14} /> {FAMILY.length - seen.size} restant(s)</> : <>{T('phase1Continue')} <Icon name="arrow" size={16} /></>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// QUESTION PHASE (avec révélation pédagogique)
+// ============================================================
+function QuestionPhase({ title, question, options, correctIdx, explain, onCorrect, onWrong, onNext }) {
+  const [selected, setSelected] = useState(null);
+  const [answered, setAnswered] = useState(false);
+  const [wasCorrect, setWasCorrect] = useState(false);
+
+  const submit = () => {
+    if (selected === null) return;
+    const correct = selected === correctIdx;
+    setWasCorrect(correct);
+    setAnswered(true);
+    if (correct) onCorrect(); else onWrong();
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="anim-in text-center mb-6">
+        <p className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/60 mb-3"><Icon name="target" size={14} /> Analyse</p>
+        <h2 className="font-display text-2xl md:text-3xl">{title}</h2>
+      </div>
+
+      <div className="anim-in delay-100 card-border rounded-2xl p-5 mb-5">
+        <p className="text-slate-100 text-base md:text-lg leading-relaxed">{question}</p>
+      </div>
+
+      <div className="space-y-2.5 mb-5">
+        {options.map((opt, idx) => {
+          const isSel = selected === idx;
+          const showCorrect = answered && idx === correctIdx;
+          const showWrong = answered && isSel && idx !== correctIdx;
+          let cls = 'border-slate-700 bg-slate-900/40 text-slate-200';
+          if (showCorrect) cls = 'border-emerald-400 bg-emerald-500/10 text-emerald-100';
+          else if (showWrong) cls = 'border-red-500 bg-red-500/10 text-red-100';
+          else if (isSel) cls = 'border-amber-400 bg-amber-500/10 text-amber-100';
+          return (
+            <button key={idx} onClick={() => !answered && setSelected(idx)} disabled={answered}
+              className={`anim-in w-full text-left p-4 rounded-xl border transition-all ${cls}`}
+              style={{animationDelay: `${0.15 + idx * 0.06}s`}}>
+              <div className="flex items-start gap-3">
+                <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold ${
+                  showCorrect ? 'border-emerald-400 bg-emerald-400 text-slate-950' :
+                  showWrong ? 'border-red-500 bg-red-500 text-white' :
+                  isSel ? 'border-amber-400 bg-amber-400 text-slate-950' : 'border-slate-600 text-slate-500'
+                }`}>
+                  {showCorrect ? <Icon name="check" size={14} /> : showWrong ? <Icon name="x" size={14} /> : String.fromCharCode(65 + idx)}
+                </div>
+                <span className="text-sm md:text-base leading-relaxed">{opt}</span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {answered && (
+        <div className={`card-border rounded-2xl p-5 mb-5 anim-in`} style={{borderColor: wasCorrect ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)', background: wasCorrect ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)'}}>
+          <div className="flex items-start gap-3">
+            <span className={wasCorrect ? 'text-emerald-400' : 'text-red-400'}><Icon name={wasCorrect ? 'check' : 'alert'} size={20} /></span>
+            <div>
+              <p className={`text-xs uppercase tracking-wider font-bold mb-2 ${wasCorrect ? 'text-emerald-400' : 'text-red-400'}`}>
+                {wasCorrect ? T('correct') + ' • +100 XP' : T('wrong') + ' • la bonne réponse est la B'}
+              </p>
+              <p className="text-sm text-slate-200 leading-relaxed">{explain}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-center" style={{marginTop: '1.5rem', marginBottom: '1.5rem'}}>
+        {!answered ? (
+          <button onClick={submit} disabled={selected === null}
+            className={`px-8 py-3.5 rounded-full inline-flex items-center gap-3 ${selected === null ? 'bg-slate-800 text-slate-500' : 'btn-primary'}`}
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+            {T('confirm')} <Icon name="check" size={16} />
+          </button>
+        ) : (
+          <button onClick={onNext} className="btn-primary px-8 py-3.5 rounded-full inline-flex items-center gap-3"
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+            {T('continue')} <Icon name="arrow" size={16} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PHASE 4 — Pedigree
+// ============================================================
+function Phase4Pedigree({ data, setData, onCorrect, onWrong, onNext }) {
+  const gen1 = FAMILY.filter(f => f.gen === 1);
+  const gen2 = FAMILY.filter(f => f.gen === 2);
+  const gen3 = FAMILY.filter(f => f.gen === 3);
+
+  const check = () => {
+    const errors = [];
+    FAMILY.forEach(c => {
+      const v = data.genotypes[c.id];
+      if (!v) errors.push(c.id);
+      else if (c.expected === 'AAorAS' && !['AA','AS'].includes(v)) errors.push(c.id);
+      else if (c.expected === 'AS' && v !== 'AS') errors.push(c.id);
+      else if (c.expected === 'SS' && v !== 'SS') errors.push(c.id);
+    });
+    setData(d => ({...d, pedigreeChecked: true, pedigreeErrors: errors}));
+    if (errors.length === 0) onCorrect(); else onWrong();
+  };
+
+  const renderRow = (members) => (
+    <div className="flex justify-around items-end flex-wrap gap-3">
+      {members.map(m => (
+        <div key={m.id} className="flex flex-col items-center">
+          <div onClick={() => setData(d => ({...d, selectedChar: m}))} style={{cursor: 'pointer', transform: data.selectedChar?.id === m.id ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.2s'}}>
+            <CharIcon sex={m.sex} affected={m.affected} size={50}
+              selected={data.selectedChar?.id === m.id}
+              error={data.pedigreeChecked && data.pedigreeErrors.includes(m.id)} />
+          </div>
+          {data.genotypes[m.id] && (
+            <p className="text-center text-xs font-mono-sci font-bold mt-1" style={{color: data.pedigreeChecked && data.pedigreeErrors.includes(m.id) ? '#fca5a5' : '#fde68a'}}>
+              {data.genotypes[m.id]}
+            </p>
+          )}
+          <p className="text-[10px] text-slate-400 mt-0.5 text-center max-w-[80px] leading-tight">{m.name}</p>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div>
+      <div className="anim-in text-center mb-6">
+        <p className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/60 mb-3"><Icon name="dna" size={14} /> {T('phase4Title')}</p>
+        <p className="text-slate-400 max-w-2xl mx-auto text-sm">{T('phase4Intro')}</p>
+      </div>
+
+      <div className="card-border rounded-2xl p-5 md:p-7 mb-5 anim-in delay-100">
+        <div className="space-y-6">
+          <div><p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2 text-center">Génération I</p>{renderRow(gen1)}</div>
+          <div className="flex justify-center"><div className="h-px w-16 bg-amber-500/20"></div></div>
+          <div><p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2 text-center">Génération II</p>{renderRow(gen2)}</div>
+          <div className="flex justify-center"><div className="h-px w-16 bg-amber-500/20"></div></div>
+          <div><p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2 text-center">Génération III</p>{renderRow(gen3)}</div>
+        </div>
+      </div>
+
+      {data.selectedChar && (
+        <div className="card-border rounded-2xl p-5 mb-5 anim-in">
+          <div className="flex items-center gap-3 mb-3">
+            <CharIcon sex={data.selectedChar.sex} affected={data.selectedChar.affected} size={40} />
+            <div>
+              <p className="font-display text-lg text-amber-100">{data.selectedChar.name}</p>
+              <p className="text-xs text-slate-400">{data.selectedChar.role}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[{v: 'AA', l: 'sain'}, {v: 'AS', l: 'porteur'}, {v: 'SS', l: 'malade'}].map(opt => {
+              const sel = data.genotypes[data.selectedChar.id] === opt.v;
+              return (
+                <button key={opt.v} onClick={() => setData(d => ({...d, genotypes: {...d.genotypes, [data.selectedChar.id]: opt.v}}))}
+                  className={`px-3 py-2.5 rounded-lg text-sm border transition-all ${sel ? 'border-amber-400 bg-amber-500/20 text-amber-100' : 'border-slate-700 bg-slate-900/50 text-slate-300'}`}>
+                  <span className="font-mono-sci font-bold mr-1.5">{opt.v}</span>
+                  <span className="text-xs opacity-70">{opt.l}</span>
+                </button>
+              );
+            })}
+          </div>
+          {data.selectedChar.expected === 'AAorAS' && (
+            <p className="text-xs text-slate-500 mt-2 italic">Indice : génotype non déterminable avec certitude. AA ou AS seront acceptés.</p>
+          )}
+        </div>
+      )}
+
+      {data.pedigreeChecked && data.pedigreeErrors.length === 0 && (
+        <div className="card-border rounded-xl p-4 mb-5 anim-in" style={{borderColor: 'rgba(16,185,129,0.4)', background: 'rgba(16,185,129,0.05)'}}>
+          <div className="flex items-center gap-3">
+            <span className="text-emerald-400"><Icon name="check" size={20} /></span>
+            <p className="text-sm text-emerald-200">{T('phase4Success')} • +150 XP</p>
+          </div>
+        </div>
+      )}
+      {data.pedigreeChecked && data.pedigreeErrors.length > 0 && (
+        <div className="card-border rounded-xl p-4 mb-5 anim-in" style={{borderColor: 'rgba(239,68,68,0.4)', background: 'rgba(239,68,68,0.05)'}}>
+          <div className="flex items-start gap-3">
+            <span className="text-red-400 mt-0.5"><Icon name="x" size={18} /></span>
+            <p className="text-sm text-red-200">{T('phase4Error')}</p>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-center gap-3" style={{marginTop: '1.5rem', marginBottom: '1.5rem'}}>
+        {!data.pedigreeChecked || data.pedigreeErrors.length > 0 ? (
+          <button onClick={check} disabled={Object.keys(data.genotypes).length < FAMILY.length}
+            className={`px-8 py-3.5 rounded-full inline-flex items-center gap-3 ${Object.keys(data.genotypes).length < FAMILY.length ? 'bg-slate-800 text-slate-500' : 'btn-primary'}`}
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+            {T('phase4Check')} <Icon name="check" size={16} />
+          </button>
+        ) : (
+          <button onClick={onNext} className="btn-primary px-8 py-3.5 rounded-full inline-flex items-center gap-3"
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+            {T('continue')} <Icon name="arrow" size={16} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PHASE 5 — Punnett
+// ============================================================
+function Phase5Punnett({ data, setData, onCorrect, onWrong, onNext }) {
+  const [selected, setSelected] = useState(null);
+  const [answered, setAnswered] = useState(false);
+  const [wasCorrect, setWasCorrect] = useState(false);
+
+  const submit = () => {
+    if (selected === null) return;
+    const c = selected === 0;
+    setWasCorrect(c); setAnswered(true);
+    if (c) onCorrect(); else onWrong();
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="anim-in text-center mb-6">
+        <p className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/60 mb-3"><Icon name="dna" size={14} /> {T('phase5Title')}</p>
+        <p className="text-slate-400 max-w-xl mx-auto text-sm">{T('phase5Intro')}</p>
+      </div>
+
+      <div className="anim-in delay-100 card-border rounded-2xl p-5 mb-5">
+        <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold mb-4 text-center">Échiquier AS × AS</p>
+        <div className="max-w-xs mx-auto">
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            <div></div>
+            <div className="text-center font-display font-bold text-amber-300 text-xl">A</div>
+            <div className="text-center font-display font-bold text-red-400 text-xl">S</div>
+          </div>
+          {[0,1].map(row => (
+            <div key={row} className="grid grid-cols-3 gap-2 mb-2">
+              <div className="text-center font-display font-bold text-xl" style={{color: row === 0 ? '#fcd34d' : '#f87171'}}>{row === 0 ? 'A' : 'S'}</div>
+              {[0,1].map(col => {
+                const k = `${row},${col}`;
+                const v = data.punnettCells[k];
+                let bg = 'bg-slate-900/50 border-slate-700';
+                if (v === 'SS') bg = 'bg-red-500/20 border-red-500/50';
+                else if (v === 'AS') bg = 'bg-amber-500/20 border-amber-500/50';
+                else if (v === 'AA') bg = 'bg-emerald-500/20 border-emerald-500/50';
+                return (
+                  <button key={col} onClick={() => {
+                    const vals = ['', 'AA', 'AS', 'SS'];
+                    const idx = vals.indexOf(v || '');
+                    setData(d => ({...d, punnettCells: {...d.punnettCells, [k]: vals[(idx+1)%vals.length]}}));
+                  }} className={`aspect-square rounded-lg border-2 font-mono-sci font-bold text-lg ${bg} text-white`}>
+                    {v || '?'}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+          <p className="text-[11px] text-slate-500 text-center mt-3 italic">Clique sur une case pour changer le génotype</p>
+        </div>
+      </div>
+
+      <div className="anim-in delay-200 card-border rounded-2xl p-5 mb-5">
+        <p className="text-slate-100 font-bold mb-4">{T('phase5Q')}</p>
+        <div className="grid grid-cols-2 gap-2">
+          {[T('phase5A'), T('phase5B'), T('phase5C'), T('phase5D')].map((opt, idx) => {
+            const isSel = selected === idx;
+            const showC = answered && idx === 0;
+            const showW = answered && isSel && idx !== 0;
+            let cls = 'border-slate-700 bg-slate-900/40 text-slate-200';
+            if (showC) cls = 'border-emerald-400 bg-emerald-500/10 text-emerald-100';
+            else if (showW) cls = 'border-red-500 bg-red-500/10 text-red-100';
+            else if (isSel) cls = 'border-amber-400 bg-amber-500/10 text-amber-100';
+            return (
+              <button key={idx} onClick={() => !answered && setSelected(idx)} disabled={answered}
+                className={`p-3 rounded-lg border text-sm font-medium transition-all ${cls}`}>
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {answered && (
+        <div className="card-border rounded-2xl p-5 mb-5 anim-in" style={{borderColor: wasCorrect ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)', background: wasCorrect ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)'}}>
+          <div className="flex items-start gap-3">
+            <span className={wasCorrect ? 'text-emerald-400' : 'text-red-400'}><Icon name={wasCorrect ? 'check' : 'alert'} size={20} /></span>
+            <div>
+              <p className={`text-xs uppercase tracking-wider font-bold mb-2 ${wasCorrect ? 'text-emerald-400' : 'text-red-400'}`}>
+                {wasCorrect ? T('correct') + ' • +150 XP' : T('wrong') + ' • la bonne réponse est 1/4 (25 %)'}
+              </p>
+              <p className="text-sm text-slate-200 leading-relaxed">{T('phase5Explain')}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-center" style={{marginTop: '1.5rem', marginBottom: '1.5rem'}}>
+        {!answered ? (
+          <button onClick={submit} disabled={selected === null}
+            className={`px-8 py-3.5 rounded-full inline-flex items-center gap-3 ${selected === null ? 'bg-slate-800 text-slate-500' : 'btn-primary'}`}
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+            {T('confirm')} <Icon name="check" size={16} />
+          </button>
+        ) : (
+          <button onClick={onNext} className="btn-primary px-8 py-3.5 rounded-full inline-flex items-center gap-3"
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+            {T('continue')} <Icon name="arrow" size={16} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// EPILOGUE
+// ============================================================
+function Epilogue({ xp, onComplete }) {
+  return (
+    <div className="max-w-2xl mx-auto text-center">
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-emerald-400/80 mb-4">
+        <Icon name="check" size={14} /> <span>Mission accomplie</span>
+      </div>
+      <h2 className="anim-in delay-100 font-display text-4xl md:text-5xl mb-5"><span className="shimmer-text">{T('epilogueTitle')}</span></h2>
+      <p className="anim-in delay-200 text-slate-300 text-base md:text-lg mb-8 leading-relaxed">{T('epilogueMsg')}</p>
+
+      <div className="anim-in delay-300 card-border rounded-2xl p-5 mb-6 text-left">
+        <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold mb-2">{T('epilogueConseil')}</p>
+        <p className="text-slate-200 italic">« {T('epilogueConseilText')} »</p>
+      </div>
+
+      <div className="anim-in delay-400 grid grid-cols-3 gap-2 mb-6">
+        <div className="card-border rounded-xl p-3">
+          <div className="flex justify-center mb-1 text-amber-400"><Icon name="sparkles" size={20} /></div>
+          <p className="font-mono-sci text-xl text-amber-300 font-bold">{xp}</p>
+          <p className="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">XP</p>
+        </div>
+        <div className="card-border rounded-xl p-3">
+          <div className="flex justify-center mb-1 text-amber-400"><Icon name="award" size={20} /></div>
+          <p className="text-[11px] text-amber-200 font-bold leading-tight">Détective drépanocytose</p>
+        </div>
+        <div className="card-border rounded-xl p-3">
+          <div className="flex justify-center mb-1 text-amber-400"><Icon name="bookOpen" size={20} /></div>
+          <p className="text-[11px] text-amber-200 font-bold leading-tight">Hérédité autosomale récessive</p>
+        </div>
+      </div>
+
+      <div className="anim-in delay-500 mb-8 py-5 border-t border-b border-amber-500/20">
+        <p className="italic text-amber-200/90 text-lg">« {T('epiloguePhilo')} »</p>
+      </div>
+
+      <div className="anim-in delay-500 card-border rounded-2xl p-5 mb-8 text-left" style={{borderColor: 'rgba(251,191,36,0.4)'}}>
+        <div className="flex items-center gap-2 mb-2 text-amber-400">
+          <Icon name="zap" size={16} />
+          <p className="text-xs uppercase tracking-wider font-bold">{T('epilogueMVR')}</p>
+        </div>
+        <p className="text-slate-200 leading-relaxed text-sm">{T('epilogueMVRText')}</p>
+      </div>
+
+      <button onClick={onComplete} className="anim-in delay-500 btn-primary px-8 py-3.5 rounded-full inline-flex items-center gap-3">
+        <Icon name="home" size={16} /> {T('backHome')}
+      </button>
+      <p className="anim-in delay-500 mt-10 text-[10px] tracking-[0.3em] uppercase text-slate-700">{T('brand')}</p>
+    </div>
+  );
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
