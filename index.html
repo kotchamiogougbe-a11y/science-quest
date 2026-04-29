@@ -4,12 +4,130 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Science Quest">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Science Quest">
 <meta name="theme-color" content="#020617">
 <meta name="author" content="Kotchami Ogougbe">
 <meta name="copyright" content="© 2026 Kotchami Ogougbe. Tous droits réservés.">
 <meta name="description" content="Science Quest — Plateforme éducative gamifiée. Sauver le monde par la connaissance.">
 <title>Science Quest — Mission Science</title>
+
+<!-- ====== PWA : Icône SVG embarquée (data URI) ====== -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23f59e0b'/><stop offset='100%25' stop-color='%23d97706'/></linearGradient></defs><rect width='192' height='192' rx='40' fill='%23020617'/><circle cx='96' cy='96' r='62' fill='none' stroke='url(%23g)' stroke-width='5'/><text x='96' y='118' text-anchor='middle' font-family='Georgia,serif' font-size='80' font-weight='bold' fill='url(%23g)'>SQ</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23f59e0b'/><stop offset='100%25' stop-color='%23d97706'/></linearGradient></defs><rect width='192' height='192' rx='40' fill='%23020617'/><circle cx='96' cy='96' r='62' fill='none' stroke='url(%23g)' stroke-width='5'/><text x='96' y='118' text-anchor='middle' font-family='Georgia,serif' font-size='80' font-weight='bold' fill='url(%23g)'>SQ</text></svg>">
+
+<!-- ====== PWA : Manifest inline (data URI) — fonctionne sans fichier séparé ====== -->
+<script>
+  // Manifest généré dynamiquement et injecté via Blob URL au démarrage
+  // pour rester compatible avec un déploiement en un seul fichier HTML.
+  (function() {
+    try {
+      const iconSvg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='#f59e0b'/><stop offset='100%' stop-color='#d97706'/></linearGradient></defs><rect width='192' height='192' rx='40' fill='#020617'/><circle cx='96' cy='96' r='62' fill='none' stroke='url(#g)' stroke-width='5'/><text x='96' y='118' text-anchor='middle' font-family='Georgia,serif' font-size='80' font-weight='bold' fill='url(#g)'>SQ</text></svg>";
+      const iconDataUri = 'data:image/svg+xml;base64,' + btoa(iconSvg);
+      const manifest = {
+        name: 'Science Quest — Mission Science',
+        short_name: 'Science Quest',
+        description: 'Plateforme éducative gamifiée. Sauver le monde par la connaissance.',
+        start_url: './',
+        display: 'standalone',
+        orientation: 'portrait-primary',
+        background_color: '#020617',
+        theme_color: '#020617',
+        lang: 'fr',
+        dir: 'ltr',
+        categories: ['education', 'games', 'science'],
+        icons: [
+          { src: iconDataUri, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+          { src: iconDataUri, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = URL.createObjectURL(blob);
+      document.head.appendChild(link);
+    } catch(e) { console.warn('Manifest dynamique non supporté:', e); }
+  })();
+</script>
+
+<!-- ====== PWA : Service Worker inline (cache offline complet) ====== -->
+<script>
+  // Service Worker généré via Blob URL — fonctionne sans fichier séparé.
+  // Cache stratégie : "stale-while-revalidate" pour les ressources externes,
+  // "cache-first" pour les assets statiques.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      try {
+        const swCode = `
+          const CACHE_NAME = 'science-quest-v1';
+          const RUNTIME_CACHE = 'sq-runtime-v1';
+
+          // Installation : on n'a rien à pré-cacher, on laisse le runtime caching faire
+          self.addEventListener('install', function(e) {
+            self.skipWaiting();
+          });
+
+          self.addEventListener('activate', function(e) {
+            // Nettoyer les anciens caches
+            e.waitUntil(
+              caches.keys().then(function(keys) {
+                return Promise.all(keys.filter(function(k) {
+                  return k !== CACHE_NAME && k !== RUNTIME_CACHE;
+                }).map(function(k) { return caches.delete(k); }));
+              }).then(function() { return self.clients.claim(); })
+            );
+          });
+
+          // Fetch handler : cache-first avec mise à jour en arrière-plan
+          self.addEventListener('fetch', function(event) {
+            const req = event.request;
+            // Ne gérer que les GET
+            if (req.method !== 'GET') return;
+            // Ignorer les requêtes externes non-cachables (ex: analytics, ws)
+            if (req.url.indexOf('chrome-extension') !== -1) return;
+            if (req.url.indexOf('googletagmanager') !== -1) return;
+            if (req.url.indexOf('google-analytics') !== -1) return;
+
+            event.respondWith(
+              caches.match(req).then(function(cached) {
+                const fetchPromise = fetch(req).then(function(response) {
+                  if (response && response.status === 200 && response.type !== 'opaque') {
+                    const respClone = response.clone();
+                    caches.open(RUNTIME_CACHE).then(function(cache) {
+                      cache.put(req, respClone).catch(function(){});
+                    });
+                  }
+                  return response;
+                }).catch(function() {
+                  // Si offline et la ressource n'est pas en cache, on retourne ce qu'on a
+                  return cached;
+                });
+                // Stale-while-revalidate : retourne le cache d'abord si dispo, fetch en parallèle
+                return cached || fetchPromise;
+              })
+            );
+          });
+
+          // Permettre au client de demander une mise à jour
+          self.addEventListener('message', function(event) {
+            if (event.data === 'SKIP_WAITING') self.skipWaiting();
+          });
+        `;
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl, { scope: './' })
+          .then(function(reg) {
+            console.log('Service Worker enregistré pour le mode hors-ligne');
+            // Auto-update toutes les heures si l'app reste ouverte
+            setInterval(function() { reg.update().catch(function(){}); }, 3600000);
+          })
+          .catch(function(err) { console.warn('Service Worker non disponible:', err); });
+      } catch(e) { console.warn('PWA non supportée sur ce navigateur:', e); }
+    });
+  }
+</script>
 
 <!-- ====== Google Analytics — Mesure d'audience Science Quest ====== -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SNCF3PF2JF"></script>
@@ -84,6 +202,14 @@
   @keyframes musicPulse {
     0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.5); opacity: 0.6; }
+  }
+
+  /* Print : pour sauver les certificats en PDF */
+  @media print {
+    body * { visibility: hidden; }
+    #certificate-printable, #certificate-printable * { visibility: visible; }
+    #certificate-printable { position: absolute; left: 0; top: 0; width: 100%; }
+    .print-hidden { display: none !important; }
   }
 
   .card-border {
@@ -551,35 +677,67 @@ const MISSIONS_DATA = {
         question: "Tu reçois ce symbole : ■  Que représente-t-il ?",
         options: ["Une femme saine", "Un homme atteint d'une maladie", "Un sexe non déterminé", "Un avortement"],
         correctIdx: 1, xp: 80,
-        explain: "Le carré (□) représente le sexe masculin. Le remplissage plein (■) indique un individu atteint. Donc ■ = homme atteint. Pour la femme atteinte, on utilise ● (cercle plein)." },
+        hint: "Souviens-toi : carré = ?, cercle = ?. Et le remplissage plein indique l'état atteint.",
+        explain: "Le carré (□) représente le sexe masculin. Le remplissage plein (■) indique un individu atteint. Donc ■ = homme atteint. Pour la femme atteinte, on utilise ● (cercle plein).",
+        successOutcome: "Tu commences à reconnaître les symboles. Dr. Mariama hoche discrètement la tête.",
+        consequence: "Dr. Mariama te tend une autre fiche : « Reprends. Si tu te trompes ici, tout l'arbre devient illisible. »" },
+
+      { type: 'narrative',
+        icon: '🏥',
+        title: "Le dossier de la famille Ibrahim",
+        subtitle: "Pause — un dossier important arrive",
+        paragraphs: [
+          "Dr. Mariama te tend un dossier épais. C'est celui de la famille Ibrahim, suivie depuis 30 ans à l'hôpital de Niamey.",
+          "Quatre générations y sont représentées. Trois cas de maladie sanguine héréditaire. Un mariage consanguin entre cousins. Une grossesse en cours.",
+          "« Ce dossier, dit-elle, est ton premier vrai défi. Avant de l'analyser, il faut savoir le LIRE. Continuons. »"
+        ],
+        character: { emoji: '👩‍⚕️', name: 'Dr. Mariama', line: "Dans ce métier, mal lire un pédigrée a déjà coûté des vies. Prends le temps." } },
 
       { type: 'question',
         title: "Phase 2 — Le sexe non spécifié",
         question: "Tu vois ce symbole sur un pédigrée : ◇  Dans quelle situation l'utilise-t-on ?",
         options: ["Pour un mort-né", "Pour un sexe inconnu ou non spécifié (ex : fœtus avant échographie)", "Pour un mariage consanguin", "Pour un porteur sain"],
         correctIdx: 1, xp: 80,
-        explain: "Le losange (◇) sert quand on ne connaît pas le sexe : fœtus avant échographie, mort-né dont le sexe n'est pas mentionné, ou information manquante dans un dossier ancien." },
+        hint: "Le losange est neutre — ni masculin ni féminin. À quoi ça sert ?",
+        explain: "Le losange (◇) sert quand on ne connaît pas le sexe : fœtus avant échographie, mort-né dont le sexe n'est pas mentionné, ou information manquante dans un dossier ancien.",
+        successOutcome: "Tu identifies correctement le losange. Le dossier Ibrahim a justement un fœtus en cours de grossesse.",
+        consequence: "Le fœtus reste mal identifié dans le dossier. Dr. Mariama soupire : « Ces erreurs s'accumulent. »" },
 
-      { type: 'question',
+      { type: 'vraifaux',
         title: "Phase 3 — Les jumeaux",
-        question: "Sur un pédigrée, deux frères sont reliés à leurs parents par une ligne en V avec une barre horizontale commune. De quel type de jumeaux s'agit-il ?",
-        options: ["Faux jumeaux (dizygotes)", "Vrais jumeaux (monozygotes)", "Frères ordinaires", "Cousins"],
+        question: "Sur un pédigrée, deux frères reliés à leurs parents par DEUX lignes en V séparées sont des vrais jumeaux (monozygotes).",
         correctIdx: 1, xp: 100,
-        explain: "La barre horizontale commune représente l'œuf unique d'origine. Les vrais jumeaux (monozygotes) viennent d'un seul zygote qui s'est divisé. Les faux jumeaux (dizygotes) sont représentés par deux lignes en V séparées : deux ovules différents." },
+        hint: "Vrais jumeaux = un seul œuf qui s'est divisé. Comment représenter cette origine commune ?",
+        explain: "FAUX. Deux lignes en V séparées = deux ovules différents = faux jumeaux (dizygotes). Les vrais jumeaux (monozygotes) sont représentés par une ligne en V avec une BARRE horizontale commune (l'œuf unique d'origine).",
+        justifQuestion: "Pourquoi est-ce faux ?",
+        justifications: [
+          "Deux lignes en V séparées indiquent deux ovules différents = faux jumeaux",
+          "Les vrais jumeaux n'apparaissent jamais sur un pédigrée",
+          "Il s'agit d'un mariage consanguin"
+        ],
+        correctJustifIdx: 0,
+        successOutcome: "Tu distingues parfaitement vrais et faux jumeaux. Une compétence cruciale en génétique.",
+        consequence: "Dans le dossier, deux frères Ibrahim sont mal classifiés. Cela compromet l'analyse de transmission." },
 
       { type: 'question',
         title: "Phase 4 — Le mariage consanguin",
         question: "Sur un arbre généalogique, deux personnes sont reliées par DEUX lignes horizontales parallèles ( ═ ) au lieu d'une seule. Que cela signifie-t-il ?",
         options: ["Un divorce", "Un mariage consanguin (entre apparentés)", "Une union illégitime", "Un remariage"],
         correctIdx: 1, xp: 100,
-        explain: "Le double trait ( ═ ) est le code universel pour un mariage entre personnes apparentées (cousins, par exemple). C'est crucial à repérer car la consanguinité augmente fortement le risque d'apparition de maladies récessives." },
+        hint: "Le double trait souligne un lien spécial entre les époux. Ce lien existait avant le mariage…",
+        explain: "Le double trait ( ═ ) est le code universel pour un mariage entre personnes apparentées (cousins, par exemple). C'est crucial à repérer car la consanguinité augmente fortement le risque d'apparition de maladies récessives.",
+        successOutcome: "Le couple consanguin du dossier Ibrahim est maintenant bien identifié. C'est probablement la clé.",
+        consequence: "Tu rates l'indice central du dossier : la consanguinité explique la maladie." },
 
       { type: 'question',
         title: "Phase 5 — Le défi Ibrahim",
         question: "Le dossier Ibrahim mentionne « II₃ ». Que signifie cette notation ?",
         options: ["L'individu né en deuxième position dans la troisième génération", "Le 3ème individu de la 2ème génération", "Le couple n°3 de la maison n°2", "Une notation médicale d'urgence"],
         correctIdx: 1, xp: 140,
-        explain: "Le chiffre romain (II) indique la génération (en partant des plus anciens en haut : I, II, III…). Le chiffre arabe en indice (₃) indique le rang dans la génération (de gauche à droite). II₃ = troisième individu de la deuxième génération." }
+        hint: "Chiffre romain = ? (regarde sur les pédigrées : où sont les chiffres romains ?). Indice = rang dans la ligne.",
+        explain: "Le chiffre romain (II) indique la génération (en partant des plus anciens en haut : I, II, III…). Le chiffre arabe en indice (₃) indique le rang dans la génération (de gauche à droite). II₃ = troisième individu de la deuxième génération.",
+        successOutcome: "Tu navigues maintenant dans le pédigrée comme dans un livre. Mariama te confie le dossier complet.",
+        consequence: "Sans cette notation, impossible de communiquer avec d'autres généticiens. Recommence." }
     ],
     epilogue: {
       titre: "Rang 1 débloqué : Décodeur junior",
@@ -620,35 +778,67 @@ const MISSIONS_DATA = {
         question: "Madame Halima dit : « Mes deux parents sont sains. J'ai un frère sain et un autre frère atteint. » Combien de générations vas-tu déjà tracer ?",
         options: ["Une seule (I)", "Deux générations (I et II)", "Trois générations (I, II, III)", "Pas assez d'informations"],
         correctIdx: 1, xp: 80,
-        explain: "Les parents = génération I. Madame Halima et ses frères = génération II. Donc deux générations à tracer. Si elle parlait de ses propres enfants, on ajouterait la génération III." },
+        hint: "Les parents = génération I. Halima + ses frères = ? Compte chaque ligne d'âge.",
+        explain: "Les parents = génération I. Madame Halima et ses frères = génération II. Donc deux générations à tracer. Si elle parlait de ses propres enfants, on ajouterait la génération III.",
+        successOutcome: "Halima sourit faiblement. Elle voit que tu es méthodique — c'est ce dont elle a besoin.",
+        consequence: "Halima s'inquiète : « Vous semblez perdu. C'est si compliqué que ça ? »" },
 
       { type: 'question',
         title: "Phase 2 — Le frère atteint",
         question: "Le frère atteint est un homme. Quel symbole vas-tu utiliser pour lui ?",
         options: ["○ (cercle vide)", "● (cercle plein)", "□ (carré vide)", "■ (carré plein)"],
         correctIdx: 3, xp: 80,
-        explain: "Carré = homme. Plein = atteint. Donc ■ = homme atteint. Pour la position dans le pédigrée, il sera dessiné comme enfant des parents en génération I, à la même ligne que sa sœur Halima et son autre frère sain." },
+        hint: "Carré ou cercle ? Plein ou vide ? Combine les deux infos : sexe + état.",
+        explain: "Carré = homme. Plein = atteint. Donc ■ = homme atteint. Pour la position dans le pédigrée, il sera dessiné comme enfant des parents en génération I, à la même ligne que sa sœur Halima et son autre frère sain.",
+        successOutcome: "Le pédigrée prend forme sur ta feuille. Halima reconnaît son frère sur le schéma.",
+        consequence: "Halima fronce les sourcils en voyant le mauvais symbole. Recommence." },
 
-      { type: 'question',
+      { type: 'narrative',
+        icon: '💔',
+        title: "Une mémoire douloureuse",
+        subtitle: "Pause — Halima se confie",
+        paragraphs: [
+          "Madame Halima essuie une larme. Tu attends qu'elle reprenne son souffle.",
+          "« Ma petite sœur Aïcha est morte avant qu'on puisse savoir si elle avait la même maladie. Personne n'en parle dans la famille. Mais elle compte. »",
+          "Tu prends note. En génétique, les défunts comptent autant que les vivants. Chaque silence cache une histoire."
+        ],
+        character: { emoji: '👩', name: 'Madame Halima', line: "Notez tout. Même les morts. Surtout les morts." } },
+
+      { type: 'vraifaux',
         title: "Phase 3 — Une fille décédée",
-        question: "Madame Halima ajoute : « J'avais aussi une petite sœur qui est décédée à 6 mois. On ne sait pas si elle était malade. » Comment la représenter ?",
-        options: ["Ne pas la mentionner — pas assez d'info", "○ avec une barre oblique pour indiquer le décès", "■ pour indiquer atteinte", "↓ pour indiquer un avortement"],
+        question: "Une fille décédée à 6 mois dont on ne sait pas si elle était atteinte ne doit PAS apparaître sur le pédigrée puisqu'on n'a pas d'information.",
         correctIdx: 1, xp: 100,
-        explain: "Une fille décédée se représente par ○ (cercle pour femme) avec une barre oblique traversant le symbole pour indiquer le décès. Elle est INDISPENSABLE à mentionner — chaque membre de la famille compte, même décédé, car cela donne des indices essentiels (mortalité infantile suspecte, etc.)." },
+        hint: "En génétique, ignore-t-on les défunts inconnus ? Réfléchis : que peut révéler une mortalité infantile ?",
+        explain: "FAUX. Une fille décédée doit être représentée par ○ (cercle pour femme) avec une barre oblique. Elle est INDISPENSABLE à mentionner — chaque membre compte, même décédé, car cela donne des indices essentiels (mortalité infantile suspecte, transmission cachée).",
+        justifQuestion: "Pourquoi est-il faux de ne pas la mentionner ?",
+        justifications: [
+          "Chaque membre, même décédé, peut révéler un schéma de transmission caché",
+          "C'est une obligation légale en génétique médicale",
+          "Pour respecter sa mémoire seulement"
+        ],
+        correctJustifIdx: 0,
+        successOutcome: "Halima est touchée que tu inclues sa sœur. « Merci. C'est important pour nous. »",
+        consequence: "Tu rates un indice clinique majeur : la mortalité infantile peut signaler une forme grave de la maladie." },
 
       { type: 'question',
-        title: "Phase 4 — Première hypothèse",
-        question: "Le récit révèle : seuls des HOMMES sont touchés. Les femmes sont toutes saines. Les parents sont sains. Quelle hypothèse formuler en premier ?",
-        options: ["Maladie autosomale dominante", "Maladie gonosomale liée à X récessive (transmise par les mères)", "Maladie purement environnementale", "Maladie consanguine"],
-        correctIdx: 1, xp: 140,
-        explain: "Seuls les hommes touchés + parents sains = signature classique d'une maladie gonosomale liée à X récessive. La mère (saine) est probablement conductrice. Elle transmet l'allèle malade à ses fils via son chromosome X. C'est exactement le profil de maladies comme l'hémophilie, le daltonisme, la myopathie de Duchenne." },
+        title: "Phase 4 — La grand-mère paternelle",
+        question: "Halima ajoute : « Mon père m'a dit qu'il avait une tante (la sœur de sa mère) atteinte de la même maladie des yeux. » Que peux-tu en déduire ?",
+        options: ["La maladie vient du côté paternel uniquement", "Il y a au moins une porteuse en génération I (la mère du père)", "La maladie est probablement nouvelle", "L'information est inutilisable"],
+        correctIdx: 1, xp: 120,
+        hint: "Si la tante paternelle est atteinte, quelqu'un dans sa propre lignée parentale (grand-mère paternelle d'Halima) est forcément lié.",
+        explain: "Si la tante paternelle (sœur de la grand-mère paternelle) est atteinte, alors les parents de la grand-mère portaient l'allèle. La grand-mère paternelle est probablement une porteuse saine. C'est la première grande hypothèse à vérifier !",
+        successOutcome: "Tu remontes la trace jusqu'aux grands-parents. Une transmission cachée se dessine.",
+        consequence: "Tu rates le lien entre les générations. Le diagnostic tarde à émerger." },
 
       { type: 'question',
-        title: "Phase 5 — Le défi Ibrahim — Fragment 1",
-        question: "Tu reprends le dossier Ibrahim. Il révèle : « Le grand-père Mamane Ibrahim est décédé d'une maladie sanguine. Sa femme Aïcha est saine. Ils ont eu : 2 fils dont l'un est malade, 1 fille saine, 1 fille décédée à 6 mois. » Combien de symboles vas-tu placer en génération II ?",
-        options: ["3 symboles", "4 symboles", "5 symboles", "Aucun, je commence à la génération III"],
-        correctIdx: 1, xp: 140,
-        explain: "4 symboles : ■ (fils malade) + □ (fils sain) + ○ (fille saine) + ○ avec barre oblique (fille décédée). TOUS les enfants comptent, même celle décédée à 6 mois. Tu viens de construire la première génération du pédigrée Ibrahim." }
+        title: "Phase 5 — La piste préliminaire",
+        question: "À ce stade, avec un frère atteint et une tante paternelle atteinte, mais des parents et grands-parents sains, quelle hypothèse principale dois-tu poser ?",
+        options: ["Maladie autosomale dominante", "Maladie autosomale récessive", "Maladie liée à l'X récessive", "Aucune piste possible"],
+        correctIdx: 2, xp: 140,
+        hint: "Une maladie 'des yeux' chez plusieurs hommes (frère, tante mais via paternel)… le chromosome X est-il impliqué ? Pense à la transmission par les femmes porteuses.",
+        explain: "Atteintes uniquement chez les hommes (frère, tante = femme MAIS sans filles atteintes), parents sains : très probablement une maladie liée à l'X récessive. La grand-mère paternelle serait porteuse saine, et la mère d'Halima serait peut-être aussi porteuse.",
+        successOutcome: "Halima a maintenant une piste claire. Dr. Mariama valide ton raisonnement.",
+        consequence: "Sans cette hypothèse, l'analyse est impossible à poursuivre. Reprends le pédigrée." }
     ],
     epilogue: {
       titre: "Rang 1 confirmé — Pédigrée Ibrahim Fragment 1/5",
@@ -1549,6 +1739,17 @@ const MISSIONS_DATA = {
       recompenses: { xp: 280, badge: "Cartographe NEUROLINK", power: "Cartographe du système nerveux" }
     },
     phases: [
+      { type: 'narrative',
+        icon: '🚨',
+        title: "Arrivée aux urgences",
+        subtitle: "23h47 — Une nuit qui bascule",
+        paragraphs: [
+          "L'ambulance s'arrête en trombe devant les urgences de l'hôpital de Niamey. Amadou Mahamane, 47 ans, transporteur de marchandises, est inconscient.",
+          "Sa femme Hadiza pleure dans le couloir. Leurs trois enfants attendent dehors. Personne ne sait encore ce qui se passe.",
+          "Dr Salamatou prend la situation en main. Tu es son interne ce soir. Elle te regarde : « Tu vas m'aider à comprendre. Vite. »"
+        ],
+        character: { emoji: '👩‍⚕️', name: 'Dr Salamatou', line: "Dans cette salle, on n'apprend pas — on raisonne. Et vite. Suis-moi." } },
+
       { type: 'question',
         title: "Phase 1 — Le grand plan",
         question: "Dr Salamatou te demande : « Le système nerveux d'Amadou se divise en deux grandes parties. Lesquelles ? »",
@@ -1559,19 +1760,26 @@ const MISSIONS_DATA = {
           "Les nerfs sensitifs et les nerfs moteurs"
         ],
         correctIdx: 1, xp: 80,
-        explain: "Le système nerveux humain comprend deux parties : (1) le SNC, logé dans la boîte crânienne (encéphale = cerveau + cervelet + bulbe rachidien) et le canal rachidien (moelle épinière), c'est le centre de décision ; (2) le SNP, formé de 12 paires de nerfs crâniens et 31 paires de nerfs rachidiens, c'est le réseau de câbles qui relie le SNC à tous les organes." },
+        hint: "Pense en termes anatomiques : le 'centre' (protégé par les os) et la 'périphérie' (les câbles qui partent du centre).",
+        explain: "Le système nerveux humain comprend deux parties : (1) le SNC, logé dans la boîte crânienne (encéphale = cerveau + cervelet + bulbe rachidien) et le canal rachidien (moelle épinière), c'est le centre de décision ; (2) le SNP, formé de 12 paires de nerfs crâniens et 31 paires de nerfs rachidiens, c'est le réseau de câbles qui relie le SNC à tous les organes.",
+        successOutcome: "Tu démarres bien. Salamatou hoche la tête : « Voilà la base. On peut continuer. »",
+        consequence: "Salamatou s'impatiente : « Reprends. Sans ce schéma, tu ne pourras pas localiser la lésion. »" },
 
-      { type: 'question',
-        title: "Phase 2 — Les boucliers du cerveau",
-        question: "Dr Moustapha pointe une zone sur l'IRM d'Amadou : « Ces trois membranes protègent l'encéphale. Comment s'appellent-elles, de l'extérieur vers l'intérieur ? »",
-        options: [
-          "Cortex, hippocampe, thalamus",
-          "Pie-mère, arachnoïde, dure-mère",
-          "Dure-mère (épaisse, externe), arachnoïde (vascularisée, intermédiaire), pie-mère (fine, collée au tissu)",
-          "Substance grise, substance blanche, liquide céphalorachidien"
+      { type: 'vraifaux',
+        title: "Phase 2 — Les méninges",
+        question: "Les méninges, de l'extérieur vers l'intérieur, sont : Pie-mère → Arachnoïde → Dure-mère.",
+        correctIdx: 1, xp: 100,
+        hint: "Mnémotechnique : « Dure » = qui ressemble à un casque. Où placerais-tu ce 'casque' ?",
+        explain: "FAUX. L'ordre correct, de l'extérieur vers l'intérieur, est : DURE-MÈRE (épaisse, comme un casque), ARACHNOÏDE (vascularisée, intermédiaire), PIE-MÈRE (fine, collée au cerveau). Mnémotechnique : Dure-Arachnée-Pie = de la plus dure à la plus douce.",
+        justifQuestion: "Pourquoi est-ce faux ?",
+        justifications: [
+          "L'ordre correct est Dure-mère → Arachnoïde → Pie-mère (de l'extérieur vers l'intérieur)",
+          "Les méninges sont en réalité dans l'ordre inverse",
+          "Il n'y a que deux méninges, pas trois"
         ],
-        correctIdx: 2, xp: 80,
-        explain: "Les méninges sont 3 enveloppes protectrices, dans l'ordre de l'extérieur vers l'intérieur : DURE-MÈRE (épaisse, résistante, comme un casque), ARACHNOÏDE (très vascularisée, lieu de synthèse du liquide céphalorachidien qui amortit les chocs), PIE-MÈRE (fine, transparente, collée directement au cerveau et à la moelle pour les nourrir). Mnémotechnique : Dure-Arachnée-Pie = D-A-P, de la plus dure à la plus douce." },
+        correctJustifIdx: 0,
+        successOutcome: "Tu maîtrises l'anatomie protectrice. Important pour interpréter le scanner d'Amadou.",
+        consequence: "Si tu inverses les méninges, tu mal interprètes l'IRM. Refais le schéma anatomique." },
 
       { type: 'question',
         title: "Phase 3 — Substance grise vs substance blanche",
@@ -1583,7 +1791,10 @@ const MISSIONS_DATA = {
           "La blanche fabrique le sang, la grise les hormones"
         ],
         correctIdx: 1, xp: 100,
-        explain: "Substance GRISE = corps cellulaires des neurones + cellules gliales. C'est là que l'information est REÇUE et TRAITÉE. Substance BLANCHE = axones recouverts de myéline (qui donne la couleur blanche). C'est là que l'information CIRCULE rapidement entre zones du SNC. Dans la moelle, la substance grise est centrale (en forme de papillon), la blanche périphérique. Dans le cerveau, c'est l'inverse : grise en surface (cortex), blanche dessous." },
+        hint: "La couleur 'blanche' vient de quelque chose de gras et brillant. C'est… ?",
+        explain: "Substance GRISE = corps cellulaires des neurones + cellules gliales. C'est là que l'information est REÇUE et TRAITÉE. Substance BLANCHE = axones recouverts de myéline (qui donne la couleur blanche). C'est là que l'information CIRCULE rapidement entre zones du SNC. Dans la moelle, la substance grise est centrale (en forme de papillon), la blanche périphérique. Dans le cerveau, c'est l'inverse : grise en surface (cortex), blanche dessous.",
+        successOutcome: "Tu peux maintenant lire l'IRM d'Amadou. La zone sombre touche bien la substance grise.",
+        consequence: "Sans cette distinction, l'IRM reste illisible. Reprends." },
 
       { type: 'question',
         title: "Phase 4 — L'ultrastructure du neurone",
@@ -1595,7 +1806,10 @@ const MISSIONS_DATA = {
           "Cytoplasme → Membrane → Cellule de Schwann"
         ],
         correctIdx: 1, xp: 100,
-        explain: "Le neurone est polarisé : le message circule TOUJOURS dans un seul sens. (1) Les DENDRITES (prolongements courts, ramifiés) reçoivent les messages d'autres neurones. (2) Le CORPS CELLULAIRE (péricaryon) contient le noyau et tous les organites — il intègre les signaux reçus. (3) L'AXONE (long prolongement unique) conduit le message vers les autres cellules. (4) Les BOUTONS SYNAPTIQUES libèrent le message à la fin. La gaine de myéline qui entoure l'axone est faite de cellules de Schwann (dans le SNP) ; les nœuds de Ranvier sont les zones non myélinisées où le signal saute." },
+        hint: "Le neurone est POLARISÉ comme une pile : entrée → traitement → sortie. Quel prolongement reçoit ? Quel prolongement transmet ?",
+        explain: "Le neurone est polarisé : le message circule TOUJOURS dans un seul sens. (1) Les DENDRITES (prolongements courts, ramifiés) reçoivent les messages d'autres neurones. (2) Le CORPS CELLULAIRE (péricaryon) contient le noyau et tous les organites — il intègre les signaux reçus. (3) L'AXONE (long prolongement unique) conduit le message vers les autres cellules. (4) Les BOUTONS SYNAPTIQUES libèrent le message à la fin.",
+        successOutcome: "Tu comprends le sens du flux nerveux. Crucial pour analyser ce qui marche encore chez Amadou.",
+        consequence: "Sans le sens du flux, impossible de prédire ce qu'Amadou peut récupérer." },
 
       { type: 'question',
         title: "Phase 5 — Défi Amadou — IRM cervicale",
@@ -1607,7 +1821,10 @@ const MISSIONS_DATA = {
           "Le foie va défaillir"
         ],
         correctIdx: 1, xp: 140,
-        explain: "Réponse exacte. C4-C5 est une zone CRUCIALE car elle commande le diaphragme (C3-C5) et l'innervation des bras (C5-C7). Une lésion ici peut donner : tétraplégie (paralysie des 4 membres), troubles respiratoires (besoin de ventilation), perte de sensibilité sous la lésion. C'est pour ça qu'Amadou est inconscient et incapable de bouger : son cerveau veut envoyer des ordres, mais ils ne peuvent plus traverser la moelle au niveau cervical. On dit qu'il est « spinalisé » au-dessus de la lésion. Mais — point d'espoir — les réflexes médullaires en dessous peuvent persister." }
+        hint: "Que commande la région C3-C5 ? (Indice : un muscle vital pour respirer). Et C5-C7 ? (Indice : les bras).",
+        explain: "Réponse exacte. C4-C5 est une zone CRUCIALE car elle commande le diaphragme (C3-C5) et l'innervation des bras (C5-C7). Une lésion ici peut donner : tétraplégie (paralysie des 4 membres), troubles respiratoires (besoin de ventilation), perte de sensibilité sous la lésion. C'est pour ça qu'Amadou est inconscient et incapable de bouger : son cerveau veut envoyer des ordres, mais ils ne peuvent plus traverser la moelle au niveau cervical.",
+        successOutcome: "Diagnostic posé. Salamatou prépare l'équipe : « On a la localisation. Maintenant, on agit. »",
+        consequence: "Sans diagnostic clair, Amadou ne peut pas être pris en charge correctement. Reprends l'IRM." }
     ],
     epilogue: {
       titre: "Rang 1 atteint : Technicien NEUROLINK",
@@ -3569,26 +3786,76 @@ const MusicEngine = {
     filt.connect(wet).connect(this.reverbBus);
 
     const oscs = [];
-    chord.forEach(semitone => {
+    // Création des voix avec espacement stéréo (panoramique gauche/droite)
+    // Chaque note du chord est légèrement panée, créant une image stéréo large et organique
+    chord.forEach((semitone, idx) => {
       const freq = root * Math.pow(2, semitone / 12);
-      [-1, 1].forEach(side => {
+      // Pan : -0.6 à +0.6 selon la position dans le chord
+      const panValue = chord.length > 1 ? ((idx / (chord.length - 1)) - 0.5) * 1.2 : 0;
+      [-1, 1].forEach((side, sideIdx) => {
         const o = ctx.createOscillator();
         o.type = 'sawtooth';
         o.frequency.value = freq;
         o.detune.value = detune * side;
         const og = ctx.createGain();
         og.gain.value = 0.10 / chord.length;
-        o.connect(og).connect(g);
+        // Panner stéréo : voix gauche + voix droite légèrement décalées
+        const panner = (typeof ctx.createStereoPanner === 'function') ? ctx.createStereoPanner() : null;
+        if (panner) {
+          panner.pan.value = Math.max(-1, Math.min(1, panValue + side * 0.15));
+          o.connect(og).connect(panner).connect(g);
+        } else {
+          o.connect(og).connect(g);
+        }
         o.start();
         oscs.push(o);
       });
     });
-    // LFO sur le filtre pour mouvement organique
+
+    // LFO principal sur le filtre — cycle 12s pour respiration lente
     const lfo = ctx.createOscillator();
-    lfo.frequency.value = 0.08;
-    const lfoG = ctx.createGain(); lfoG.gain.value = 300;
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.083; // ~12s
+    const lfoG = ctx.createGain(); lfoG.gain.value = 350;
     lfo.connect(lfoG).connect(filt.frequency);
     lfo.start();
+
+    // Second LFO sur le pan (auto-pan subtil) si stéréo dispo
+    let panLfo = null;
+    if (typeof ctx.createStereoPanner === 'function') {
+      const masterPanner = ctx.createStereoPanner();
+      masterPanner.pan.value = 0;
+      // On insère le panner master entre filt et dry
+      try {
+        filt.disconnect(dry);
+        filt.connect(masterPanner).connect(dry);
+        panLfo = ctx.createOscillator();
+        panLfo.type = 'sine';
+        panLfo.frequency.value = 0.04; // cycle 25s, très lent
+        const panLfoG = ctx.createGain(); panLfoG.gain.value = 0.15;
+        panLfo.connect(panLfoG).connect(masterPanner.pan);
+        panLfo.start();
+      } catch(e) {}
+    }
+
+    // Variation harmonique : progression d'accord toutes les 16 secondes (transposition douce)
+    // Modulation harmonique légère via détune coordonné
+    let harmonicLfoTimer = null;
+    let cycle = 0;
+    const harmonicVariation = () => {
+      // Toutes les 16s, on transpose légèrement le pad d'un demi-ton vers le haut puis bas
+      cycle = (cycle + 1) % 4;
+      const mods = [0, 200, 0, -100]; // I → ~II (un peu monté) → I → bVII (légèrement descendu) en cents
+      const target = mods[cycle];
+      oscs.forEach((o, i) => {
+        const baseDetune = (i % 2 === 0) ? -detune : detune;
+        try {
+          o.detune.cancelScheduledValues(ctx.currentTime);
+          o.detune.linearRampToValueAtTime(baseDetune + target, ctx.currentTime + 8);
+        } catch(e) {}
+      });
+    };
+    harmonicLfoTimer = setInterval(harmonicVariation, 16000);
 
     const t = ctx.currentTime;
     g.gain.linearRampToValueAtTime(p.vol || 0.3, t + attack);
@@ -3599,9 +3866,11 @@ const MusicEngine = {
         g.gain.cancelScheduledValues(tt);
         g.gain.setValueAtTime(g.gain.value, tt);
         g.gain.linearRampToValueAtTime(0, tt + fade);
+        if (harmonicLfoTimer) clearInterval(harmonicLfoTimer);
         setTimeout(() => {
           oscs.forEach(o => { try { o.stop(); } catch(e){} });
           try { lfo.stop(); } catch(e){}
+          try { if (panLfo) panLfo.stop(); } catch(e){}
         }, fade * 1000 + 100);
       }
     };
@@ -4057,6 +4326,128 @@ const MENTORS = {
       "Tu es à mi-chemin. Je te trouve solide aujourd'hui.",
       "Bravo de tenir. Le plus dur est presque derrière."
     ]
+  },
+  // ---- NEUROLINK (médecine, neurosciences) ----
+  blandine: {
+    name: 'Dr Blandine', color: '#06b6d4', initials: 'Bl',
+    role: 'Radiologue — méticuleuse, lit les images comme on lit un texte.',
+    intro: ["Une image vaut mille mots — à condition de savoir la lire. Suis-moi.",
+            "Les détails parlent. Encore faut-il les écouter."],
+    success3: ["Tu vois ce que d'autres ne voient pas. C'est ça, l'œil radiologique.",
+               "Trois bonnes lectures. Tu deviens redoutable."],
+    success5: ["Cinq de suite. Tu as l'œil d'une radiologue confirmée."],
+    wrong: ["Reprends l'image, plan par plan. La réponse est toujours dedans.",
+            "Pas grave. En radio, on relit toujours deux fois."],
+    midway: ["Tu tiens bon. L'imagerie récompense la patience."]
+  },
+  moustapha: {
+    name: 'Dr Moustapha', color: '#dc2626', initials: 'Mo',
+    role: 'Neurochirurgien — précis, calme sous pression.',
+    intro: ["En neurochirurgie, le millimètre fait la différence. Précision absolue.",
+            "Pose ton scalpel mental. On y va doucement."],
+    success3: ["Précision millimétrique. Continue.",
+               "Tu opères comme un chirurgien. Pas un geste de trop."],
+    success5: ["Cinq d'affilée. Tu as les mains d'un opérateur expérimenté."],
+    wrong: ["Recommence. En chirurgie, on ne précipite jamais.",
+            "Erreur. Reprends ton souffle. La précision exige le calme."],
+    midway: ["Mi-chemin. La main reste ferme. Continue."]
+  },
+  appoline: {
+    name: 'Dr Appoline', color: '#84cc16', initials: 'Ap',
+    role: 'Kinésithérapeute — patiente, réhabilite mouvement et confiance.',
+    intro: ["La rééducation est un dialogue avec le corps. Apprends à l'écouter.",
+            "Le mouvement reviendra. Pas tout d'un coup. Étape par étape."],
+    success3: ["Trois progrès consécutifs. C'est exactement comme ça qu'on rééduque.",
+               "Tu accompagnes le mouvement. Bien."],
+    success5: ["Cinq de suite. Tu as compris que la patience est une compétence."],
+    wrong: ["Pas de problème. La rééducation, c'est répéter sans se lasser.",
+            "Reprends. Le corps apprend à son rythme — toi aussi."],
+    midway: ["Tu tiens. Le mouvement vient de la persévérance."]
+  },
+  florentine: {
+    name: 'Dr Florentine', color: '#a855f7', initials: 'Fl',
+    role: 'Endocrinologue — lit les hormones comme un récit.',
+    intro: ["L'endocrinologie, c'est l'art de lire les messages chimiques du corps.",
+            "Une hormone, ce n'est pas un nombre. C'est une histoire."],
+    success3: ["Tu lis les hormones comme un livre. Continue.",
+               "Trois bonnes interprétations. Tu raisonnes bilan en main."],
+    success5: ["Cinq d'affilée. C'est de l'endocrino de haut niveau."],
+    wrong: ["Reprends le bilan. La réponse est dans les chiffres et leur cohérence.",
+            "Pas grave. L'endocrinologie demande de croiser plusieurs valeurs."],
+    midway: ["Mi-parcours. Garde l'ensemble du bilan en tête."]
+  },
+  hamza: {
+    name: 'Dr Hamza', color: '#f43f5e', initials: 'H',
+    role: 'Cardiologue — rythme et précision, écoute les battements.',
+    intro: ["Le cœur ne ment jamais. Apprends à l'écouter.",
+            "En cardiologie, le rythme dit tout. Concentre-toi sur lui."],
+    success3: ["Trois bons rythmes. Tu prends le pouls de la situation."],
+    success5: ["Cinq d'affilée. Tu auscultes comme un cardiologue confirmé."],
+    wrong: ["Reprends l'ECG. La réponse est dans le tracé.",
+            "Une erreur en cardio, ça arrive. Reprends calmement."],
+    midway: ["Mi-chemin. Le cœur tient. Toi aussi."]
+  },
+  rachel: {
+    name: 'Inf. Rachel', color: '#14b8a6', initials: 'R',
+    role: 'Infirmière chef — pragmatique, terrain, voit ce que les médecins ratent.',
+    intro: ["Au lit du patient, on apprend ce qu'aucun livre n'enseigne. Suis-moi.",
+            "Le détail clinique du jour, c'est ton meilleur allié."],
+    success3: ["Tu observes bien. C'est le premier pas vers le bon soin.",
+               "Trois fois juste. Tu as l'œil terrain."],
+    success5: ["Cinq de suite. Tu travailles comme une infirmière expérimentée."],
+    wrong: ["Reprends. Au chevet du patient, on observe avant de conclure.",
+            "Pas grave. Sur le terrain, on corrige toujours."],
+    midway: ["Tu tiens. Le terrain récompense la rigueur."]
+  },
+  // ---- GENECODE (génétique, biologie moléculaire) ----
+  altine: {
+    name: 'Dr Altiné', color: '#7c3aed', initials: 'Al',
+    role: 'Généticien — lit les chromosomes comme une partition.',
+    intro: ["Un caryotype est une partition. Apprends à lire chaque ligne.",
+            "En génétique, chaque chromosome a son histoire. Écoute-les."],
+    success3: ["Trois bonnes lectures chromosomiques. Tu raisonnes en généticien.",
+               "Tu vois la translocation avant qu'elle ne se déclare."],
+    success5: ["Cinq d'affilée. C'est du diagnostic chromosomique de précision."],
+    wrong: ["Reprends le caryotype, paire par paire.",
+            "Pas grave. La génétique pardonne celui qui relit."],
+    midway: ["Mi-parcours. Garde la cytogénétique en tête."]
+  },
+  matthieu: {
+    name: 'Dr Matthieu', color: '#0ea5e9', initials: 'Mt',
+    role: 'Biologiste moléculaire — passionné par l\'ADN au niveau atomique.',
+    intro: ["L'ADN n'a pas de secret. Il a juste des séquences à lire.",
+            "Toute mutation est une variation. Toute variation a une cause."],
+    success3: ["Trois bonnes interprétations moléculaires. Tu décodes l'ADN.",
+               "Tu raisonnes au niveau du nucléotide. Bien."],
+    success5: ["Cinq d'affilée. Tu maîtrises la biologie moléculaire."],
+    wrong: ["Reprends la séquence. La réponse est dans la lecture des bases.",
+            "Pas grave. La biologie moléculaire récompense la précision."],
+    midway: ["Mi-chemin. La séquence parle, à condition d'écouter."]
+  },
+  bernadette: {
+    name: 'Dr Bernadette', color: '#f97316', initials: 'Be',
+    role: 'Obstétricienne — accompagne la vie qui commence.',
+    intro: ["Chaque grossesse est une histoire. Cette mission concerne une vie qui arrive.",
+            "L'obstétrique, c'est la médecine de l'espoir. Garde-le en tête."],
+    success3: ["Trois bons raisonnements. La famille est entre de bonnes mains.",
+               "Tu protèges la mère et l'enfant. C'est ça, l'obstétrique."],
+    success5: ["Cinq d'affilée. Tu prends soin de deux vies à la fois."],
+    wrong: ["Reprends doucement. En obstétrique, on agit avec mesure.",
+            "Pas grave. La grossesse demande de l'humilité face à l'inconnu."],
+    midway: ["Mi-parcours. Mère et enfant comptent sur toi."]
+  },
+  // ---- Universels (peuvent intervenir partout) ----
+  saratou: {
+    name: 'Dr Saratou', color: '#22c55e', initials: 'Sa',
+    role: 'Épidémiologiste — voit la santé à l\'échelle des populations.',
+    intro: ["Une maladie n'arrive jamais seule. Elle a un contexte, une histoire collective.",
+            "L'épidémiologie t'apprend à voir au-delà du patient unique."],
+    success3: ["Trois bonnes analyses. Tu vois les patterns de population.",
+               "Bien. La santé publique t'attend."],
+    success5: ["Cinq d'affilée. Tu raisonnes comme une vraie épidémiologiste."],
+    wrong: ["Reprends. L'épidémiologie demande de croiser plusieurs facteurs.",
+            "Une erreur, ça forme. Reprends le contexte."],
+    midway: ["Mi-chemin. Garde la dimension collective en tête."]
   }
 };
 
@@ -4066,19 +4457,296 @@ function pickMentorMsg(mentorId, kind) {
   return m[kind][Math.floor(Math.random() * m[kind].length)];
 }
 
-// Pour une mission donnée, retourne une rotation de mentors (3-4 mentors différents)
+// Pour une mission donnée, retourne une rotation de mentors (avec Kotchami toujours présent).
+// La rotation puise dans la liste élargie de personnages selon le contexte de la mission.
 function pickMentorRotation(missionId) {
   const id = missionId || '';
+  // Hashage simple du missionId pour varier la composition d'une mission à l'autre
+  let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  const pickFrom = (arr, n) => {
+    const out = [];
+    let seed = Math.abs(h);
+    const copy = arr.slice();
+    while (out.length < n && copy.length) {
+      const idx = seed % copy.length;
+      out.push(copy.splice(idx, 1)[0]);
+      seed = Math.floor(seed / 7) + 13;
+    }
+    return out;
+  };
+
   if (id.startsWith('nl-')) {
-    // NEUROLINK : équipe médicale, Salamatou + Moctar dominants, Kotchami philosophe
-    return ['salamatou', 'moctar', 'kotchami', 'fatima'];
+    // NEUROLINK : rotation parmi l'équipe médicale
+    const pool = ['salamatou', 'moctar', 'blandine', 'moustapha', 'appoline', 'florentine', 'hamza', 'rachel', 'fatima', 'saratou'];
+    return [...pickFrom(pool, 3), 'kotchami']; // 3 médecins variés + Kotchami
   }
   if (id.startsWith('gc-')) {
-    // GENECODE : Mariama dominante, Fatima superviseure, Kotchami philosophe
-    return ['mariama', 'fatima', 'kotchami', 'salamatou'];
+    // GENECODE : rotation parmi les généticiens et superviseurs
+    const pool = ['mariama', 'altine', 'matthieu', 'bernadette', 'fatima', 'salamatou', 'saratou'];
+    return [...pickFrom(pool, 3), 'kotchami']; // 3 généticiens variés + Kotchami
   }
-  // Tuto drépanocytose / autres : Mariama (génétique) + Salamatou (clinique) + Kotchami (philo)
-  return ['mariama', 'salamatou', 'kotchami', 'fatima'];
+  // Tuto drépanocytose : Mariama (génétique), Salamatou (clinique), Bernadette (obstétrique pour la famille), Kotchami (philo)
+  return ['mariama', 'salamatou', 'bernadette', 'kotchami'];
+}
+
+// ============================================================
+// MENTOR BUBBLE — Bulle mentor coin bas-droite (auto-dismiss)
+// ============================================================
+// ============================================================
+// GLOSSARY — Définitions scientifiques (clic = pop-up)
+// ============================================================
+const GLOSSARY = {
+  // Génétique
+  'allèle': "Variante d'un gène. Chaque individu possède 2 allèles par gène : un de chaque parent.",
+  'allèles': "Variantes d'un gène. Chaque individu possède 2 allèles par gène : un de chaque parent.",
+  'gène': "Segment d'ADN qui code une information précise (couleur des yeux, groupe sanguin…).",
+  'génotype': "Ensemble des allèles d'un individu. C'est le « code » génétique caché.",
+  'phénotype': "Ce qu'on observe : couleur des yeux, taille, présence ou non d'une maladie.",
+  'homozygote': "Individu qui possède 2 allèles identiques pour un même gène (ex : AA, aa).",
+  'hétérozygote': "Individu qui possède 2 allèles différents pour un même gène (ex : Aa).",
+  'dominant': "Allèle qui s'exprime même quand il est seul (Aa = phénotype A).",
+  'récessif': "Allèle qui ne s'exprime que s'il est présent en double (aa).",
+  'pédigree': "Arbre généalogique qui suit la transmission d'une maladie sur plusieurs générations.",
+  'caryotype': "Photographie ordonnée des chromosomes d'un individu (46 chromosomes chez l'humain).",
+  'chromosome': "Structure qui porte les gènes. L'humain en possède 46 (23 paires).",
+  'autosomal': "Lié à l'un des 22 chromosomes non-sexuels (par opposition à X ou Y).",
+  'gonosomal': "Lié aux chromosomes sexuels X ou Y.",
+  'translocation': "Échange de morceaux de chromosomes — peut être bénin ou cause de syndromes.",
+  'mutation': "Changement dans la séquence d'ADN — peut être bénin, néfaste, ou avantageux.",
+  'drépanocytose': "Maladie génétique du sang : globules rouges déformés en faucille. Très fréquente en Afrique.",
+  'mitose': "Division cellulaire qui produit 2 cellules identiques à la cellule mère.",
+  'méiose': "Division cellulaire qui produit les gamètes (ovules, spermatozoïdes) — réduit à 23 chromosomes.",
+
+  // Neurosciences
+  'neurone': "Cellule nerveuse spécialisée dans la transmission de l'information.",
+  'synapse': "Zone de contact entre 2 neurones — la communication s'y fait par neurotransmetteurs.",
+  'axone': "Long prolongement du neurone qui transmet l'influx nerveux.",
+  'dendrite': "Prolongement court du neurone qui reçoit les signaux.",
+  'myéline': "Gaine isolante autour de l'axone — accélère la conduction de l'influx.",
+  'potentiel de repos': "État électrique du neurone au repos : –70 mV (intérieur négatif).",
+  'potentiel d\'action': "Inversion brève du potentiel (–70 mV → +30 mV) qui propage l'influx nerveux.",
+  'dépolarisation': "Phase où le neurone passe de –70 mV vers le positif.",
+  'repolarisation': "Phase de retour vers le potentiel de repos.",
+  'neurotransmetteur': "Molécule libérée à la synapse pour transmettre le signal au neurone suivant.",
+  'glycémie': "Taux de glucose dans le sang — normalement autour de 1 g/L.",
+  'insuline': "Hormone qui fait baisser la glycémie en faisant entrer le glucose dans les cellules.",
+  'glucagon': "Hormone qui fait monter la glycémie en libérant le glucose stocké.",
+  'diabète': "Maladie caractérisée par une glycémie chroniquement élevée.",
+  'neuropathie': "Atteinte des nerfs périphériques — fréquente complication du diabète.",
+  'homéostasie': "Capacité de l'organisme à maintenir constants ses paramètres internes.",
+
+  // Méthode et physico-chimie courantes
+  'hypothèse': "Proposition d'explication d'un phénomène, à tester par l'expérience.",
+  'protocole': "Suite d'étapes précises à suivre pour réaliser une expérience.",
+  'oxydoréduction': "Réaction où il y a échange d'électrons entre un oxydant et un réducteur.",
+  'pH': "Mesure de l'acidité (pH < 7 = acide, pH = 7 = neutre, pH > 7 = basique)."
+};
+
+function GlossaryTerm({ word, children }) {
+  const [open, setOpen] = React.useState(false);
+  const def = GLOSSARY[word.toLowerCase()];
+  if (!def) return <>{children || word}</>;
+  return (
+    <span className="relative inline-block">
+      <span
+        onClick={() => setOpen(o => !o)}
+        className="cursor-pointer transition-colors"
+        style={{
+          borderBottom: '1px dashed rgba(245, 158, 11, 0.6)',
+          color: 'rgba(245, 158, 11, 0.95)'
+        }}
+        title="Cliquer pour la définition"
+      >
+        {children || word}
+      </span>
+      {open && (
+        <span
+          onClick={(e) => { e.stopPropagation(); setOpen(false); }}
+          className="absolute z-50 left-0 mt-1 anim-in"
+          style={{
+            top: '100%', minWidth: '240px', maxWidth: '320px',
+            background: 'rgba(2, 6, 23, 0.98)',
+            border: '1px solid rgba(245, 158, 11, 0.4)',
+            borderRadius: '12px', padding: '12px 14px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(12px)',
+            display: 'block'
+          }}
+        >
+          <span className="text-[10px] uppercase tracking-wider block mb-1" style={{color: 'rgba(245, 158, 11, 0.9)'}}>📖 Définition</span>
+          <span className="text-xs text-slate-100 leading-relaxed block">{def}</span>
+          <span className="text-[9px] text-slate-500 mt-2 block">Tape pour fermer</span>
+        </span>
+      )}
+    </span>
+  );
+}
+
+// ============================================================
+// PWA — Hook d'installation et indicateur offline
+// ============================================================
+function usePWAInstall() {
+  const [installPrompt, setInstallPrompt] = React.useState(null);
+  const [installed, setInstalled] = React.useState(false);
+  const [dismissed, setDismissed] = React.useState(() => {
+    try { return localStorage.getItem('sq_install_dismissed') === '1'; } catch(e) { return false; }
+  });
+
+  React.useEffect(() => {
+    // Détecter si déjà installée (mode standalone)
+    const isStandalone = (typeof window !== 'undefined') && (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true
+    );
+    if (isStandalone) setInstalled(true);
+
+    // Capturer l'événement d'installation (Chrome/Edge/Android)
+    const handler = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeinstallprompt', handler);
+      window.addEventListener('appinstalled', () => setInstalled(true));
+    }
+    return () => {
+      if (typeof window !== 'undefined') window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const promptInstall = async () => {
+    if (!installPrompt) return false;
+    try {
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') setInstalled(true);
+      setInstallPrompt(null);
+      return outcome === 'accepted';
+    } catch(e) { return false; }
+  };
+
+  const dismiss = () => {
+    setDismissed(true);
+    try { localStorage.setItem('sq_install_dismissed', '1'); } catch(e) {}
+  };
+
+  return { canInstall: !!installPrompt && !installed && !dismissed, installed, promptInstall, dismiss };
+}
+
+function useOnlineStatus() {
+  const [online, setOnline] = React.useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const goOnline = () => setOnline(true);
+    const goOffline = () => setOnline(false);
+    window.addEventListener('online', goOnline);
+    window.addEventListener('offline', goOffline);
+    return () => {
+      window.removeEventListener('online', goOnline);
+      window.removeEventListener('offline', goOffline);
+    };
+  }, []);
+  return online;
+}
+
+function InstallBanner({ onInstall, onDismiss }) {
+  return (
+    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-40 anim-in">
+      <div className="rounded-2xl p-4 shadow-2xl"
+        style={{
+          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(2, 6, 23, 0.98))',
+          border: '1px solid rgba(245, 158, 11, 0.5)',
+          backdropFilter: 'blur(12px)'
+        }}>
+        <div className="flex items-start gap-3 mb-3">
+          <span className="text-2xl shrink-0">📱</span>
+          <div className="flex-1 min-w-0">
+            <p className="font-display text-sm text-amber-100 mb-1">Installer Science Quest</p>
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              Ajoute-la sur ton téléphone et joue même sans Internet, comme une vraie application.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onInstall}
+            className="btn-primary flex-1 px-3 py-2 rounded-lg text-xs"
+            style={{opacity: 1, visibility: 'visible'}}
+          >
+            Installer
+          </button>
+          <button
+            onClick={onDismiss}
+            className="btn-ghost px-3 py-2 rounded-lg text-xs"
+            style={{opacity: 1, visibility: 'visible'}}
+          >
+            Plus tard
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OfflineIndicator({ online }) {
+  const [show, setShow] = React.useState(!online);
+  const [justReturned, setJustReturned] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!online) { setShow(true); setJustReturned(false); }
+    else if (show) {
+      setJustReturned(true);
+      const t = setTimeout(() => { setShow(false); setJustReturned(false); }, 2500);
+      return () => clearTimeout(t);
+    }
+  }, [online]);
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed top-4 left-1/2 z-50 anim-in" style={{transform: 'translateX(-50%)'}}>
+      <div className="px-4 py-2 rounded-full text-xs flex items-center gap-2"
+        style={{
+          background: justReturned ? 'rgba(16, 185, 129, 0.95)' : 'rgba(15, 23, 42, 0.95)',
+          border: '1px solid ' + (justReturned ? '#10b981' : '#f59e0b'),
+          color: '#fff',
+          backdropFilter: 'blur(8px)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+        }}>
+        {justReturned ? (
+          <><span>✓</span> <span>Connexion rétablie</span></>
+        ) : (
+          <><span>📡</span> <span>Mode hors-ligne — tout fonctionne</span></>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// AVATAR — Affichage du profil joueur (emoji + couleur)
+// ============================================================
+const AVATAR_EMOJIS = ['🧬', '🧠', '🔬', '⚗️', '🧪', '🩺', '💊', '🔭', '🌍', '⚛️', '🧮', '📐', '🎓', '🏆', '✨', '🦋', '🌱', '🦁', '🐢', '🦅'];
+const AVATAR_COLORS = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#dc2626', '#f97316', '#14b8a6'];
+
+function PlayerAvatar({ emoji, color, size, onClick }) {
+  const sz = size || 36;
+  return (
+    <div
+      onClick={onClick}
+      className={onClick ? 'cursor-pointer transition-transform hover:scale-110' : ''}
+      style={{
+        width: sz, height: sz, borderRadius: '50%',
+        background: (color || '#f59e0b') + '22',
+        border: '2px solid ' + (color || '#f59e0b'),
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: Math.round(sz * 0.55),
+        flexShrink: 0
+      }}
+    >
+      {emoji || '🧬'}
+    </div>
+  );
 }
 
 // ============================================================
@@ -4144,6 +4812,26 @@ function updateStreak(state) {
   return { ...state, lastPlayDate: today, streakDays };
 }
 
+// Régénère 1 vie toutes les 30 minutes (jusqu'à maxLives)
+function regenLives(state) {
+  const maxLives = state.maxLives || 3;
+  if ((state.lives || 0) >= maxLives) {
+    return { ...state, lastLifeRegen: Date.now() };
+  }
+  const REGEN_MS = 30 * 60 * 1000; // 30 minutes
+  const now = Date.now();
+  const last = state.lastLifeRegen || now;
+  const elapsed = now - last;
+  if (elapsed < REGEN_MS) return state;
+  const livesToAdd = Math.min(maxLives - state.lives, Math.floor(elapsed / REGEN_MS));
+  if (livesToAdd <= 0) return state;
+  return {
+    ...state,
+    lives: Math.min(maxLives, state.lives + livesToAdd),
+    lastLifeRegen: last + livesToAdd * REGEN_MS
+  };
+}
+
 // ============================================================
 // PERSISTENCE — localStorage (résout la perte de progression)
 // ============================================================
@@ -4153,8 +4841,12 @@ function useGameState() {
   const initial = {
     playerName: '',
     country: '',
+    avatarEmoji: '🧬',
+    avatarColor: '#f59e0b',
     xp: 0,
     lives: 3,
+    maxLives: 3,
+    lastLifeRegen: null,
     completedMissions: [],
     grimoireEntries: [],
     badges: [],
@@ -4164,9 +4856,17 @@ function useGameState() {
     mentorEnabled: true,
     timerEnabled: true,
     musicEnabled: false,
+    freeMode: false,
     streakDays: 0,
     lastPlayDate: null,
-    missionRecords: {}
+    missionRecords: {},
+    testimonies: {},
+    notes: {},
+    dailyQuizHistory: {},
+    xpHistory: [],
+    bestStreak: 0,
+    totalQuestionsAnswered: 0,
+    totalCorrectAnswers: 0
   };
   const [state, setState] = useState(function() {
     try {
@@ -4298,12 +4998,24 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
   };
 
   const onPhaseCorrect = (xp) => {
-    setMissionXP(x => x + xp);
-    setPhaseAnswered(p => ({ ...p, [step]: { correct: true, xp } }));
+    const newStreak = correctStreak + 1;
+    // Combo : +20% à 3 d'affilée, +50% à 5 d'affilée
+    let multiplier = 1;
+    if (newStreak >= 5) multiplier = 1.5;
+    else if (newStreak >= 3) multiplier = 1.2;
+    const finalXp = Math.round(xp * multiplier);
+    setMissionXP(x => x + finalXp);
+    setPhaseAnswered(p => ({ ...p, [step]: { correct: true, xp: finalXp, combo: multiplier > 1 } }));
     SoundManager.play('correct');
     MusicEngine.pulse('validation');
-    const newStreak = correctStreak + 1;
     setCorrectStreak(newStreak);
+    // Tracking stats globales
+    setState(s => ({
+      ...s,
+      totalQuestionsAnswered: (s.totalQuestionsAnswered || 0) + 1,
+      totalCorrectAnswers: (s.totalCorrectAnswers || 0) + 1,
+      bestStreak: Math.max(s.bestStreak || 0, newStreak)
+    }));
     if (newStreak === 3) showMentorFrom('success3', 0); // mentor spécialiste
     else if (newStreak === 5) showMentorFrom('success5', 2); // Kotchami
   };
@@ -4314,6 +5026,11 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
     SoundManager.play('wrong');
     MusicEngine.pulse('tension');
     setCorrectStreak(0);
+    // Tracking stats globales
+    setState(s => ({
+      ...s,
+      totalQuestionsAnswered: (s.totalQuestionsAnswered || 0) + 1
+    }));
     // Après une erreur, varier le mentor (rotation)
     showMentorFrom('wrong', Math.floor(Math.random() * mentorRotation.length));
   };
@@ -4335,6 +5052,14 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
       if (fastBonus > 0 && !badges.includes('badge:eclair')) badges.push('badge:eclair');
       // Badge streak 7 jours
       if ((updated.streakDays || 0) >= 7 && !badges.includes('badge:streak7')) badges.push('badge:streak7');
+      // Mise à jour xpHistory pour le sparkline
+      const today = new Date().toISOString().slice(0, 10);
+      const xpHistory = [...(updated.xpHistory || [])];
+      const todayEntry = xpHistory.find(e => e.date === today);
+      if (todayEntry) todayEntry.xp += finalXP;
+      else xpHistory.push({ date: today, xp: finalXP });
+      // Garder seulement les 30 derniers jours
+      const recent = xpHistory.slice(-30);
       return {
         ...updated,
         xp: s.xp + finalXP,
@@ -4345,7 +5070,8 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
           : (s.ibrahimFragments || []),
         currentRank: Math.max(s.currentRank || 0, mission.rank.to),
         missionRecords: records,
-        badges
+        badges,
+        xpHistory: recent
       };
     });
     onExit();
@@ -4387,6 +5113,11 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
               {state.timerEnabled !== false && (
                 <span className="text-slate-400" title="Temps de mission">⏱ {formatTime(elapsedSeconds)}</span>
               )}
+              {correctStreak >= 3 && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{background: correctStreak >= 5 ? 'rgba(245, 158, 11, 0.3)' : 'rgba(16, 185, 129, 0.2)', color: correctStreak >= 5 ? '#fbbf24' : '#6ee7b7', border: '1px solid ' + (correctStreak >= 5 ? '#f59e0b' : '#10b981')}} title={`Combo x${correctStreak >= 5 ? '1.5' : '1.2'}`}>
+                  🔥 x{correctStreak >= 5 ? '1.5' : '1.2'}
+                </span>
+              )}
               <span className="text-amber-400">+{missionXP}</span>
             </div>
           </div>
@@ -4398,7 +5129,15 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
       {step === 'intro' && <MissionIntroV2 mission={mission} onStart={goNext} onBack={onExit} />}
       {step === 'prologue' && <MissionPrologue mission={mission} onNext={goNext} />}
       {step === 'briefing' && <MissionBriefing mission={mission} onNext={goNext} />}
-      {step.startsWith('phase') && (
+      {step.startsWith('phase') && mission.phases[currentPhaseIdx] && mission.phases[currentPhaseIdx].type === 'narrative' && (
+        <MissionPhaseNarrative
+          phase={mission.phases[currentPhaseIdx]}
+          phaseIdx={currentPhaseIdx}
+          totalPhases={totalPhases}
+          onNext={goNext}
+        />
+      )}
+      {step.startsWith('phase') && mission.phases[currentPhaseIdx] && mission.phases[currentPhaseIdx].type !== 'narrative' && (
         <MissionPhaseQuestion
           phase={mission.phases[currentPhaseIdx]}
           phaseIdx={currentPhaseIdx}
@@ -4415,6 +5154,7 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
           mission={mission}
           missionXP={missionXP}
           state={state}
+          setState={setState}
           onComplete={completeMission}
         />
       )}
@@ -4550,49 +5290,179 @@ function MissionBriefing({ mission, onNext }) {
 }
 
 // ============================================================
-// PHASE QUESTION — Composant générique
-// Affiche bonne réponse et explication même quand on se trompe (philosophie Kotchami)
+// PHASE NARRATIVE — Texte d'histoire / progression sans question
 // ============================================================
-function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrect, onWrong, onNext, missionLives }) {
+function MissionPhaseNarrative({ phase, phaseIdx, totalPhases, onNext }) {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-4">
+        <span>{phase.icon || '📖'}</span>
+        <span>{phase.title || 'Évolution de la situation'}</span>
+        <span className="ml-1 px-2 py-0.5 rounded-full text-[9px]" style={{background: 'rgba(99, 102, 241, 0.15)', color: '#a5b4fc', border: '1px solid rgba(99, 102, 241, 0.4)'}}>NARRATIF</span>
+      </div>
+
+      {phase.subtitle && (
+        <p className="anim-in delay-100 text-amber-200/80 text-sm italic mb-4">{phase.subtitle}</p>
+      )}
+
+      <div className="anim-in delay-200 card-border rounded-2xl p-5 md:p-6 mb-6"
+        style={{background: 'linear-gradient(145deg, rgba(99, 102, 241, 0.04), rgba(2, 6, 23, 0.6))', borderColor: 'rgba(99, 102, 241, 0.3)'}}>
+        {(phase.paragraphs || [phase.text || '']).map((p, i) => (
+          <p key={i} className="text-slate-200 text-base leading-relaxed mb-3 last:mb-0">{p}</p>
+        ))}
+      </div>
+
+      {phase.character && (
+        <div className="anim-in delay-300 card-border rounded-xl p-4 mb-6 flex items-start gap-3"
+          style={{background: 'rgba(245, 158, 11, 0.04)', borderColor: 'rgba(245, 158, 11, 0.2)'}}>
+          <span className="text-2xl shrink-0">{phase.character.emoji || '👤'}</span>
+          <div className="flex-1">
+            <p className="text-[10px] uppercase tracking-wider text-amber-400/80 mb-1">{phase.character.name}</p>
+            <p className="text-slate-200 text-sm italic leading-relaxed">« {phase.character.line} »</p>
+          </div>
+        </div>
+      )}
+
+      <div className="text-center">
+        <button onClick={onNext} className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2"
+          style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+          {phaseIdx + 1 < totalPhases ? 'Continuer →' : 'Voir l\'épilogue →'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PHASE QUESTION — Composant générique unifié
+// Supporte : QCM, V/F + justification, bouton indice
+// Les options sont mélangées aléatoirement à chaque affichage
+// ============================================================
+function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrect, onWrong, onNext, missionLives, onUseHint }) {
   const [selectedIdx, setSelectedIdx] = React.useState(null);
   const [submitted, setSubmitted] = React.useState(false);
+  const [hintUsed, setHintUsed] = React.useState(false);
+  const [showHint, setShowHint] = React.useState(false);
+
+  // Détecte le type de question
+  const isVraiFaux = phase.type === 'vraifaux';
+  const hasJustif = isVraiFaux && phase.justifications && phase.justifications.length > 0;
+
+  // Pour V/F, on construit dynamiquement les options "Vrai" / "Faux"
+  // correctIdx est censé être 0 (vrai) ou 1 (faux)
+  const baseOptions = isVraiFaux ? ['Vrai', 'Faux'] : phase.options;
+  const baseCorrectIdx = phase.correctIdx;
+
+  // Mélange aléatoire (re-mélangé à chaque nouvelle phase)
+  const shuffled = React.useMemo(() => {
+    const indices = baseOptions.map((_, i) => i);
+    // Pas de shuffle pour V/F simple (Vrai/Faux fixe)
+    if (isVraiFaux) return indices;
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return indices;
+  // eslint-disable-next-line
+  }, [phaseIdx]);
+  const displayedOptions = shuffled.map(i => baseOptions[i]);
+  const newCorrectIdx = shuffled.indexOf(baseCorrectIdx);
+  const correctLetter = String.fromCharCode(65 + newCorrectIdx);
+
+  // Justification (deuxième étape pour V/F)
+  const [justifIdx, setJustifIdx] = React.useState(null);
+  const [justifSubmitted, setJustifSubmitted] = React.useState(false);
+  const justifShuffled = React.useMemo(() => {
+    if (!hasJustif) return [];
+    const indices = phase.justifications.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return indices;
+  // eslint-disable-next-line
+  }, [phaseIdx]);
+  const displayedJustifs = hasJustif ? justifShuffled.map(i => phase.justifications[i]) : [];
+  const newCorrectJustifIdx = hasJustif ? justifShuffled.indexOf(phase.correctJustifIdx || 0) : -1;
 
   // Reset à chaque phase
   React.useEffect(() => {
     setSelectedIdx(null);
     setSubmitted(false);
+    setHintUsed(false);
+    setShowHint(false);
+    setJustifIdx(null);
+    setJustifSubmitted(false);
   }, [phaseIdx]);
 
   const handleSubmit = () => {
     if (selectedIdx === null) return;
     setSubmitted(true);
-    if (selectedIdx === phase.correctIdx) onCorrect(phase.xp);
-    else onWrong();
+    const correct = selectedIdx === newCorrectIdx;
+    // Si V/F avec justification et bonne réponse Q1 : on attend la justification avant de valider XP
+    if (correct && hasJustif) {
+      // On ne fait rien — on attend la justification
+    } else if (correct) {
+      const finalXp = hintUsed ? Math.max(0, phase.xp - 10) : phase.xp;
+      onCorrect(finalXp);
+    } else {
+      onWrong();
+    }
   };
 
-  const isCorrect = selectedIdx === phase.correctIdx;
+  const handleSubmitJustif = () => {
+    if (justifIdx === null) return;
+    setJustifSubmitted(true);
+    if (justifIdx === newCorrectJustifIdx) {
+      const finalXp = hintUsed ? Math.max(0, phase.xp - 10) : phase.xp;
+      onCorrect(finalXp);
+    } else {
+      onWrong();
+    }
+  };
+
+  const useHint = () => {
+    if (hintUsed || submitted) return;
+    setHintUsed(true);
+    setShowHint(true);
+    if (onUseHint) onUseHint();
+  };
+
+  const isCorrect = selectedIdx === newCorrectIdx;
+  const isJustifCorrect = justifIdx === newCorrectJustifIdx;
+  const fullyComplete = submitted && (!hasJustif || justifSubmitted || !isCorrect);
 
   return (
     <div className="max-w-2xl mx-auto">
       <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-4">
-        <span>🧪</span> <span>{phase.title}</span>
+        <span>{isVraiFaux ? '⚖️' : '🧪'}</span>
+        <span>{phase.title}</span>
+        {isVraiFaux && <span className="ml-1 px-2 py-0.5 rounded-full text-[9px]" style={{background: 'rgba(139,92,246,0.15)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.4)'}}>VRAI/FAUX</span>}
       </div>
       <h2 className="anim-in delay-100 font-display text-xl md:text-2xl mb-8 text-amber-100 leading-snug">
         {phase.question}
       </h2>
 
-      <div className="space-y-3 mb-8">
-        {phase.options.map((opt, i) => {
+      {showHint && phase.hint && (
+        <div className="anim-in card-border rounded-xl p-4 mb-5" style={{background: 'rgba(99, 102, 241, 0.06)', borderColor: 'rgba(99, 102, 241, 0.4)'}}>
+          <div className="flex items-start gap-2">
+            <span className="text-xl shrink-0">💡</span>
+            <div className="flex-1">
+              <p className="text-[10px] uppercase tracking-wider mb-1" style={{color: '#a5b4fc'}}>Indice (–10 XP)</p>
+              <p className="text-slate-200 text-sm leading-relaxed">{phase.hint}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-3 mb-6">
+        {displayedOptions.map((opt, i) => {
           const isSelected = selectedIdx === i;
-          const isCorrectAnswer = i === phase.correctIdx;
-          let extraClasses = "";
+          const isCorrectAnswer = i === newCorrectIdx;
           let extraStyle = {};
           if (submitted) {
-            if (isCorrectAnswer) {
-              extraStyle = { borderColor: '#10b981', background: 'rgba(16,185,129,0.08)' };
-            } else if (isSelected) {
-              extraStyle = { borderColor: '#ef4444', background: 'rgba(239,68,68,0.08)' };
-            }
+            if (isCorrectAnswer) extraStyle = { borderColor: '#10b981', background: 'rgba(16,185,129,0.08)' };
+            else if (isSelected) extraStyle = { borderColor: '#ef4444', background: 'rgba(239,68,68,0.08)' };
           } else if (isSelected) {
             extraStyle = { borderColor: '#f59e0b', background: 'rgba(245,158,11,0.08)' };
           }
@@ -4601,17 +5471,18 @@ function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrec
               key={i}
               onClick={() => !submitted && setSelectedIdx(i)}
               disabled={submitted}
-              className={`anim-in delay-${(i+2)*100} w-full text-left p-4 rounded-lg border-2 transition-all ${submitted ? 'cursor-default' : 'cursor-pointer hover:border-amber-500/50'}`}
+              className={`anim-in w-full text-left p-4 rounded-lg border-2 transition-all ${submitted ? 'cursor-default' : 'cursor-pointer hover:border-amber-500/50'}`}
               style={{
                 borderColor: '#334155',
                 background: 'rgba(15, 23, 42, 0.4)',
                 opacity: 1,
+                animationDelay: `${(i+1) * 0.08}s`,
                 ...extraStyle
               }}
             >
               <div className="flex items-start gap-3">
                 <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-mono-sci text-sm border-2 ${submitted && isCorrectAnswer ? 'border-emerald-400 text-emerald-400' : submitted && isSelected ? 'border-red-400 text-red-400' : isSelected ? 'border-amber-400 text-amber-400' : 'border-slate-600 text-slate-500'}`}>
-                  {String.fromCharCode(65 + i)}
+                  {isVraiFaux ? (i === 0 ? 'V' : 'F') : String.fromCharCode(65 + i)}
                 </span>
                 <span className="text-slate-200 text-sm md:text-base flex-1">{opt}</span>
                 {submitted && isCorrectAnswer && <span className="text-emerald-400 text-lg">✓</span>}
@@ -4623,7 +5494,16 @@ function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrec
       </div>
 
       {!submitted && (
-        <div className="text-center">
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          {phase.hint && !hintUsed && (
+            <button
+              onClick={useHint}
+              className="btn-ghost px-4 py-2.5 rounded-full inline-flex items-center gap-2 text-xs"
+              style={{opacity: 1, color: '#a5b4fc', borderColor: 'rgba(99,102,241,0.4)'}}
+            >
+              💡 Indice (–10 XP)
+            </button>
+          )}
           <button
             onClick={handleSubmit}
             disabled={selectedIdx === null}
@@ -4635,13 +5515,61 @@ function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrec
         </div>
       )}
 
-      {submitted && (
-        <div className="anim-in card-border rounded-xl p-5 mb-6" style={{background: isCorrect ? 'rgba(16,185,129,0.05)' : 'rgba(245,158,11,0.05)', borderColor: isCorrect ? '#10b981' : '#f59e0b'}}>
+      {/* Justification pour V/F (si bonne première réponse) */}
+      {submitted && isCorrect && hasJustif && (
+        <div className="anim-in mt-6">
+          <div className="card-border rounded-xl p-5 mb-5" style={{background: 'rgba(139, 92, 246, 0.06)', borderColor: 'rgba(139, 92, 246, 0.4)'}}>
+            <p className="text-[10px] uppercase tracking-wider mb-2" style={{color: '#c4b5fd'}}>Justification — pourquoi ?</p>
+            <p className="text-slate-100 text-base">{phase.justifQuestion || 'Choisis la justification correcte :'}</p>
+          </div>
+          <div className="space-y-3 mb-6">
+            {displayedJustifs.map((j, i) => {
+              const isSel = justifIdx === i;
+              const isOk = i === newCorrectJustifIdx;
+              let st = {};
+              if (justifSubmitted) {
+                if (isOk) st = { borderColor: '#10b981', background: 'rgba(16,185,129,0.08)' };
+                else if (isSel) st = { borderColor: '#ef4444', background: 'rgba(239,68,68,0.08)' };
+              } else if (isSel) {
+                st = { borderColor: '#f59e0b', background: 'rgba(245,158,11,0.08)' };
+              }
+              return (
+                <button
+                  key={i}
+                  onClick={() => !justifSubmitted && setJustifIdx(i)}
+                  disabled={justifSubmitted}
+                  className={`w-full text-left p-4 rounded-lg border-2 transition-all ${justifSubmitted ? 'cursor-default' : 'cursor-pointer hover:border-amber-500/50'}`}
+                  style={{borderColor: '#334155', background: 'rgba(15, 23, 42, 0.4)', ...st}}
+                >
+                  <div className="flex items-start gap-3">
+                    <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-mono-sci text-sm border-2 ${justifSubmitted && isOk ? 'border-emerald-400 text-emerald-400' : justifSubmitted && isSel ? 'border-red-400 text-red-400' : isSel ? 'border-amber-400 text-amber-400' : 'border-slate-600 text-slate-500'}`}>
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    <span className="text-slate-200 text-sm md:text-base flex-1">{j}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {!justifSubmitted && (
+            <div className="text-center">
+              <button onClick={handleSubmitJustif} disabled={justifIdx === null}
+                className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2"
+                style={{opacity: justifIdx !== null ? 1 : 0.4}}>
+                Valider la justification
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {fullyComplete && (
+        <div className="anim-in card-border rounded-xl p-5 mb-6 mt-6" style={{background: (isCorrect && (!hasJustif || isJustifCorrect)) ? 'rgba(16,185,129,0.05)' : 'rgba(245,158,11,0.05)', borderColor: (isCorrect && (!hasJustif || isJustifCorrect)) ? '#10b981' : '#f59e0b'}}>
           <div className="flex items-start gap-3">
-            <span className="text-2xl shrink-0">{isCorrect ? '✓' : '💡'}</span>
+            <span className="text-2xl shrink-0">{(isCorrect && (!hasJustif || isJustifCorrect)) ? '✓' : '💡'}</span>
             <div className="flex-1">
-              <p className="font-display text-base mb-2" style={{color: isCorrect ? '#10b981' : '#f59e0b'}}>
-                {isCorrect ? `Excellent ! +${phase.xp} XP` : 'Pas tout à fait — voici l\'explication :'}
+              <p className="font-display text-base mb-2" style={{color: (isCorrect && (!hasJustif || isJustifCorrect)) ? '#10b981' : '#f59e0b'}}>
+                {(isCorrect && (!hasJustif || isJustifCorrect)) ? `Excellent ! +${hintUsed ? Math.max(0, phase.xp - 10) : phase.xp} XP${hintUsed ? ' (indice utilisé)' : ''}` : `Pas tout à fait — la bonne réponse est ${correctLetter}`}
               </p>
               <p className="text-slate-300 text-sm leading-relaxed">{phase.explain}</p>
             </div>
@@ -4649,7 +5577,33 @@ function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrec
         </div>
       )}
 
-      {submitted && (
+      {/* Conséquence narrative en cas d'erreur (immersif) */}
+      {fullyComplete && !isCorrect && phase.consequence && (
+        <div className="anim-in rounded-xl p-4 mb-6 -mt-2" style={{background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.3)'}}>
+          <div className="flex items-start gap-3">
+            <span className="text-xl shrink-0">⚠️</span>
+            <div className="flex-1">
+              <p className="text-[10px] uppercase tracking-wider mb-1" style={{color: '#fca5a5'}}>Conséquence dans la mission</p>
+              <p className="text-slate-200 text-sm italic leading-relaxed">{phase.consequence}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Conséquence positive en cas de succès (renforcement) */}
+      {fullyComplete && isCorrect && (!hasJustif || isJustifCorrect) && phase.successOutcome && (
+        <div className="anim-in rounded-xl p-4 mb-6 -mt-2" style={{background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)'}}>
+          <div className="flex items-start gap-3">
+            <span className="text-xl shrink-0">✨</span>
+            <div className="flex-1">
+              <p className="text-[10px] uppercase tracking-wider mb-1" style={{color: '#6ee7b7'}}>Impact dans la mission</p>
+              <p className="text-slate-200 text-sm italic leading-relaxed">{phase.successOutcome}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {fullyComplete && (
         <div className="text-center">
           <button
             onClick={onNext}
@@ -4667,7 +5621,7 @@ function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrec
 // ============================================================
 // EPILOGUE — Avec système d'engagement-échange
 // ============================================================
-function MissionEpilogue({ mission, missionXP, state, onComplete }) {
+function MissionEpilogue({ mission, missionXP, state, setState, onComplete }) {
   const [showEngagement, setShowEngagement] = React.useState(false);
   return (
     <div className="max-w-2xl mx-auto" style={{paddingTop: '2vh'}}>
@@ -4717,7 +5671,7 @@ function MissionEpilogue({ mission, missionXP, state, onComplete }) {
       )}
 
       {/* Système d'engagement-échange (4 mécaniques) */}
-      {showEngagement && <EngagementEchange missionTitle={mission.title} />}
+      {showEngagement && <EngagementEchange missionTitle={mission.title} missionId={mission.id} state={state} setState={setState} />}
 
       <div className="text-center mt-8">
         <button
@@ -4736,9 +5690,11 @@ function MissionEpilogue({ mission, missionXP, state, onComplete }) {
 // SYSTÈME D'ENGAGEMENT-ÉCHANGE
 // 4 mécaniques : Mission Vie Réelle, Témoignage, Invitation, Bug/Amélioration
 // ============================================================
-function EngagementEchange({ missionTitle }) {
+function EngagementEchange({ missionTitle, missionId, state, setState }) {
   const [activeTab, setActiveTab] = React.useState(null);
   const [submitted, setSubmitted] = React.useState({});
+  const [testimonyText, setTestimonyText] = React.useState('');
+  const [kotchamiReply, setKotchamiReply] = React.useState(null);
 
   const mecaniques = [
     {
@@ -4754,8 +5710,8 @@ function EngagementEchange({ missionTitle }) {
       id: 'temoignage',
       icon: '✍️',
       titre: 'Témoignage qualité',
-      sousTitre: 'Débloque 100 XP bonus',
-      description: "Écris en 3 phrases ce que tu as appris dans cette mission et pourquoi c'est important pour toi. Ton témoignage aide à améliorer Science Quest.",
+      sousTitre: 'Débloque 100 XP bonus + Kotchami te répond',
+      description: "Écris en 3 phrases ce que tu as appris dans cette mission et pourquoi c'est important pour toi. Kotchami te lira et te répondra personnellement.",
       input: true,
       placeholder: "Ce que j'ai appris...",
       action: "Envoyer mon témoignage",
@@ -4784,8 +5740,80 @@ function EngagementEchange({ missionTitle }) {
     }
   ];
 
+  // Génère une réponse personnalisée de Kotchami selon le contenu du témoignage
+  const generateKotchamiReply = (text) => {
+    const t = text.toLowerCase();
+    const replies = [];
+
+    // Détection de mots-clés émotionnels et thématiques
+    if (t.includes('compris') || t.includes('comprendre') || t.includes('compréhension')) {
+      replies.push("Tu utilises le mot juste : « comprendre ». Pas mémoriser. Tu as déjà fait la moitié du chemin.");
+    }
+    if (t.includes('difficile') || t.includes('dur') || t.includes('compliqué')) {
+      replies.push("Tu trouves ça difficile, et tu l'écris. C'est ce qu'on appelle de l'honnêteté intellectuelle. Continue.");
+    }
+    if (t.includes('intéressant') || t.includes('passion') || t.includes('aime')) {
+      replies.push("L'intérêt sincère est la première forme d'intelligence. Tu en as. Cultive-la.");
+    }
+    if (t.includes('santé') || t.includes('médecine') || t.includes('médecin') || t.includes('patient')) {
+      replies.push("La science que tu apprends ici sauvera peut-être une vie un jour. C'est la vraie raison de comprendre.");
+    }
+    if (t.includes('famille') || t.includes('parent') || t.includes('mère') || t.includes('père')) {
+      replies.push("Tu fais le lien avec ta famille. C'est exactement ce que je veux : que la science quitte la salle de classe.");
+    }
+    if (t.includes('niger') || t.includes('afrique')) {
+      replies.push("Tu penses à ton continent. La science africaine se construit dans des têtes comme la tienne. Continue.");
+    }
+    if (t.includes('génétique') || t.includes('adn') || t.includes('chromosome')) {
+      replies.push("Tu touches au cœur de la biologie. L'ADN n'a pas de secrets pour ceux qui prennent le temps de l'écouter.");
+    }
+    if (t.includes('neurone') || t.includes('cerveau') || t.includes('nerveux')) {
+      replies.push("Le système nerveux est l'unité la plus fascinante du vivant. Tu commences à le voir.");
+    }
+    if (t.includes('drépano') || t.includes('drepano') || t.includes('sang')) {
+      replies.push("Tu comprends la drépanocytose, donc tu comprendras des dizaines d'autres maladies de la même famille. Tu as un outil maintenant.");
+    }
+
+    // Si rien de spécifique détecté, message générique chaleureux
+    if (replies.length === 0) {
+      const generic = [
+        "Merci pour ces mots. Ce que tu as écrit, je le lis comme un signe que la mission a fait son travail. Tu sors différent que tu y es entré.",
+        "Tu prends le temps d'écrire ce que tu as appris. C'est rare. C'est précieux. Continue comme ça.",
+        "Tes mots me confirment que Science Quest fait ce qu'elle doit faire : transformer le savoir en regard. Bravo.",
+        "Je lis ton témoignage et je vois quelqu'un qui réfléchit, pas qui consomme. C'est exactement ce que je voulais."
+      ];
+      replies.push(generic[Math.floor(Math.random() * generic.length)]);
+    }
+
+    // Combine 1-2 phrases + signature philosophique
+    const main = replies.slice(0, 2).join(' ');
+    const closings = [
+      "Et ce que tu as compris ici, personne ne pourra jamais te l'enlever.",
+      "Continue de construire sur du roc, pas sur du sable.",
+      "Tu n'apprends pas la science. Tu la deviens.",
+      "Comprendre, ça se transmet. Maintenant, à ton tour."
+    ];
+    return main + ' ' + closings[Math.floor(Math.random() * closings.length)];
+  };
+
   const handleAction = (mec) => {
     setSubmitted(s => ({ ...s, [mec.id]: true }));
+    if (mec.id === 'temoignage' && testimonyText.trim().length > 0) {
+      // Sauvegarder le témoignage dans le state
+      if (setState) {
+        setState(s => {
+          const testimonies = { ...(s.testimonies || {}) };
+          testimonies[missionId || 'unknown'] = {
+            text: testimonyText.trim(),
+            date: new Date().toISOString(),
+            mission: missionTitle
+          };
+          return { ...s, testimonies, xp: (s.xp || 0) + 100 };
+        });
+      }
+      // Réponse de Kotchami
+      setKotchamiReply(generateKotchamiReply(testimonyText));
+    }
     if (mec.id === 'invitation') {
       const url = window.location.href;
       const text = mec.shareText + url;
@@ -4834,7 +5862,9 @@ function EngagementEchange({ missionTitle }) {
             {mec.input && !isSubmitted && (
               <textarea
                 placeholder={mec.placeholder}
-                rows={3}
+                rows={4}
+                value={testimonyText}
+                onChange={(e) => setTestimonyText(e.target.value)}
                 className="w-full mb-3 p-3 rounded-lg text-sm"
                 style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fff'}}
               />
@@ -4842,13 +5872,27 @@ function EngagementEchange({ missionTitle }) {
             {!isSubmitted ? (
               <button
                 onClick={() => handleAction(mec)}
+                disabled={mec.input && testimonyText.trim().length < 10}
                 className="btn-primary px-5 py-2 rounded-full text-sm inline-flex items-center gap-2"
-                style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}
+                style={{opacity: (mec.input && testimonyText.trim().length < 10) ? 0.4 : 1, visibility: 'visible', display: 'inline-flex'}}
               >
                 {mec.action}
               </button>
             ) : (
               <p className="text-emerald-400 text-sm">✓ Action enregistrée. Récompense : {mec.reward}</p>
+            )}
+            {/* Réponse personnalisée de Kotchami au témoignage */}
+            {mec.id === 'temoignage' && isSubmitted && kotchamiReply && (
+              <div className="anim-in mt-4 rounded-xl p-4" style={{background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.4)'}}>
+                <div className="flex items-start gap-3">
+                  <div className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm" style={{background: '#10b981'}}>K</div>
+                  <div className="flex-1">
+                    <p className="text-[10px] uppercase tracking-wider mb-1" style={{color: '#6ee7b7'}}>Dr Kotchami te répond</p>
+                    <p className="text-slate-100 text-sm leading-relaxed italic">« {kotchamiReply} »</p>
+                    <p className="text-[10px] text-slate-500 mt-2">— Le Passeur de sciences</p>
+                  </div>
+                </div>
+              </div>
             )}
             {mec.id === 'bug' && (
               <p className="text-[11px] text-slate-500 mt-3">Contact direct : kotchamiogougbe@gmail.com</p>
@@ -4872,9 +5916,26 @@ function App() {
   const [nameInput, setNameInput] = useState('');
   const [countryInput, setCountryInput] = useState('');
   const [activeGenecodeMission, setActiveGenecodeMission] = useState(null);
-  // Mettre à jour la streak au démarrage (une fois par jour)
+  // PWA — installation et statut online
+  const pwa = usePWAInstall();
+  const online = useOnlineStatus();
+  const [showInstallBanner, setShowInstallBanner] = React.useState(false);
+  // Afficher la bannière d'installation après 30s de jeu (pas dès l'arrivée)
   React.useEffect(() => {
-    if (state.playerName) setState(s => updateStreak(s));
+    if (!pwa.canInstall) return;
+    const t = setTimeout(() => setShowInstallBanner(true), 30000);
+    return () => clearTimeout(t);
+  }, [pwa.canInstall]);
+  // Mettre à jour la streak ET régénérer les vies au démarrage
+  React.useEffect(() => {
+    if (state.playerName) {
+      setState(s => regenLives(updateStreak(s)));
+      // Régénération continue toutes les minutes
+      const intervalId = setInterval(() => {
+        setState(s => regenLives(s));
+      }, 60 * 1000);
+      return () => clearInterval(intervalId);
+    }
     // eslint-disable-next-line
   }, []);
 
@@ -4939,13 +6000,21 @@ function App() {
       const badges = [...new Set([...(updated.badges || []), 'mission:drepanocytose'])];
       if (fastBonus > 0 && !badges.includes('badge:eclair')) badges.push('badge:eclair');
       if ((updated.streakDays || 0) >= 7 && !badges.includes('badge:streak7')) badges.push('badge:streak7');
+      // Mise à jour xpHistory pour le sparkline
+      const today = new Date().toISOString().slice(0, 10);
+      const xpHistory = [...(updated.xpHistory || [])];
+      const todayEntry = xpHistory.find(e => e.date === today);
+      if (todayEntry) todayEntry.xp += finalXP;
+      else xpHistory.push({ date: today, xp: finalXP });
+      const recent = xpHistory.slice(-30);
       return {
         ...updated,
         xp: s.xp + finalXP,
         completedMissions: [...new Set([...s.completedMissions, 'drepanocytose'])],
         grimoireEntries: [...new Set([...s.grimoireEntries, 'Hérédité autosomale récessive'])],
         missionRecords: records,
-        badges
+        badges,
+        xpHistory: recent
       };
     });
     setScreen('home');
@@ -5004,6 +6073,9 @@ function App() {
                   <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400" style={{animation: 'musicPulse 1.6s ease-in-out infinite'}}></span>
                 )}
               </button>
+              <button onClick={() => setScreen('help')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Aide & tutoriel">
+                <span style={{fontSize: '15px', lineHeight: 1}}>❓</span>
+              </button>
               <button onClick={() => setScreen('settings')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Profil & réglages">
                 <Icon name="user" size={18} />
               </button>
@@ -5036,6 +6108,8 @@ function App() {
             state={state}
             onStartMission={startMission}
             onContact={() => setScreen('contact')}
+            onDailyQuiz={() => setScreen('dailyquiz')}
+            onChallenge={() => setScreen('challenge')}
           />
         )}
 
@@ -5044,9 +6118,40 @@ function App() {
           <ContactScreen onBack={() => setScreen('home')} />
         )}
 
+        {/* ========== HELP ========== */}
+        {screen === 'help' && (
+          <HelpScreen state={state} setState={setState} onBack={() => setScreen('home')} />
+        )}
+
+        {/* ========== DAILY QUIZ ========== */}
+        {screen === 'dailyquiz' && (
+          <DailyQuizScreen state={state} setState={setState} onBack={() => setScreen('home')} />
+        )}
+
+        {/* ========== CHALLENGE MODE ========== */}
+        {screen === 'challenge' && (
+          <ChallengeScreen state={state} setState={setState} onBack={() => setScreen('home')} />
+        )}
+
+        {/* ========== SHARE ========== */}
+        {screen === 'share' && (
+          <ShareScreen state={state} onBack={() => setScreen('home')} />
+        )}
+
+        {/* ========== CERTIFICATE ========== */}
+        {screen === 'certificate' && (
+          <CertificateScreen state={state} themeName={state._currentThemeName || 'Thème complet'} onBack={() => setScreen('home')} />
+        )}
+
         {/* ========== SETTINGS / PROFIL ========== */}
         {screen === 'settings' && (
-          <SettingsScreen state={state} setState={setState} onBack={() => setScreen('home')} />
+          <SettingsScreen
+            state={state}
+            setState={setState}
+            onBack={() => setScreen('home')}
+            onShare={() => setScreen('share')}
+            onCertificate={() => setScreen('certificate')}
+          />
         )}
 
         {/* ========== MISSION ========== */}
@@ -5061,6 +6166,7 @@ function App() {
             addXP={addXP}
             loseLife={loseLife}
             onComplete={completeMission}
+            onExit={() => setScreen('home')}
             elapsedSeconds={tutoElapsed}
           />
         )}
@@ -5075,6 +6181,20 @@ function App() {
           />
         )}
       </div>
+
+      {/* ========== PWA — Bannière d'installation ========== */}
+      {showInstallBanner && pwa.canInstall && (
+        <InstallBanner
+          onInstall={async () => {
+            await pwa.promptInstall();
+            setShowInstallBanner(false);
+          }}
+          onDismiss={() => { pwa.dismiss(); setShowInstallBanner(false); }}
+        />
+      )}
+
+      {/* ========== PWA — Indicateur offline ========== */}
+      <OfflineIndicator online={online} />
     </div>
   );
 }
@@ -5150,13 +6270,15 @@ function WelcomeScreen({ nameInput, setNameInput, countryInput, setCountryInput,
 // ============================================================
 // HOME (Académie - carte des missions)
 // ============================================================
-function HomeScreen({ state, onStartMission, onContact }) {
+function HomeScreen({ state, onStartMission, onContact, onDailyQuiz, onChallenge }) {
   const terminaleD = CURRICULUM.terminaleD;
   const totalMissions = terminaleD.subjects.reduce((sum, sub) =>
     sum + sub.parts.reduce((s, p) => s + p.themes.reduce((t, th) => t + th.chapters.length, 0), 0), 0
   );
   const completedCount = state.completedMissions.length;
   const progressPct = (completedCount / totalMissions) * 100;
+  const today = new Date().toISOString().slice(0, 10);
+  const todayQuiz = (state.dailyQuizHistory || {})[today];
 
   return (
     <div>
@@ -5168,7 +6290,7 @@ function HomeScreen({ state, onStartMission, onContact }) {
       </div>
 
       {/* Progression */}
-      <div className="anim-in delay-100 card-border rounded-2xl p-5 mb-8">
+      <div className="anim-in delay-100 card-border rounded-2xl p-5 mb-6">
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold">{T('homeProgress')}</p>
           <p className="font-mono-sci text-amber-300 text-sm">{completedCount} / {totalMissions}</p>
@@ -5177,8 +6299,59 @@ function HomeScreen({ state, onStartMission, onContact }) {
         <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
           <span><Icon name="sparkles" size={12} color="#fbbf24" /> {state.xp} XP</span>
           <span><Icon name="bookOpen" size={12} color="#fbbf24" /> {state.grimoireEntries.length} entrées</span>
+          {state.streakDays > 0 && <span className="text-orange-300">🔥 {state.streakDays}j</span>}
         </div>
       </div>
+
+      {/* Quiz Éclair Quotidien */}
+      <button
+        onClick={onDailyQuiz}
+        className="anim-in delay-150 w-full card-border rounded-2xl p-4 mb-3 text-left transition-all hover:border-amber-400/60"
+        style={{
+          background: todayQuiz ? 'linear-gradient(145deg, rgba(16, 185, 129, 0.08), rgba(15, 23, 42, 0.6))' : 'linear-gradient(145deg, rgba(245, 158, 11, 0.10), rgba(15, 23, 42, 0.6))',
+          borderColor: todayQuiz ? 'rgba(16, 185, 129, 0.4)' : 'rgba(251, 191, 36, 0.4)'
+        }}
+      >
+        <div className="flex items-center gap-4">
+          <div className="text-3xl shrink-0">{todayQuiz ? '✅' : '⚡'}</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold mb-0.5">Quiz éclair quotidien</p>
+            <p className="font-display text-base text-amber-100 truncate">
+              {todayQuiz ? `Score : ${todayQuiz.score}/${todayQuiz.total}` : '5 questions, 60 secondes'}
+            </p>
+            <p className="text-[11px] text-slate-400 mt-0.5">
+              {todayQuiz ? 'Reviens demain pour un nouveau défi' : 'Bonus jusqu\'à +150 XP'}
+            </p>
+          </div>
+          <Icon name="chevron" size={18} color="#fbbf24" />
+        </div>
+      </button>
+
+      {/* Mode Défi Élite */}
+      {(state.completedMissions || []).length >= 1 && (
+        <button
+          onClick={onChallenge}
+          className="anim-in delay-200 w-full card-border rounded-2xl p-4 mb-6 text-left transition-all hover:border-red-400/60"
+          style={{
+            background: 'linear-gradient(145deg, rgba(220, 38, 38, 0.08), rgba(15, 23, 42, 0.6))',
+            borderColor: 'rgba(220, 38, 38, 0.3)'
+          }}
+        >
+          <div className="flex items-center gap-4">
+            <div className="text-3xl shrink-0">🎯</div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] uppercase tracking-wider text-red-400/80 font-bold mb-0.5">Mode Défi Élite</p>
+              <p className="font-display text-base text-amber-100 truncate">
+                5 questions difficiles, 3 minutes
+              </p>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                Aucune erreur permise • Bonus +200 XP
+              </p>
+            </div>
+            <Icon name="chevron" size={18} color="#fbbf24" />
+          </div>
+        </button>
+      )}
 
       {/* CTA principal — Mission débloquée (toujours visible tant que non terminée) */}
       {!state.completedMissions.includes('drepanocytose') && (
@@ -5219,7 +6392,7 @@ function HomeScreen({ state, onStartMission, onContact }) {
       <div className="anim-in delay-300 space-y-5 mb-10">
         <h2 className="font-display text-2xl text-amber-100 mb-3">Terminale D — Matières</h2>
         {terminaleD.subjects.map((subject, idx) => (
-          <SubjectCard key={subject.id} subject={subject} onStartMission={onStartMission} completedMissions={state.completedMissions} delay={0.05 + idx * 0.08} />
+          <SubjectCard key={subject.id} subject={subject} onStartMission={onStartMission} completedMissions={state.completedMissions} freeMode={state.freeMode} delay={0.05 + idx * 0.08} />
         ))}
       </div>
 
@@ -5234,10 +6407,47 @@ function HomeScreen({ state, onStartMission, onContact }) {
   );
 }
 
-function SubjectCard({ subject, onStartMission, completedMissions, delay }) {
+// ============================================================
+// PROGRESSION — Calcule prérequis et verrouillage
+// Une mission est jouable si :
+//   - elle est explicitement marquée locked: false sans requires (cas tutoriel/exploration)
+//   - OU le mode libre est activé (state.freeMode)
+//   - OU toutes ses missions prérequises sont complétées
+// ============================================================
+function getMissionPrereqs(missionId) {
+  // Tutoriel : aucun prérequis
+  if (missionId === 'drepanocytose') return [];
+  // GENECODE : chaîne séquentielle après le tuto
+  const gcChain = ['gc-1-1','gc-1-2','gc-2-1','gc-2-2','gc-2-3','gc-3-1','gc-3-2','gc-3-3','gc-4-1','gc-4-2','gc-4-3','gc-5-1','gc-5-2','gc-boss'];
+  const gcIdx = gcChain.indexOf(missionId);
+  if (gcIdx === 0) return ['drepanocytose'];
+  if (gcIdx > 0) return [gcChain[gcIdx - 1]];
+  // NEUROLINK : chaîne séquentielle indépendante (peut être commencée après le tuto)
+  const nlChain = ['nl-1-1','nl-1-2','nl-1-3','nl-2-1','nl-2-2','nl-2-3','nl-3-1','nl-3-2','nl-3-3','nl-4-1','nl-4-2','nl-4-3','nl-5-1','nl-5-2','nl-boss'];
+  const nlIdx = nlChain.indexOf(missionId);
+  if (nlIdx === 0) return ['drepanocytose'];
+  if (nlIdx > 0) return [nlChain[nlIdx - 1]];
+  return [];
+}
+
+function isMissionPlayable(chap, completedMissions, freeMode) {
+  if (chap.locked === true) return false; // verrouillé en dur (thèmes futurs)
+  if (freeMode) return true;
+  const prereqs = getMissionPrereqs(chap.id);
+  return prereqs.every(p => completedMissions.includes(p));
+}
+
+function getMissionBlocker(chap, completedMissions) {
+  const prereqs = getMissionPrereqs(chap.id);
+  const missing = prereqs.filter(p => !completedMissions.includes(p));
+  return missing[0] || null;
+}
+
+function SubjectCard({ subject, onStartMission, completedMissions, freeMode, delay }) {
   const [expanded, setExpanded] = useState(false);
   const allChapters = subject.parts.flatMap(p => p.themes.flatMap(t => t.chapters));
-  const unlocked = allChapters.filter(c => !c.locked).length;
+  const playableCount = allChapters.filter(c => isMissionPlayable(c, completedMissions, freeMode)).length;
+  const completedCount = allChapters.filter(c => completedMissions.includes(c.id)).length;
   const total = allChapters.length;
   return (
     <div className="anim-in" style={{animationDelay: `${delay}s`}}>
@@ -5256,7 +6466,7 @@ function SubjectCard({ subject, onStartMission, completedMissions, delay }) {
             )}
           </div>
           <div className="text-right shrink-0">
-            <p className="font-mono-sci text-amber-300 text-sm">{unlocked}/{total}</p>
+            <p className="font-mono-sci text-amber-300 text-sm">{completedCount}/{total}</p>
             <Icon name="chevron" size={16} color="#fbbf24" />
           </div>
         </div>
@@ -5272,20 +6482,30 @@ function SubjectCard({ subject, onStartMission, completedMissions, delay }) {
                   <p className="text-xs text-amber-200/80 font-semibold mb-1.5 pl-3 border-l-2 border-amber-500/30">{theme.name}</p>
                   {theme.chapters.map(chap => {
                     const isCompleted = completedMissions.includes(chap.id);
+                    const playable = isMissionPlayable(chap, completedMissions, freeMode);
+                    const blocker = !playable && !chap.locked ? getMissionBlocker(chap, completedMissions) : null;
                     return (
                       <button
                         key={chap.id}
-                        onClick={() => { if (!chap.locked) onStartMission(chap.id); }}
-                        disabled={chap.locked}
-                        className={`w-full text-left p-3 rounded-xl mb-1.5 flex items-center gap-3 transition-all ${chap.locked ? 'mission-locked bg-slate-900/40 border border-slate-800 cursor-not-allowed' : 'card-border hover:border-amber-400/60'}`}
+                        onClick={() => { if (playable) onStartMission(chap.id); }}
+                        disabled={!playable}
+                        title={blocker ? `Termine d'abord : ${blocker}` : (chap.locked ? 'Disponible dans une prochaine mise à jour' : isCompleted ? 'Mission complétée — clique pour réviser' : '')}
+                        className={`w-full text-left p-3 rounded-xl mb-1.5 flex items-center gap-3 transition-all ${!playable ? 'mission-locked bg-slate-900/40 border border-slate-800 cursor-not-allowed' : 'card-border hover:border-amber-400/60'}`}
                       >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${chap.locked ? 'bg-slate-800' : isCompleted ? 'bg-emerald-500/20' : 'bg-amber-500/15'}`}>
-                          <Icon name={chap.locked ? 'lock' : isCompleted ? 'check' : 'play'} size={14} color={chap.locked ? '#64748b' : isCompleted ? '#10b981' : '#fbbf24'} fill={!chap.locked && !isCompleted ? '#fbbf24' : 'none'} />
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${!playable ? 'bg-slate-800' : isCompleted ? 'bg-emerald-500/20' : 'bg-amber-500/15'}`}>
+                          <Icon name={!playable ? 'lock' : isCompleted ? 'check' : 'play'} size={14} color={!playable ? '#64748b' : isCompleted ? '#10b981' : '#fbbf24'} fill={playable && !isCompleted ? '#fbbf24' : 'none'} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm text-amber-100 truncate">{chap.name}</p>
-                          <p className="text-[11px] text-slate-500 truncate">« {chap.power} »</p>
+                          <p className="text-[11px] text-slate-500 truncate">
+                            {blocker ? `🔒 Termine d'abord la mission précédente` : `« ${chap.power} »`}
+                          </p>
                         </div>
+                        {isCompleted && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full shrink-0" style={{background: 'rgba(16, 185, 129, 0.15)', color: '#6ee7b7', border: '1px solid rgba(16, 185, 129, 0.3)'}}>
+                            🔄 Réviser
+                          </span>
+                        )}
                       </button>
                     );
                   })}
@@ -5302,7 +6522,1063 @@ function SubjectCard({ subject, onStartMission, completedMissions, delay }) {
 // ============================================================
 // SETTINGS / PROFIL SCREEN — Badges, streak, options, reset
 // ============================================================
-function SettingsScreen({ state, setState, onBack }) {
+// ============================================================
+// DAILY QUIZ — 5 questions, 60 secondes, bonus XP quotidien
+// ============================================================
+function DailyQuizScreen({ state, setState, onBack }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const alreadyDone = (state.dailyQuizHistory || {})[today];
+  const [phase, setPhase] = React.useState(alreadyDone ? 'done' : 'intro');
+  const [currentQ, setCurrentQ] = React.useState(0);
+  const [score, setScore] = React.useState(0);
+  const [timeLeft, setTimeLeft] = React.useState(60);
+  const [selected, setSelected] = React.useState(null);
+  const [revealed, setRevealed] = React.useState(false);
+
+  // Banque de questions du quiz éclair (5 questions tirées au sort dans une banque)
+  const QUIZ_POOL = [
+    { q: "Le gène de la drépanocytose est :", opts: ["Dominant", "Récessif", "Lié à X"], correct: 1 },
+    { q: "Le potentiel de repos d'un neurone est environ :", opts: ["+30 mV", "0 mV", "–70 mV"], correct: 2 },
+    { q: "L'hormone qui fait BAISSER la glycémie est :", opts: ["Glucagon", "Insuline", "Adrénaline"], correct: 1 },
+    { q: "Combien de chromosomes possède un humain normal ?", opts: ["23", "46", "48"], correct: 1 },
+    { q: "Un individu Aa est :", opts: ["Homozygote", "Hétérozygote", "Stérile"], correct: 1 },
+    { q: "La mitose produit :", opts: ["2 cellules identiques", "4 gamètes", "1 cellule géante"], correct: 0 },
+    { q: "Le syndrome de Down (trisomie 21) est :", opts: ["Mendélien", "Chromosomique", "Infectieux"], correct: 1 },
+    { q: "L'axone d'un neurone sert à :", opts: ["Recevoir l'information", "Transmettre l'information", "Stocker l'énergie"], correct: 1 },
+    { q: "Le diabète de type 1 est dû à :", opts: ["Manque d'insuline", "Excès d'insuline", "Manque de sucre"], correct: 0 },
+    { q: "Les gamètes humains contiennent :", opts: ["46 chromosomes", "23 chromosomes", "Aucun chromosome"], correct: 1 },
+    { q: "Le pH du sang est environ :", opts: ["6 (acide)", "7,4 (légèrement basique)", "8,5 (basique)"], correct: 1 },
+    { q: "Un allèle dominant s'écrit avec :", opts: ["Une lettre minuscule", "Une lettre majuscule", "Un chiffre"], correct: 1 },
+    { q: "La glycémie normale à jeun est environ :", opts: ["0,5 g/L", "1 g/L", "2 g/L"], correct: 1 },
+    { q: "Le cycle cellulaire comprend :", opts: ["Interphase + Mitose", "Mitose seule", "Méiose + Mitose"], correct: 0 },
+    { q: "La synapse est :", opts: ["Une cellule", "Une zone de contact entre neurones", "Un nerf"], correct: 1 }
+  ];
+
+  // Pioche aléatoire de 5 questions (stable pour la session)
+  const questions = React.useMemo(() => {
+    const pool = [...QUIZ_POOL];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    // Pour chaque question, mélanger aussi les options
+    return pool.slice(0, 5).map(q => {
+      const indices = q.opts.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      return {
+        question: q.q,
+        options: indices.map(i => q.opts[i]),
+        correct: indices.indexOf(q.correct)
+      };
+    });
+  // eslint-disable-next-line
+  }, []);
+
+  // Timer
+  React.useEffect(() => {
+    if (phase !== 'playing') return;
+    if (timeLeft <= 0) { setPhase('finished'); return; }
+    const id = setTimeout(() => setTimeLeft(t => t - 1), 1000);
+    return () => clearTimeout(id);
+  }, [phase, timeLeft]);
+
+  const startQuiz = () => {
+    setPhase('playing');
+    setCurrentQ(0);
+    setScore(0);
+    setTimeLeft(60);
+    setSelected(null);
+    setRevealed(false);
+  };
+
+  const submitAnswer = (idx) => {
+    if (revealed) return;
+    setSelected(idx);
+    setRevealed(true);
+    const isCorrect = idx === questions[currentQ].correct;
+    if (isCorrect) {
+      setScore(s => s + 1);
+      SoundManager.play('correct');
+    } else {
+      SoundManager.play('wrong');
+    }
+    setTimeout(() => {
+      if (currentQ + 1 >= questions.length) {
+        setPhase('finished');
+      } else {
+        setCurrentQ(c => c + 1);
+        setSelected(null);
+        setRevealed(false);
+      }
+    }, 1200);
+  };
+
+  const finalize = () => {
+    // Calculer le bonus XP : 20 XP par bonne réponse + 50 XP bonus si 5/5
+    const bonusXP = score * 20 + (score === 5 ? 50 : 0);
+    SoundManager.play('complete');
+    MusicEngine.pulse('progression');
+    setState(s => {
+      const history = { ...(s.dailyQuizHistory || {}) };
+      history[today] = { score, total: questions.length, xp: bonusXP };
+      // Mise à jour xpHistory
+      const xpHistory = [...(s.xpHistory || [])];
+      const todayEntry = xpHistory.find(e => e.date === today);
+      if (todayEntry) todayEntry.xp += bonusXP;
+      else xpHistory.push({ date: today, xp: bonusXP });
+      // Badge "Quiz parfait" si 5/5
+      const badges = [...(s.badges || [])];
+      if (score === 5 && !badges.includes('badge:quiz-perfect')) badges.push('badge:quiz-perfect');
+      return {
+        ...s,
+        xp: (s.xp || 0) + bonusXP,
+        dailyQuizHistory: history,
+        xpHistory: xpHistory.slice(-30),
+        badges
+      };
+    });
+    onBack();
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto" style={{paddingTop: '2vh'}}>
+      <button onClick={onBack} className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 mb-6"
+        style={{opacity: 1, visibility: 'visible'}}>
+        ← Retour à l'Académie
+      </button>
+
+      {phase === 'intro' && (
+        <div className="text-center anim-in">
+          <div className="text-6xl mb-4">⚡</div>
+          <h1 className="font-display text-3xl text-amber-100 mb-3">Quiz Éclair Quotidien</h1>
+          <p className="text-slate-300 text-base leading-relaxed mb-6 px-4">
+            <strong className="text-amber-300">5 questions, 60 secondes</strong>.<br/>
+            Reviens chaque jour pour tester tes réflexes scientifiques.
+          </p>
+          <div className="card-border rounded-xl p-4 mb-6 max-w-sm mx-auto">
+            <p className="text-[10px] uppercase tracking-wider text-amber-400/80 mb-2">Récompenses</p>
+            <p className="text-slate-200 text-sm leading-relaxed">+ 20 XP par bonne réponse<br/>+ 50 XP bonus si 5/5<br/>🏅 Badge « Quiz parfait »</p>
+          </div>
+          <button onClick={startQuiz} className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2 mega-pulse"
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+            <Icon name="play" size={16} fill="currentColor" /> Lancer le quiz
+          </button>
+        </div>
+      )}
+
+      {phase === 'playing' && (
+        <div className="anim-in">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-amber-400/70">Question {currentQ + 1}/{questions.length}</p>
+            <div className="flex items-center gap-2">
+              <span className={`px-3 py-1 rounded-full text-sm font-mono-sci tabular-nums ${timeLeft <= 10 ? 'text-red-400' : 'text-amber-300'}`}
+                style={{background: timeLeft <= 10 ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.12)', border: '1px solid ' + (timeLeft <= 10 ? '#ef4444' : '#f59e0b')}}>
+                ⏱ {timeLeft}s
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm font-mono-sci tabular-nums text-emerald-300"
+                style={{background: 'rgba(16,185,129,0.12)', border: '1px solid #10b981'}}>
+                {score}/{questions.length}
+              </span>
+            </div>
+          </div>
+          <div className="card-border rounded-2xl p-5 mb-5">
+            <p className="text-slate-100 text-lg leading-relaxed">{questions[currentQ].question}</p>
+          </div>
+          <div className="space-y-2.5">
+            {questions[currentQ].options.map((opt, i) => {
+              const isSel = selected === i;
+              const isCorrect = revealed && i === questions[currentQ].correct;
+              const isWrong = revealed && isSel && i !== questions[currentQ].correct;
+              let style = { borderColor: '#334155', background: 'rgba(15, 23, 42, 0.4)' };
+              if (isCorrect) style = { borderColor: '#10b981', background: 'rgba(16,185,129,0.1)' };
+              else if (isWrong) style = { borderColor: '#ef4444', background: 'rgba(239,68,68,0.1)' };
+              else if (isSel) style = { borderColor: '#f59e0b', background: 'rgba(245,158,11,0.1)' };
+              return (
+                <button
+                  key={i}
+                  onClick={() => submitAnswer(i)}
+                  disabled={revealed}
+                  className="w-full text-left p-4 rounded-xl border-2 transition-all"
+                  style={style}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 text-xs font-bold ${isCorrect ? 'border-emerald-400 bg-emerald-400 text-slate-950' : isWrong ? 'border-red-500 bg-red-500 text-white' : 'border-slate-600 text-slate-500'}`}>
+                      {isCorrect ? '✓' : isWrong ? '✗' : String.fromCharCode(65 + i)}
+                    </span>
+                    <span className="text-sm text-slate-100">{opt}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {phase === 'finished' && (
+        <div className="text-center anim-in">
+          <div className="text-7xl mb-4">{score === 5 ? '🏆' : score >= 3 ? '✨' : '💪'}</div>
+          <h1 className="font-display text-3xl text-amber-100 mb-3">
+            {score === 5 ? 'Sans faute !' : score >= 3 ? 'Bien joué !' : 'Continue'}
+          </h1>
+          <p className="text-amber-200 text-2xl font-mono-sci mb-2">{score} / {questions.length}</p>
+          <p className="text-slate-400 text-sm mb-6">Score du jour</p>
+          <div className="card-border rounded-xl p-4 mb-6 max-w-sm mx-auto">
+            <p className="text-[10px] uppercase tracking-wider text-amber-400/80 mb-2">XP gagnés</p>
+            <p className="font-display text-3xl text-amber-100">+ {score * 20 + (score === 5 ? 50 : 0)}</p>
+            {score === 5 && <p className="text-xs text-amber-300 mt-2">🏅 Badge « Quiz parfait » débloqué</p>}
+          </div>
+          <p className="text-slate-300 text-sm italic mb-6 px-4">
+            « Reviens demain pour un nouveau quiz. La rigueur quotidienne, c'est l'excellence. »
+            <br/><span className="text-[10px] text-slate-500">— Dr Kotchami</span>
+          </p>
+          <button onClick={finalize} className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2"
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex'}}>
+            Valider mon score
+          </button>
+        </div>
+      )}
+
+      {phase === 'done' && (
+        <div className="text-center anim-in">
+          <div className="text-6xl mb-4">✅</div>
+          <h1 className="font-display text-2xl text-amber-100 mb-3">Quiz du jour déjà terminé</h1>
+          <p className="text-amber-200 text-xl font-mono-sci mb-6">{alreadyDone.score} / {alreadyDone.total}</p>
+          <p className="text-slate-300 text-sm mb-6 italic px-4">
+            Reviens demain pour un nouveau quiz éclair !
+          </p>
+          <button onClick={onBack} className="btn-ghost px-6 py-2.5 rounded-full text-sm">
+            Retour à l'Académie
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// SHARE SCREEN — Partage de progression (carte avec stats)
+// ============================================================
+function ShareScreen({ state, onBack }) {
+  const [copied, setCopied] = React.useState(false);
+  const totalQ = state.totalQuestionsAnswered || 0;
+  const correctQ = state.totalCorrectAnswers || 0;
+  const accuracy = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : 0;
+
+  const shareText = `🧬 Science Quest — Mon parcours
+
+🎓 Agent : ${state.playerName}
+⚡ XP total : ${state.xp || 0}
+🏆 Missions complétées : ${(state.completedMissions || []).length}
+🔥 Série : ${state.streakDays || 0} jour(s)
+🎯 Précision : ${accuracy}%
+🏅 Badges : ${(state.badges || []).length}
+
+« Comprendre avant de mémoriser — construire sur du roc, pas sur du sable. »
+
+Rejoins-moi sur Science Quest 👇
+${typeof window !== 'undefined' ? window.location.origin : ''}`;
+
+  const handleShare = async () => {
+    SoundManager.play('click');
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: 'Mon parcours Science Quest', text: shareText });
+      } catch(e) {}
+    } else {
+      handleCopy();
+    }
+  };
+  const handleCopy = async () => {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(shareText);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }
+    } catch(e) {}
+  };
+  const handleWhatsApp = () => {
+    SoundManager.play('click');
+    const url = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto" style={{paddingTop: '2vh'}}>
+      <button onClick={onBack} className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 mb-6"
+        style={{opacity: 1, visibility: 'visible'}}>
+        ← Retour à l'Académie
+      </button>
+      <h1 className="font-display text-3xl text-amber-100 mb-2">📤 Partager mon parcours</h1>
+      <p className="text-slate-400 text-sm mb-6">Montre tes progrès à tes amis et invite-les à rejoindre Science Quest</p>
+
+      {/* Carte de partage visuelle */}
+      <div className="anim-in rounded-2xl p-6 mb-6"
+        style={{
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98))',
+          border: '2px solid rgba(245, 158, 11, 0.4)',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
+        }}>
+        <div className="flex items-center gap-4 mb-5 pb-4 border-b border-amber-500/20">
+          <PlayerAvatar emoji={state.avatarEmoji} color={state.avatarColor} size={64} />
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] uppercase tracking-wider text-amber-400/70">Science Quest</p>
+            <p className="font-display text-2xl text-amber-100 truncate">{state.playerName}</p>
+            <p className="text-xs text-slate-400">{state.country || 'Niger'}</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          <div className="rounded-lg p-3" style={{background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)'}}>
+            <p className="text-[9px] uppercase text-slate-500">XP total</p>
+            <p className="font-mono-sci text-2xl text-amber-300">{state.xp || 0}</p>
+          </div>
+          <div className="rounded-lg p-3" style={{background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)'}}>
+            <p className="text-[9px] uppercase text-slate-500">Missions</p>
+            <p className="font-mono-sci text-2xl text-emerald-300">{(state.completedMissions || []).length}</p>
+          </div>
+          <div className="rounded-lg p-3" style={{background: 'rgba(249, 115, 22, 0.08)', border: '1px solid rgba(249, 115, 22, 0.2)'}}>
+            <p className="text-[9px] uppercase text-slate-500">Série 🔥</p>
+            <p className="font-mono-sci text-2xl text-orange-300">{state.streakDays || 0}j</p>
+          </div>
+          <div className="rounded-lg p-3" style={{background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.2)'}}>
+            <p className="text-[9px] uppercase text-slate-500">Précision</p>
+            <p className="font-mono-sci text-2xl text-purple-300">{accuracy}%</p>
+          </div>
+        </div>
+        <p className="text-xs italic text-amber-300/80 text-center leading-relaxed">
+          « Comprendre avant de mémoriser —<br/>construire sur du roc, pas sur du sable. »
+        </p>
+      </div>
+
+      {/* Boutons de partage */}
+      <div className="space-y-3">
+        <button
+          onClick={handleWhatsApp}
+          className="w-full p-4 rounded-xl font-semibold text-white inline-flex items-center justify-center gap-2 transition-all"
+          style={{background: '#25D366', opacity: 1, visibility: 'visible'}}
+        >
+          <span style={{fontSize: '18px'}}>💬</span> Partager sur WhatsApp
+        </button>
+        {typeof navigator !== 'undefined' && navigator.share && (
+          <button
+            onClick={handleShare}
+            className="btn-primary w-full p-4 rounded-xl inline-flex items-center justify-center gap-2"
+            style={{opacity: 1, visibility: 'visible'}}
+          >
+            📤 Partager via le système
+          </button>
+        )}
+        <button
+          onClick={handleCopy}
+          className="btn-ghost w-full p-4 rounded-xl inline-flex items-center justify-center gap-2"
+          style={{opacity: 1, visibility: 'visible'}}
+        >
+          {copied ? '✓ Copié !' : '📋 Copier le texte'}
+        </button>
+      </div>
+
+      <div className="mt-6 card-border rounded-xl p-4">
+        <p className="text-[10px] uppercase tracking-wider text-amber-400/70 mb-2">Ce qui sera partagé</p>
+        <pre className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-wrap font-mono-sci">{shareText}</pre>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// CHALLENGE MODE — Une seule erreur permise = perdu
+// ============================================================
+function ChallengeScreen({ state, setState, onBack }) {
+  const [phase, setPhase] = React.useState('intro');
+  const [currentQ, setCurrentQ] = React.useState(0);
+  const [timeLeft, setTimeLeft] = React.useState(180);
+  const [selected, setSelected] = React.useState(null);
+  const [revealed, setRevealed] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
+
+  // Banque ÉLITE : 8 questions vraiment difficiles, mélangées
+  const ELITE_POOL = [
+    { q: "Une mère AaBb × Père aaBb : quelle est la probabilité d'un enfant aabb ?", opts: ["1/16", "1/8", "1/4", "1/2"], correct: 1 },
+    { q: "Un père [I^A i] et une mère [I^B I^B] : groupes possibles de l'enfant ?", opts: ["A et B", "AB et B", "A et AB", "AB et O"], correct: 1 },
+    { q: "Lors d'un PA, la phase de dépolarisation est due à :", opts: ["Sortie de K+", "Entrée de Na+", "Sortie de Cl-", "Entrée de Ca++"], correct: 1 },
+    { q: "Une glycémie à jeun de 1,40 g/L correspond à :", opts: ["Normal", "Prédiabète", "Diabète", "Hypoglycémie"], correct: 2 },
+    { q: "Le syndrome de Klinefelter correspond à :", opts: ["XYY", "XXY", "X0", "XXX"], correct: 1 },
+    { q: "La méiose réductionnelle se produit en :", opts: ["Méiose I", "Méiose II", "Mitose", "Phase G1"], correct: 0 },
+    { q: "L'insuline est sécrétée par :", opts: ["Cellules α", "Cellules β", "Foie", "Reins"], correct: 1 },
+    { q: "La drépanocytose résulte d'une mutation sur la chaîne :", opts: ["α de l'hémoglobine", "β de l'hémoglobine", "γ", "δ"], correct: 1 }
+  ];
+
+  const questions = React.useMemo(() => {
+    const pool = [...ELITE_POOL];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, 5).map(q => {
+      const indices = q.opts.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      return {
+        question: q.q,
+        options: indices.map(i => q.opts[i]),
+        correct: indices.indexOf(q.correct)
+      };
+    });
+  // eslint-disable-next-line
+  }, []);
+
+  React.useEffect(() => {
+    if (phase !== 'playing') return;
+    if (timeLeft <= 0) { setFailed(true); setPhase('finished'); return; }
+    const id = setTimeout(() => setTimeLeft(t => t - 1), 1000);
+    return () => clearTimeout(id);
+  }, [phase, timeLeft]);
+
+  const startChallenge = () => {
+    setPhase('playing');
+    setCurrentQ(0);
+    setTimeLeft(180);
+    setSelected(null);
+    setRevealed(false);
+    setFailed(false);
+  };
+
+  const submitAnswer = (idx) => {
+    if (revealed) return;
+    setSelected(idx);
+    setRevealed(true);
+    const isCorrect = idx === questions[currentQ].correct;
+    if (isCorrect) {
+      SoundManager.play('correct');
+      setTimeout(() => {
+        if (currentQ + 1 >= questions.length) setPhase('finished');
+        else { setCurrentQ(c => c + 1); setSelected(null); setRevealed(false); }
+      }, 1000);
+    } else {
+      SoundManager.play('wrong');
+      MusicEngine.pulse('tension');
+      setFailed(true);
+      setTimeout(() => setPhase('finished'), 2000);
+    }
+  };
+
+  const finalize = () => {
+    if (!failed) {
+      SoundManager.play('complete');
+      MusicEngine.pulse('progression');
+      setState(s => {
+        const badges = [...(s.badges || [])];
+        if (!badges.includes('badge:challenger')) badges.push('badge:challenger');
+        const today = new Date().toISOString().slice(0, 10);
+        const xpHistory = [...(s.xpHistory || [])];
+        const todayEntry = xpHistory.find(e => e.date === today);
+        if (todayEntry) todayEntry.xp += 200;
+        else xpHistory.push({ date: today, xp: 200 });
+        return { ...s, xp: (s.xp || 0) + 200, badges, xpHistory: xpHistory.slice(-30) };
+      });
+    }
+    onBack();
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto" style={{paddingTop: '2vh'}}>
+      <button onClick={onBack} className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 mb-6"
+        style={{opacity: 1, visibility: 'visible'}}>
+        ← Retour à l'Académie
+      </button>
+
+      {phase === 'intro' && (
+        <div className="text-center anim-in">
+          <div className="text-6xl mb-4">🎯</div>
+          <h1 className="font-display text-3xl text-amber-100 mb-3">Mode Défi Élite</h1>
+          <p className="text-slate-300 text-base leading-relaxed mb-6 px-4">
+            <strong className="text-red-400">5 questions difficiles, 3 minutes, AUCUNE erreur autorisée</strong>.<br/>
+            Une seule mauvaise réponse = défi raté.
+          </p>
+          <div className="card-border rounded-xl p-4 mb-6 max-w-sm mx-auto" style={{borderColor: 'rgba(239, 68, 68, 0.3)'}}>
+            <p className="text-[10px] uppercase tracking-wider text-red-400/80 mb-2">Récompense</p>
+            <p className="text-slate-200 text-sm leading-relaxed">+ 200 XP<br/>🏅 Badge « Challenger »</p>
+          </div>
+          <p className="text-xs italic text-slate-400 mb-6 px-4">
+            « C'est dans la pression que se révèle la vraie compréhension. »<br/>
+            <span className="text-[10px] text-slate-500">— Dr Kotchami</span>
+          </p>
+          <button onClick={startChallenge} className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2 mega-pulse"
+            style={{opacity: 1, visibility: 'visible', display: 'inline-flex', background: 'linear-gradient(135deg, #dc2626, #f59e0b)'}}>
+            🎯 Lancer le défi
+          </button>
+        </div>
+      )}
+
+      {phase === 'playing' && (
+        <div className="anim-in">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-amber-400/70">Question {currentQ + 1}/{questions.length}</p>
+            <span className={`px-3 py-1 rounded-full text-sm font-mono-sci tabular-nums ${timeLeft <= 30 ? 'text-red-400' : 'text-amber-300'}`}
+              style={{background: timeLeft <= 30 ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.12)', border: '1px solid ' + (timeLeft <= 30 ? '#ef4444' : '#f59e0b')}}>
+              ⏱ {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+            </span>
+          </div>
+          <div className="card-border rounded-2xl p-5 mb-5">
+            <p className="text-slate-100 text-base leading-relaxed">{questions[currentQ].question}</p>
+          </div>
+          <div className="space-y-2.5">
+            {questions[currentQ].options.map((opt, i) => {
+              const isSel = selected === i;
+              const isCorrect = revealed && i === questions[currentQ].correct;
+              const isWrong = revealed && isSel && i !== questions[currentQ].correct;
+              let style = { borderColor: '#334155', background: 'rgba(15, 23, 42, 0.4)' };
+              if (isCorrect) style = { borderColor: '#10b981', background: 'rgba(16,185,129,0.1)' };
+              else if (isWrong) style = { borderColor: '#ef4444', background: 'rgba(239,68,68,0.1)' };
+              return (
+                <button key={i} onClick={() => submitAnswer(i)} disabled={revealed}
+                  className="w-full text-left p-4 rounded-xl border-2 transition-all" style={style}>
+                  <div className="flex items-center gap-3">
+                    <span className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 text-xs font-bold ${isCorrect ? 'border-emerald-400 bg-emerald-400 text-slate-950' : isWrong ? 'border-red-500 bg-red-500 text-white' : 'border-slate-600 text-slate-500'}`}>
+                      {isCorrect ? '✓' : isWrong ? '✗' : String.fromCharCode(65 + i)}
+                    </span>
+                    <span className="text-sm text-slate-100">{opt}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {phase === 'finished' && (
+        <div className="text-center anim-in">
+          <div className="text-7xl mb-4">{failed ? '💔' : '🏆'}</div>
+          <h1 className="font-display text-3xl text-amber-100 mb-3">
+            {failed ? 'Défi raté' : 'Défi réussi !'}
+          </h1>
+          <p className="text-slate-300 text-base mb-6 px-4 italic">
+            {failed
+              ? "« Une erreur, ce n'est pas un échec — c'est une information. Reviens t'entraîner et reviens. »"
+              : "« 5 sur 5 sans une erreur. C'est l'excellence pure. Continue. »"}
+            <br/><span className="text-[10px] text-slate-500">— Dr Kotchami</span>
+          </p>
+          {!failed && (
+            <div className="card-border rounded-xl p-4 mb-6 max-w-sm mx-auto">
+              <p className="text-[10px] uppercase tracking-wider text-amber-400/80 mb-2">Récompenses</p>
+              <p className="text-slate-200 text-sm">+ 200 XP<br/>🏅 Badge « Challenger »</p>
+            </div>
+          )}
+          <button onClick={finalize} className="btn-primary px-8 py-3 rounded-full">
+            Retour
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// CERTIFICATE SCREEN — Imprimable / capture pour partage
+// ============================================================
+function CertificateScreen({ state, themeId, themeName, onBack }) {
+  const totalQ = state.totalQuestionsAnswered || 0;
+  const correctQ = state.totalCorrectAnswers || 0;
+  const accuracy = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : 0;
+  const dateStr = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  const handlePrint = () => {
+    SoundManager.play('click');
+    if (typeof window !== 'undefined') window.print();
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto" style={{paddingTop: '2vh'}}>
+      <button onClick={onBack} className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 mb-6 print-hidden"
+        style={{opacity: 1, visibility: 'visible'}}>
+        ← Retour
+      </button>
+      <h1 className="font-display text-2xl text-amber-100 mb-4 print-hidden">🏆 Mon Certificat</h1>
+
+      {/* Le certificat lui-même */}
+      <div
+        id="certificate-printable"
+        className="anim-in rounded-2xl p-8 md:p-10 text-center mb-6"
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #020617 100%)',
+          border: '3px double rgba(245, 158, 11, 0.6)',
+          boxShadow: '0 0 0 1px rgba(245, 158, 11, 0.2) inset, 0 30px 80px rgba(0, 0, 0, 0.6)',
+          minHeight: '500px'
+        }}
+      >
+        <p className="text-[10px] uppercase tracking-[0.3em] text-amber-400/80 mb-2">Académie des Sciences Avancées</p>
+        <h2 className="font-display text-3xl md:text-4xl mb-1" style={{color: '#fbbf24'}}>Science Quest</h2>
+        <p className="text-xs italic text-slate-400 mb-8">« Sauver le monde par la connaissance »</p>
+
+        <div className="my-8">
+          <p className="text-xs uppercase tracking-wider text-slate-500 mb-2">Certificat délivré à</p>
+          <p className="font-display text-3xl md:text-4xl text-amber-100 mb-1">{state.playerName}</p>
+          <p className="text-sm text-slate-400">{state.country || 'Niger'}</p>
+        </div>
+
+        <div className="my-8 px-4">
+          <p className="text-base text-slate-200 leading-relaxed">
+            Pour avoir complété avec rigueur le thème
+          </p>
+          <p className="font-display text-xl my-2" style={{color: '#fbbf24'}}>« {themeName} »</p>
+          <p className="text-base text-slate-200 leading-relaxed">
+            avec une précision de <strong className="text-amber-300">{accuracy}%</strong>
+          </p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 my-6 max-w-xs mx-auto">
+          <div>
+            <p className="text-2xl font-mono-sci text-amber-200">{state.xp || 0}</p>
+            <p className="text-[9px] uppercase text-slate-500">XP total</p>
+          </div>
+          <div>
+            <p className="text-2xl font-mono-sci text-emerald-300">{(state.completedMissions || []).length}</p>
+            <p className="text-[9px] uppercase text-slate-500">Missions</p>
+          </div>
+          <div>
+            <p className="text-2xl font-mono-sci text-orange-300">🔥{state.streakDays || 0}j</p>
+            <p className="text-[9px] uppercase text-slate-500">Série</p>
+          </div>
+        </div>
+
+        <p className="text-xs italic text-slate-400 mt-8 px-4 leading-relaxed">
+          « La science ne change pas le monde. Elle change le regard qu'on pose sur lui. Et ce nouveau regard — une fois acquis — personne ne pourra jamais te l'enlever. »
+        </p>
+
+        <div className="mt-10 pt-6 border-t border-amber-500/20 flex items-center justify-between">
+          <div className="text-left">
+            <p className="text-[10px] text-slate-500">Délivré le</p>
+            <p className="text-sm text-amber-200 font-mono-sci">{dateStr}</p>
+          </div>
+          <div className="text-right">
+            <p className="font-display text-base text-amber-300">Kotchami Ogougbe</p>
+            <p className="text-[10px] text-slate-500">Le Passeur de sciences</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3 print-hidden">
+        <button onClick={handlePrint} className="btn-primary w-full p-4 rounded-xl inline-flex items-center justify-center gap-2"
+          style={{opacity: 1, visibility: 'visible'}}>
+          🖨️ Imprimer / Sauver en PDF
+        </button>
+        <p className="text-[11px] text-slate-500 text-center px-4">
+          Astuce : dans la fenêtre d'impression, choisis « Enregistrer au format PDF » pour garder ton certificat numériquement.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// HELP SCREEN — Tutoriel + FAQ + Mes Réflexions
+// ============================================================
+function HelpScreen({ state, setState, onBack }) {
+  const [activeTab, setActiveTab] = React.useState('tutorial');
+  const [editingNote, setEditingNote] = React.useState(null);
+  const [noteText, setNoteText] = React.useState('');
+  const testimonies = state.testimonies || {};
+  const testimonyEntries = Object.entries(testimonies);
+  const notes = state.notes || {};
+  const noteEntries = Object.entries(notes);
+
+  const saveNote = (chapterKey, text) => {
+    if (!setState) return;
+    setState(s => {
+      const newNotes = { ...(s.notes || {}) };
+      if (text && text.trim()) {
+        newNotes[chapterKey] = { text: text.trim(), date: new Date().toISOString() };
+      } else {
+        delete newNotes[chapterKey];
+      }
+      return { ...s, notes: newNotes };
+    });
+    SoundManager.play('click');
+    setEditingNote(null);
+    setNoteText('');
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto" style={{paddingTop: '2vh', paddingBottom: '4vh'}}>
+      <button onClick={onBack} className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 mb-6"
+        style={{opacity: 1, visibility: 'visible'}}>
+        ← Retour à l'Académie
+      </button>
+      <h1 className="font-display text-3xl text-amber-100 mb-2">Centre d'aide</h1>
+      <p className="text-slate-400 text-sm mb-6">Tout ce qu'il faut savoir pour bien jouer Science Quest</p>
+
+      {/* Onglets */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {[
+          { id: 'tutorial', label: '🎓 Comment jouer' },
+          { id: 'faq', label: '❓ FAQ' },
+          { id: 'reflections', label: '✍️ Réflexions' },
+          { id: 'notes', label: '📓 Mes notes' },
+          { id: 'about', label: '🌍 À propos' }
+        ].map(t => (
+          <button
+            key={t.id}
+            onClick={() => setActiveTab(t.id)}
+            className="px-4 py-2 rounded-full text-xs transition-all"
+            style={{
+              opacity: 1,
+              background: activeTab === t.id ? 'rgba(245, 158, 11, 0.15)' : 'rgba(15, 23, 42, 0.4)',
+              border: '1px solid ' + (activeTab === t.id ? '#f59e0b' : '#334155'),
+              color: activeTab === t.id ? '#fbbf24' : '#94a3b8'
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* TUTORIEL */}
+      {activeTab === 'tutorial' && (
+        <div className="space-y-4 anim-in">
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">🎯 Le but du jeu</h2>
+            <p className="text-slate-200 text-sm leading-relaxed">
+              Science Quest transforme tes cours de sciences en aventures captivantes.
+              Tu incarnes un agent scientifique qui résout de vrais problèmes : enquêtes génétiques,
+              urgences neurologiques, équilibres chimiques. Plus tu progresses, plus tu deviens un
+              vrai scientifique.
+            </p>
+          </div>
+
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">🧬 Les missions</h2>
+            <div className="space-y-3 text-sm text-slate-200 leading-relaxed">
+              <p>Chaque mission suit le même rythme :</p>
+              <ul className="space-y-1.5 ml-4">
+                <li><strong className="text-amber-300">Intro</strong> — présentation du défi</li>
+                <li><strong className="text-amber-300">Prologue</strong> — l'histoire commence</li>
+                <li><strong className="text-amber-300">Briefing</strong> — l'objectif et les règles</li>
+                <li><strong className="text-amber-300">Phases</strong> — questions à résoudre (3 à 7 par mission)</li>
+                <li><strong className="text-amber-300">Épilogue</strong> — récompense + bonus</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">⚡ Les XP et les vies</h2>
+            <div className="space-y-2 text-sm text-slate-200 leading-relaxed">
+              <p>• <strong className="text-amber-300">XP (points d'expérience)</strong> : tu en gagnes à chaque bonne réponse. Bonus +20% à 3 d'affilée, +50% à 5 d'affilée 🔥</p>
+              <p>• <strong className="text-amber-300">Vies (cœurs)</strong> : tu en perds à chaque erreur. Maximum 3.</p>
+              <p>• <strong className="text-amber-300">Régénération</strong> : 1 vie revient toutes les 30 minutes automatiquement.</p>
+              <p>• <strong className="text-amber-300">Bonus rapidité</strong> : termine une mission en moins de 8 minutes pour +50 XP "Éclair scientifique".</p>
+            </div>
+          </div>
+
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">💡 L'indice (–10 XP)</h2>
+            <p className="text-slate-200 text-sm leading-relaxed">
+              Bloqué sur une question ? Clique sur le bouton "💡 Indice". Tu reçois une piste, mais
+              tu perds 10 XP. À utiliser quand tu es vraiment bloqué — l'objectif reste de comprendre
+              par soi-même.
+            </p>
+          </div>
+
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">🔓 Le déverrouillage</h2>
+            <p className="text-slate-200 text-sm leading-relaxed mb-2">
+              Les missions s'ouvrent dans l'ordre : tu dois terminer la mission précédente pour accéder
+              à la suivante. Cette progression garantit que tu construis sur des bases solides
+              — comprendre avant de mémoriser.
+            </p>
+            <p className="text-slate-300 text-sm leading-relaxed italic">
+              Mode libre exploration disponible dans Paramètres pour les enseignants qui souhaitent tester
+              les missions dans n'importe quel ordre.
+            </p>
+          </div>
+
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">👥 Tes mentors</h2>
+            <p className="text-slate-200 text-sm leading-relaxed">
+              Pendant chaque mission, tes mentors apparaissent à des moments clés pour t'aider, te
+              féliciter ou te recadrer. <strong className="text-emerald-300">Dr Kotchami</strong> te
+              guide toujours au début et à la fin. Les autres spécialistes (Dr Mariama, Dr Salamatou,
+              Dr Moctar, Dr Fatima…) interviennent selon le sujet.
+            </p>
+          </div>
+
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">🎵 Sons et musique</h2>
+            <p className="text-slate-200 text-sm leading-relaxed">
+              Active les sons (🔊) et la musique adaptative (🎵) en haut de l'écran. La musique s'adapte
+              à ce que tu fais : exploration au menu, concentration pendant les questions, validation
+              quand tu réussis.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* FAQ */}
+      {activeTab === 'faq' && (
+        <div className="space-y-3 anim-in">
+          {[
+            { q: "Mes progrès sont-ils sauvegardés ?", a: "Oui, automatiquement, dans ton navigateur. Tu peux fermer et revenir, tout sera là. Si tu vides le cache de ton navigateur, tu perds ta progression." },
+            { q: "Puis-je jouer hors ligne ?", a: "Oui ! Science Quest fonctionne maintenant entièrement hors ligne après ta première visite. Tu peux même installer l'application sur ton téléphone : sur Chrome/Edge, un bouton 'Installer' apparaît automatiquement, ou tu peux aller dans le menu du navigateur → 'Ajouter à l'écran d'accueil'. Sur iPhone (Safari) : bouton 'Partager' → 'Sur l'écran d'accueil'." },
+            { q: "Pourquoi je ne peux pas accéder à toutes les missions ?", a: "Pour ton bien : chaque mission s'appuie sur la précédente. Termine la mission actuelle, et la suivante se débloque automatiquement." },
+            { q: "Combien de temps dure une mission ?", a: "Entre 5 et 15 minutes selon la mission. Les missions BOSS sont plus longues (15-25 min)." },
+            { q: "Je me suis trompé, est-ce grave ?", a: "Non. Une erreur n'est pas un échec — c'est une étape. Tu perds une vie, mais tu vois la bonne réponse et l'explication. C'est ainsi qu'on apprend." },
+            { q: "Comment partager Science Quest avec mes amis ?", a: "Termine une mission, puis dans l'épilogue, clique sur 'Inviter tes amis'. Ça génère un message WhatsApp tout fait." },
+            { q: "Comment signaler un bug ou suggérer une amélioration ?", a: "Va dans le Centre Contact ou directement par e-mail à kotchamiogougbe@gmail.com. Chaque signalement = 50 XP bonus !" },
+            { q: "Est-ce que c'est gratuit ?", a: "Oui, complètement gratuit. Science Quest est un projet éducatif, pas commercial." },
+            { q: "Pour qui est conçu ce jeu ?", a: "Initialement pour les élèves de Terminale D du Niger, mais accessible à tous ceux qui veulent comprendre la science." },
+            { q: "Pourquoi 'Comprendre avant de mémoriser' ?", a: "Parce que ce qu'on mémorise sans comprendre s'efface. Ce qu'on comprend reste à vie. C'est la philosophie qui anime tout Science Quest." }
+          ].map((item, i) => (
+            <details key={i} className="card-border rounded-xl p-4 cursor-pointer">
+              <summary className="font-bold text-amber-100 text-sm cursor-pointer">{item.q}</summary>
+              <p className="text-slate-300 text-sm leading-relaxed mt-3">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      )}
+
+      {/* RÉFLEXIONS — témoignages stockés */}
+      {activeTab === 'reflections' && (
+        <div className="space-y-3 anim-in">
+          {testimonyEntries.length === 0 ? (
+            <div className="card-border rounded-2xl p-8 text-center">
+              <p className="text-4xl mb-3">✍️</p>
+              <p className="text-amber-100 font-display text-lg mb-2">Aucune réflexion encore</p>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Termine une mission, et écris un témoignage de ce que tu as appris.
+                Kotchami te répondra personnellement, et ta réflexion sera sauvegardée ici.
+              </p>
+            </div>
+          ) : (
+            <>
+              <p className="text-slate-400 text-xs italic mb-3">
+                Tes témoignages écrits après chaque mission. Ils tracent ton parcours intellectuel.
+              </p>
+              {testimonyEntries.map(([missionId, t]) => (
+                <div key={missionId} className="card-border rounded-2xl p-5">
+                  <div className="flex items-start justify-between mb-2 gap-3">
+                    <p className="text-amber-100 font-display text-sm">{t.mission || missionId}</p>
+                    <p className="text-[10px] text-slate-500 shrink-0">{new Date(t.date).toLocaleDateString('fr-FR')}</p>
+                  </div>
+                  <p className="text-slate-200 text-sm leading-relaxed italic">« {t.text} »</p>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* CARNET DE NOTES */}
+      {activeTab === 'notes' && (
+        <div className="space-y-3 anim-in">
+          <div className="card-border rounded-2xl p-4 mb-2" style={{background: 'rgba(99, 102, 241, 0.06)', borderColor: 'rgba(99, 102, 241, 0.3)'}}>
+            <p className="text-xs text-slate-200 leading-relaxed">
+              📓 Ton carnet de notes scientifiques. Note ici ce que tu veux retenir, tes questions,
+              tes idées personnelles. Tout est sauvegardé automatiquement.
+            </p>
+          </div>
+
+          {/* Nouvelle note */}
+          {editingNote === 'new' ? (
+            <div className="card-border rounded-2xl p-4 anim-in">
+              <p className="text-[10px] uppercase tracking-wider text-amber-400/70 mb-2">Nouvelle note</p>
+              <textarea
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                placeholder="Écris ici ce que tu veux retenir, une question, une idée..."
+                rows={5}
+                className="w-full p-3 rounded-lg text-sm mb-3"
+                style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fff'}}
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => saveNote('note_' + Date.now(), noteText)}
+                  disabled={noteText.trim().length < 3}
+                  className="btn-primary px-5 py-2 rounded-full text-sm"
+                  style={{opacity: noteText.trim().length < 3 ? 0.4 : 1}}
+                >
+                  Sauvegarder
+                </button>
+                <button
+                  onClick={() => { setEditingNote(null); setNoteText(''); }}
+                  className="btn-ghost px-5 py-2 rounded-full text-sm"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => { setEditingNote('new'); setNoteText(''); }}
+              className="w-full card-border rounded-2xl p-4 text-left transition-all hover:border-amber-400/60"
+              style={{background: 'rgba(245, 158, 11, 0.06)', borderColor: 'rgba(245, 158, 11, 0.3)'}}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">➕</span>
+                <p className="text-amber-100 font-display text-sm">Ajouter une note</p>
+              </div>
+            </button>
+          )}
+
+          {/* Notes existantes */}
+          {noteEntries.length === 0 && editingNote !== 'new' && (
+            <div className="card-border rounded-2xl p-8 text-center mt-2">
+              <p className="text-4xl mb-3">📓</p>
+              <p className="text-amber-100 font-display text-base mb-2">Aucune note pour l'instant</p>
+              <p className="text-slate-400 text-xs">Clique sur « Ajouter une note » pour commencer</p>
+            </div>
+          )}
+          {noteEntries.sort((a, b) => new Date(b[1].date) - new Date(a[1].date)).map(([key, n]) => (
+            <div key={key} className="card-border rounded-2xl p-4">
+              {editingNote === key ? (
+                <div>
+                  <textarea
+                    value={noteText}
+                    onChange={(e) => setNoteText(e.target.value)}
+                    rows={5}
+                    className="w-full p-3 rounded-lg text-sm mb-3"
+                    style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fff'}}
+                  />
+                  <div className="flex gap-2">
+                    <button onClick={() => saveNote(key, noteText)} className="btn-primary px-4 py-1.5 rounded-full text-xs">
+                      Sauvegarder
+                    </button>
+                    <button onClick={() => saveNote(key, '')} className="btn-ghost px-4 py-1.5 rounded-full text-xs" style={{color: '#fca5a5'}}>
+                      Supprimer
+                    </button>
+                    <button onClick={() => { setEditingNote(null); setNoteText(''); }} className="btn-ghost px-4 py-1.5 rounded-full text-xs">
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div onClick={() => { setEditingNote(key); setNoteText(n.text); }} className="cursor-pointer">
+                  <div className="flex items-start justify-between mb-2 gap-3">
+                    <p className="text-[10px] uppercase tracking-wider text-amber-400/70">📝 Note</p>
+                    <p className="text-[10px] text-slate-500 shrink-0">
+                      {new Date(n.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                    </p>
+                  </div>
+                  <p className="text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">{n.text}</p>
+                  <p className="text-[9px] text-slate-600 mt-2 italic">Tape pour modifier</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* À PROPOS */}
+      {activeTab === 'about' && (
+        <div className="space-y-4 anim-in">
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">🌍 La mission de Science Quest</h2>
+            <p className="text-slate-200 text-sm leading-relaxed mb-3">
+              Science Quest est née d'une conviction : la science n'est pas réservée à une élite.
+              Elle est pour toi.
+            </p>
+            <p className="text-slate-300 text-sm leading-relaxed italic">
+              « La science ne change pas le monde. Elle change le regard qu'on pose sur lui.
+              Et ce nouveau regard — une fois que tu l'as acquis — personne ne pourra jamais te l'enlever. »
+            </p>
+          </div>
+
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">👤 Le créateur</h2>
+            <p className="text-slate-200 text-sm leading-relaxed mb-2">
+              <strong className="text-amber-300">Kotchami Ogougbe</strong> — Le Passeur de sciences
+            </p>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Enseignant de Sciences (Physique-Chimie, SVT, Mathématiques) à Niamey, Niger.
+              Créateur de la chaîne YouTube <strong className="text-amber-300">Science Vivante</strong>,
+              dédiée à rendre la science accessible à tous, partout en Afrique francophone.
+            </p>
+          </div>
+
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">📜 La philosophie</h2>
+            <div className="space-y-2.5 text-sm text-slate-200 leading-relaxed italic">
+              <p>« Comprendre avant de mémoriser — construire sur du roc, pas sur du sable. »</p>
+              <p>« La science n'est pas une collection de formules. C'est une façon de penser qui appartient à tout le monde. »</p>
+              <p>« Plusieurs matières, une seule réalité. »</p>
+              <p>« La science n'est pas réservée à une élite. Elle est pour toi. »</p>
+            </div>
+          </div>
+
+          <div className="card-border rounded-2xl p-5 text-center">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-amber-400/70 mb-2">Engagement</p>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Science Quest ne prendra jamais parti contre une religion, une culture ou une identité.
+              C'est un espace neutre, accueillant, conçu pour servir la curiosité.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// ============================================================
+// XP SPARKLINE — Mini-graphique XP des 7 derniers jours
+// ============================================================
+function XPSparkline({ history }) {
+  // history = [{date: 'YYYY-MM-DD', xp: number}, ...]
+  const today = new Date();
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    const entry = history.find(h => h.date === ds);
+    last7.push({
+      date: ds,
+      label: ['D','L','M','M','J','V','S'][d.getDay()],
+      xp: entry ? entry.xp : 0
+    });
+  }
+  const maxXp = Math.max(1, ...last7.map(d => d.xp));
+  const totalWeek = last7.reduce((acc, d) => acc + d.xp, 0);
+  return (
+    <div>
+      <div className="flex items-end justify-between gap-1.5 h-20 mb-2">
+        {last7.map((d, i) => {
+          const h = (d.xp / maxXp) * 100;
+          const isToday = i === 6;
+          return (
+            <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
+              <div className="w-full flex items-end" style={{height: '64px'}}>
+                <div
+                  className="w-full rounded-t transition-all"
+                  style={{
+                    height: `${h}%`,
+                    minHeight: d.xp > 0 ? '3px' : '0',
+                    background: isToday ? 'linear-gradient(to top, #f59e0b, #fbbf24)' : 'linear-gradient(to top, rgba(245, 158, 11, 0.4), rgba(245, 158, 11, 0.6))',
+                    opacity: 1
+                  }}
+                  title={`${d.date} — +${d.xp} XP`}
+                />
+              </div>
+              <p className="text-[9px] text-slate-500 font-mono-sci">{d.label}</p>
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-[10px] text-amber-300/80 text-center">
+        Total semaine : <span className="font-mono-sci">+{totalWeek} XP</span>
+      </p>
+    </div>
+  );
+}
+
+// ============================================================
+// SETTINGS / PROFIL SCREEN — Badges, streak, options, reset
+// ============================================================
+function SettingsScreen({ state, setState, onBack, onShare, onCertificate }) {
   const [confirmReset, setConfirmReset] = React.useState(false);
   const badges = state.badges || [];
   const records = state.missionRecords || {};
@@ -5311,6 +7587,8 @@ function SettingsScreen({ state, setState, onBack }) {
   const BADGE_LIBRARY = {
     'badge:eclair': { icon: '⚡', name: 'Éclair scientifique', desc: 'Mission complétée en moins de 8 minutes' },
     'badge:streak7': { icon: '🔥', name: 'Persévérance', desc: '7 jours consécutifs de jeu' },
+    'badge:quiz-perfect': { icon: '🎯', name: 'Quiz parfait', desc: 'Score 5/5 au quiz éclair quotidien' },
+    'badge:challenger': { icon: '🏆', name: 'Challenger', desc: 'Mode Défi Élite réussi sans erreur' },
   };
 
   const missionBadges = badges.filter(b => b.startsWith('mission:'));
@@ -5333,15 +7611,20 @@ function SettingsScreen({ state, setState, onBack }) {
         <span>Profil & Réglages</span>
       </div>
 
-      {/* Profil joueur */}
+      {/* Profil joueur avec avatar */}
       <div className="card-glow rounded-2xl p-5 mb-4 anim-in">
-        <div className="flex items-center justify-between mb-3">
-          <div>
+        <div className="flex items-center gap-4 mb-3">
+          <PlayerAvatar
+            emoji={state.avatarEmoji || '🧬'}
+            color={state.avatarColor || '#f59e0b'}
+            size={64}
+          />
+          <div className="flex-1 min-w-0">
             <p className="text-[10px] uppercase tracking-wider text-amber-400/70">Agent</p>
-            <p className="font-display text-2xl text-amber-100">{state.playerName || 'Invité'}</p>
+            <p className="font-display text-2xl text-amber-100 truncate">{state.playerName || 'Invité'}</p>
             {state.country && <p className="text-xs text-slate-400">{state.country}</p>}
           </div>
-          <div className="text-right">
+          <div className="text-right shrink-0">
             <p className="text-[10px] uppercase tracking-wider text-amber-400/70">XP total</p>
             <p className="font-mono-sci text-2xl text-amber-300 tabular-nums">{state.xp || 0}</p>
           </div>
@@ -5362,7 +7645,120 @@ function SettingsScreen({ state, setState, onBack }) {
         </div>
       </div>
 
-      {/* Badges */}
+      {/* Stats détaillées */}
+      {(state.totalQuestionsAnswered || 0) > 0 && (
+        <div className="card-glow rounded-2xl p-5 mb-4 anim-in">
+          <p className="text-xs uppercase tracking-wider text-amber-400/70 mb-3">📊 Statistiques détaillées</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-lg p-3" style={{background: 'rgba(15,23,42,0.4)'}}>
+              <p className="text-[10px] uppercase text-slate-500">Précision globale</p>
+              <p className="font-mono-sci text-xl text-amber-200">
+                {Math.round(((state.totalCorrectAnswers || 0) / (state.totalQuestionsAnswered || 1)) * 100)}%
+              </p>
+            </div>
+            <div className="rounded-lg p-3" style={{background: 'rgba(15,23,42,0.4)'}}>
+              <p className="text-[10px] uppercase text-slate-500">Questions résolues</p>
+              <p className="font-mono-sci text-xl text-amber-200">{state.totalQuestionsAnswered || 0}</p>
+            </div>
+            <div className="rounded-lg p-3" style={{background: 'rgba(15,23,42,0.4)'}}>
+              <p className="text-[10px] uppercase text-slate-500">Meilleure série combo</p>
+              <p className="font-mono-sci text-xl text-orange-300">🔥 {state.bestStreak || 0}</p>
+            </div>
+            <div className="rounded-lg p-3" style={{background: 'rgba(15,23,42,0.4)'}}>
+              <p className="text-[10px] uppercase text-slate-500">Quiz éclair</p>
+              <p className="font-mono-sci text-xl text-amber-200">{Object.keys(state.dailyQuizHistory || {}).length}</p>
+            </div>
+          </div>
+          {/* Mini-graphique XP des 7 derniers jours */}
+          {(state.xpHistory || []).length > 0 && (
+            <div className="mt-4 pt-3 border-t border-amber-500/10">
+              <p className="text-[10px] uppercase text-slate-500 mb-2">Activité — 7 derniers jours</p>
+              <XPSparkline history={state.xpHistory || []} />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Personnaliser avatar */}
+      <div className="card-glow rounded-2xl p-5 mb-4 anim-in">
+        <p className="text-xs uppercase tracking-wider text-amber-400/70 mb-3">🎨 Personnaliser mon avatar</p>
+        <div className="mb-3">
+          <p className="text-[10px] uppercase text-slate-500 mb-2">Choisir un emoji</p>
+          <div className="flex flex-wrap gap-2">
+            {AVATAR_EMOJIS.map(e => (
+              <button
+                key={e}
+                onClick={() => { SoundManager.play('click'); setState(s => ({ ...s, avatarEmoji: e })); }}
+                className="w-10 h-10 rounded-lg transition-all hover:scale-110"
+                style={{
+                  fontSize: '20px',
+                  background: state.avatarEmoji === e ? (state.avatarColor || '#f59e0b') + '33' : 'rgba(15, 23, 42, 0.4)',
+                  border: '2px solid ' + (state.avatarEmoji === e ? (state.avatarColor || '#f59e0b') : '#334155')
+                }}
+              >
+                {e}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="text-[10px] uppercase text-slate-500 mb-2">Choisir une couleur</p>
+          <div className="flex flex-wrap gap-2">
+            {AVATAR_COLORS.map(c => (
+              <button
+                key={c}
+                onClick={() => { SoundManager.play('click'); setState(s => ({ ...s, avatarColor: c })); }}
+                className="w-9 h-9 rounded-full transition-all hover:scale-110"
+                style={{
+                  background: c,
+                  border: state.avatarColor === c ? '3px solid #fbbf24' : '2px solid rgba(255,255,255,0.1)',
+                  boxShadow: state.avatarColor === c ? '0 0 0 2px rgba(251, 191, 36, 0.3)' : 'none'
+                }}
+                aria-label={c}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Actions : partage et certificat */}
+      <div className="card-glow rounded-2xl p-5 mb-4 anim-in">
+        <p className="text-xs uppercase tracking-wider text-amber-400/70 mb-3">🌟 Partager & valoriser</p>
+        <div className="space-y-2">
+          {onShare && (
+            <button
+              onClick={onShare}
+              className="w-full p-3 rounded-xl text-left transition-all hover:border-amber-400/60"
+              style={{background: 'rgba(15, 23, 42, 0.4)', border: '1px solid #334155'}}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📤</span>
+                <div className="flex-1">
+                  <p className="text-sm text-amber-100">Partager mon parcours</p>
+                  <p className="text-[10px] text-slate-500">WhatsApp, copier-coller, partage natif</p>
+                </div>
+                <Icon name="chevron" size={16} color="#fbbf24" />
+              </div>
+            </button>
+          )}
+          {onCertificate && (state.completedMissions || []).length > 0 && (
+            <button
+              onClick={onCertificate}
+              className="w-full p-3 rounded-xl text-left transition-all hover:border-amber-400/60"
+              style={{background: 'rgba(15, 23, 42, 0.4)', border: '1px solid #334155'}}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🏆</span>
+                <div className="flex-1">
+                  <p className="text-sm text-amber-100">Mon certificat</p>
+                  <p className="text-[10px] text-slate-500">Imprimable / sauvegardable en PDF</p>
+                </div>
+                <Icon name="chevron" size={16} color="#fbbf24" />
+              </div>
+            </button>
+          )}
+        </div>
+      </div>
       <div className="card-glow rounded-2xl p-5 mb-4 anim-in">
         <p className="text-xs uppercase tracking-wider text-amber-400/70 mb-3">Médailles & Distinctions</p>
         {badges.length === 0 ? (
@@ -5459,6 +7855,13 @@ function SettingsScreen({ state, setState, onBack }) {
             </span>
             <input type="checkbox" checked={!!state.musicEnabled} onChange={() => toggle('musicEnabled')} className="w-5 h-5 accent-amber-500 cursor-pointer" />
           </label>
+          <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-slate-800">
+            <span className="text-sm text-slate-200">
+              🔓 Mode libre exploration
+              <span className="block text-[10px] text-slate-500 mt-0.5">Pour les enseignants : déverrouille toutes les missions sans suivre l'ordre. Désactivé par défaut pour préserver la progression pédagogique.</span>
+            </span>
+            <input type="checkbox" checked={!!state.freeMode} onChange={() => toggle('freeMode')} className="w-5 h-5 accent-amber-500 cursor-pointer" />
+          </label>
         </div>
       </div>
 
@@ -5529,7 +7932,7 @@ function ContactScreen({ onBack }) {
 // ============================================================
 // MISSION FLOW
 // ============================================================
-function MissionFlow({ phase, setPhase, state, setState, missionData, setMissionData, addXP, loseLife, onComplete, elapsedSeconds }) {
+function MissionFlow({ phase, setPhase, state, setState, missionData, setMissionData, addXP, loseLife, onComplete, onExit, elapsedSeconds }) {
   const phases = ['intro', 'prologue', 'briefing', 'p1', 'p2', 'p3', 'p4', 'p5', 'epilogue'];
   const currentIdx = phases.indexOf(phase);
   const progress = ((currentIdx) / (phases.length - 1)) * 100;
@@ -5585,8 +7988,11 @@ function MissionFlow({ phase, setPhase, state, setState, missionData, setMission
   const handleCorrect = (xp) => {
     SoundManager.play('correct');
     MusicEngine.pulse('validation');
-    addXP(xp);
     const ns = correctStreak + 1;
+    let multiplier = 1;
+    if (ns >= 5) multiplier = 1.5;
+    else if (ns >= 3) multiplier = 1.2;
+    addXP(Math.round(xp * multiplier));
     setCorrectStreak(ns);
     if (ns === 3) showMentorFrom('success3', 0);
     else if (ns === 5) showMentorFrom('success5', 2);
@@ -5636,7 +8042,7 @@ function MissionFlow({ phase, setPhase, state, setState, missionData, setMission
         </div>
       )}
 
-      {phase === 'intro' && <MissionIntro onStart={() => setPhase('prologue')} />}
+      {phase === 'intro' && <MissionIntro onStart={() => setPhase('prologue')} onBack={onExit} />}
       {phase === 'prologue' && <Prologue onNext={() => setPhase('briefing')} />}
       {phase === 'briefing' && <Briefing onNext={() => setPhase('p1')} />}
 
@@ -5687,9 +8093,18 @@ function MissionFlow({ phase, setPhase, state, setState, missionData, setMission
 // ============================================================
 // MISSION INTRO
 // ============================================================
-function MissionIntro({ onStart }) {
+function MissionIntro({ onStart, onBack }) {
   return (
     <div className="text-center" style={{paddingTop: '2vh', paddingBottom: '4vh'}}>
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 mb-6"
+          style={{opacity: 1, visibility: 'visible'}}
+        >
+          ← Retour à l'Académie
+        </button>
+      )}
       <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
         <Icon name="dna" size={16} /> <span>Mission #1</span>
       </div>
@@ -5861,9 +8276,24 @@ function QuestionPhase({ title, question, options, correctIdx, explain, onCorrec
   const [answered, setAnswered] = useState(false);
   const [wasCorrect, setWasCorrect] = useState(false);
 
+  // Mélange aléatoire des options pour éviter que la bonne réponse soit toujours à la même position
+  // shuffled[i] = index original ; on calcule la nouvelle position de la bonne réponse
+  const shuffled = React.useMemo(() => {
+    const indices = options.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return indices;
+  // eslint-disable-next-line
+  }, [question]);
+  const displayedOptions = shuffled.map(i => options[i]);
+  const newCorrectIdx = shuffled.indexOf(correctIdx);
+  const correctLetter = String.fromCharCode(65 + newCorrectIdx);
+
   const submit = () => {
     if (selected === null) return;
-    const correct = selected === correctIdx;
+    const correct = selected === newCorrectIdx;
     setWasCorrect(correct);
     setAnswered(true);
     if (correct) onCorrect(); else onWrong();
@@ -5881,10 +8311,10 @@ function QuestionPhase({ title, question, options, correctIdx, explain, onCorrec
       </div>
 
       <div className="space-y-2.5 mb-5">
-        {options.map((opt, idx) => {
+        {displayedOptions.map((opt, idx) => {
           const isSel = selected === idx;
-          const showCorrect = answered && idx === correctIdx;
-          const showWrong = answered && isSel && idx !== correctIdx;
+          const showCorrect = answered && idx === newCorrectIdx;
+          const showWrong = answered && isSel && idx !== newCorrectIdx;
           let cls = 'border-slate-700 bg-slate-900/40 text-slate-200';
           if (showCorrect) cls = 'border-emerald-400 bg-emerald-500/10 text-emerald-100';
           else if (showWrong) cls = 'border-red-500 bg-red-500/10 text-red-100';
@@ -5914,7 +8344,7 @@ function QuestionPhase({ title, question, options, correctIdx, explain, onCorrec
             <span className={wasCorrect ? 'text-emerald-400' : 'text-red-400'}><Icon name={wasCorrect ? 'check' : 'alert'} size={20} /></span>
             <div>
               <p className={`text-xs uppercase tracking-wider font-bold mb-2 ${wasCorrect ? 'text-emerald-400' : 'text-red-400'}`}>
-                {wasCorrect ? T('correct') + ' • +100 XP' : T('wrong') + ' • la bonne réponse est la B'}
+                {wasCorrect ? T('correct') + ' • +100 XP' : T('wrong') + ' • la bonne réponse est la ' + correctLetter}
               </p>
               <p className="text-sm text-slate-200 leading-relaxed">{explain}</p>
             </div>
