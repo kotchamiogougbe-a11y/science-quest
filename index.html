@@ -14,63 +14,125 @@
 <meta name="description" content="Science Quest — Plateforme éducative gamifiée. Sauver le monde par la connaissance.">
 <title>Science Quest — Mission Science</title>
 
-<!-- ====== PWA : Icône SVG embarquée (data URI) ====== -->
+<!-- ====== PWA : Icônes — multiples formats pour compatibilité maximale ====== -->
+<!-- Icône SVG vectorielle (Chrome, Firefox, Edge) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23f59e0b'/><stop offset='100%25' stop-color='%23d97706'/></linearGradient></defs><rect width='192' height='192' rx='40' fill='%23020617'/><circle cx='96' cy='96' r='62' fill='none' stroke='url(%23g)' stroke-width='5'/><text x='96' y='118' text-anchor='middle' font-family='Georgia,serif' font-size='80' font-weight='bold' fill='url(%23g)'>SQ</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23f59e0b'/><stop offset='100%25' stop-color='%23d97706'/></linearGradient></defs><rect width='192' height='192' rx='40' fill='%23020617'/><circle cx='96' cy='96' r='62' fill='none' stroke='url(%23g)' stroke-width='5'/><text x='96' y='118' text-anchor='middle' font-family='Georgia,serif' font-size='80' font-weight='bold' fill='url(%23g)'>SQ</text></svg>">
+<!-- Apple touch icon (iOS) — sera remplacée dynamiquement par PNG généré -->
+<link id="sq-apple-icon" rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%23020617'/><text x='96' y='130' text-anchor='middle' font-family='Georgia,serif' font-size='100' font-weight='bold' fill='%23f59e0b'>SQ</text></svg>">
 
-<!-- ====== PWA : Manifest inline (data URI) — fonctionne sans fichier séparé ====== -->
+<!-- ====== PWA : Manifest et icônes PNG générés dynamiquement ====== -->
 <script>
-  // Manifest généré dynamiquement et injecté via Blob URL au démarrage
-  // pour rester compatible avec un déploiement en un seul fichier HTML.
+  // Génère un PNG (via canvas) en data URI — beaucoup plus compatible que SVG pour les manifests
+  function generateSqIconPNG(size) {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // Fond noir profond avec coins arrondis
+      const radius = Math.round(size * 0.21);
+      ctx.fillStyle = '#020617';
+      ctx.beginPath();
+      ctx.moveTo(radius, 0);
+      ctx.lineTo(size - radius, 0);
+      ctx.quadraticCurveTo(size, 0, size, radius);
+      ctx.lineTo(size, size - radius);
+      ctx.quadraticCurveTo(size, size, size - radius, size);
+      ctx.lineTo(radius, size);
+      ctx.quadraticCurveTo(0, size, 0, size - radius);
+      ctx.lineTo(0, radius);
+      ctx.quadraticCurveTo(0, 0, radius, 0);
+      ctx.closePath();
+      ctx.fill();
+      // Cercle doré
+      const grad = ctx.createLinearGradient(0, 0, size, size);
+      grad.addColorStop(0, '#fbbf24');
+      grad.addColorStop(1, '#d97706');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = Math.max(3, size * 0.026);
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size * 0.32, 0, Math.PI * 2);
+      ctx.stroke();
+      // Texte "SQ"
+      ctx.fillStyle = grad;
+      ctx.font = 'bold ' + Math.round(size * 0.42) + 'px Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('SQ', size / 2, size / 2 + size * 0.04);
+      return canvas.toDataURL('image/png');
+    } catch(e) { return null; }
+  }
+
+  // Au chargement initial, on génère les icônes PNG et le manifest
   (function() {
     try {
-      const iconSvg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='#f59e0b'/><stop offset='100%' stop-color='#d97706'/></linearGradient></defs><rect width='192' height='192' rx='40' fill='#020617'/><circle cx='96' cy='96' r='62' fill='none' stroke='url(#g)' stroke-width='5'/><text x='96' y='118' text-anchor='middle' font-family='Georgia,serif' font-size='80' font-weight='bold' fill='url(#g)'>SQ</text></svg>";
-      const iconDataUri = 'data:image/svg+xml;base64,' + btoa(iconSvg);
+      const icon192 = generateSqIconPNG(192);
+      const icon512 = generateSqIconPNG(512);
+
+      // Mettre à jour l'icône Apple Touch (PNG = compatibilité parfaite iOS)
+      if (icon192) {
+        const appleLink = document.getElementById('sq-apple-icon');
+        if (appleLink) appleLink.href = icon192;
+      }
+
+      // Manifest avec icônes PNG (data URI — URL stable, pas de Blob)
       const manifest = {
         name: 'Science Quest — Mission Science',
         short_name: 'Science Quest',
         description: 'Plateforme éducative gamifiée. Sauver le monde par la connaissance.',
         start_url: './',
+        scope: './',
         display: 'standalone',
+        display_override: ['standalone', 'minimal-ui'],
         orientation: 'portrait-primary',
         background_color: '#020617',
         theme_color: '#020617',
         lang: 'fr',
         dir: 'ltr',
         categories: ['education', 'games', 'science'],
-        icons: [
-          { src: iconDataUri, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
-          { src: iconDataUri, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
-        ]
+        icons: []
       };
-      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+      // Préférer PNG si générés (compatibilité maximale Android/iOS/Windows)
+      if (icon192 && icon512) {
+        manifest.icons = [
+          { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ];
+      } else {
+        // Fallback SVG
+        const svgIcon = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='#020617'/><text x='96' y='130' text-anchor='middle' font-family='Georgia,serif' font-size='100' font-weight='bold' fill='#f59e0b'>SQ</text></svg>";
+        const svgUri = 'data:image/svg+xml;base64,' + btoa(svgIcon);
+        manifest.icons = [
+          { src: svgUri, sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
+          { src: svgUri, sizes: '512x512', type: 'image/svg+xml', purpose: 'any' }
+        ];
+      }
+      // Manifest en data URI base64 (URL stable, contrairement aux Blob URLs)
+      const manifestStr = JSON.stringify(manifest);
+      // Encoder UTF-8 correctement avant base64
+      const manifestBase64 = btoa(unescape(encodeURIComponent(manifestStr)));
+      const manifestUri = 'data:application/manifest+json;base64,' + manifestBase64;
       const link = document.createElement('link');
       link.rel = 'manifest';
-      link.href = URL.createObjectURL(blob);
+      link.href = manifestUri;
       document.head.appendChild(link);
-    } catch(e) { console.warn('Manifest dynamique non supporté:', e); }
+    } catch(e) { console.warn('Manifest non généré:', e); }
   })();
 </script>
 
 <!-- ====== PWA : Service Worker inline (cache offline complet) ====== -->
 <script>
   // Service Worker généré via Blob URL — fonctionne sans fichier séparé.
-  // Cache stratégie : "stale-while-revalidate" pour les ressources externes,
-  // "cache-first" pour les assets statiques.
-  if ('serviceWorker' in navigator) {
+  // Note : pour qu'un Service Worker via Blob fonctionne, il doit être dans le même origin (ce qui est le cas pour GitHub Pages).
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', function() {
       try {
         const swCode = `
-          const CACHE_NAME = 'science-quest-v1';
-          const RUNTIME_CACHE = 'sq-runtime-v1';
-
-          // Installation : on n'a rien à pré-cacher, on laisse le runtime caching faire
-          self.addEventListener('install', function(e) {
-            self.skipWaiting();
-          });
-
+          const CACHE_NAME = 'science-quest-v2';
+          const RUNTIME_CACHE = 'sq-runtime-v2';
+          self.addEventListener('install', function(e) { self.skipWaiting(); });
           self.addEventListener('activate', function(e) {
-            // Nettoyer les anciens caches
             e.waitUntil(
               caches.keys().then(function(keys) {
                 return Promise.all(keys.filter(function(k) {
@@ -79,17 +141,12 @@
               }).then(function() { return self.clients.claim(); })
             );
           });
-
-          // Fetch handler : cache-first avec mise à jour en arrière-plan
           self.addEventListener('fetch', function(event) {
             const req = event.request;
-            // Ne gérer que les GET
             if (req.method !== 'GET') return;
-            // Ignorer les requêtes externes non-cachables (ex: analytics, ws)
             if (req.url.indexOf('chrome-extension') !== -1) return;
             if (req.url.indexOf('googletagmanager') !== -1) return;
             if (req.url.indexOf('google-analytics') !== -1) return;
-
             event.respondWith(
               caches.match(req).then(function(cached) {
                 const fetchPromise = fetch(req).then(function(response) {
@@ -100,17 +157,11 @@
                     });
                   }
                   return response;
-                }).catch(function() {
-                  // Si offline et la ressource n'est pas en cache, on retourne ce qu'on a
-                  return cached;
-                });
-                // Stale-while-revalidate : retourne le cache d'abord si dispo, fetch en parallèle
+                }).catch(function() { return cached; });
                 return cached || fetchPromise;
               })
             );
           });
-
-          // Permettre au client de demander une mise à jour
           self.addEventListener('message', function(event) {
             if (event.data === 'SKIP_WAITING') self.skipWaiting();
           });
@@ -119,12 +170,11 @@
         const swUrl = URL.createObjectURL(blob);
         navigator.serviceWorker.register(swUrl, { scope: './' })
           .then(function(reg) {
-            console.log('Service Worker enregistré pour le mode hors-ligne');
-            // Auto-update toutes les heures si l'app reste ouverte
+            console.log('[Science Quest] Service Worker enregistré');
             setInterval(function() { reg.update().catch(function(){}); }, 3600000);
           })
-          .catch(function(err) { console.warn('Service Worker non disponible:', err); });
-      } catch(e) { console.warn('PWA non supportée sur ce navigateur:', e); }
+          .catch(function(err) { console.warn('[Science Quest] SW non disponible:', err); });
+      } catch(e) { console.warn('[Science Quest] PWA non supportée:', e); }
     });
   }
 </script>
@@ -157,6 +207,11 @@
     color: white;
     -webkit-font-smoothing: antialiased;
     -webkit-text-size-adjust: 100%;
+  }
+  /* Quand le mode enseignant est actif, le bandeau bottom est fixed.
+     On ajoute du padding-bottom au body pour que rien ne soit caché. */
+  body.sq-teacher-mode-active {
+    padding-bottom: 56px;
   }
   .font-display { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; }
   .font-mono-sci { font-family: var(--font-mono); }
@@ -322,6 +377,32 @@
 
 <script type="text/babel">
 const { useState, useEffect } = React;
+
+// ============================================================
+// CANONICAL URL — URL stable pour partage
+// Si l'app est ouverte localement (file://, content://) ou via PWA,
+// on utilise toujours l'URL GitHub Pages pour les liens partagés.
+// ============================================================
+const CANONICAL_URL = 'https://kotchamiogougbe-a11y.github.io/science-quest/';
+function getCanonicalURL() {
+  try {
+    const href = window.location.href || '';
+    const proto = window.location.protocol || '';
+    // Détecter les protocoles non-web qui ne peuvent être partagés
+    if (proto === 'file:' || proto === 'content:' || proto === 'blob:' || href.indexOf('content://') !== -1 || href.indexOf('file://') !== -1) {
+      return CANONICAL_URL;
+    }
+    // Si on est sur GitHub Pages ou un domaine web normal, garder l'URL active
+    if (proto === 'https:' || proto === 'http:') return href;
+    return CANONICAL_URL;
+  } catch(e) { return CANONICAL_URL; }
+}
+function getCanonicalOrigin() {
+  try {
+    const url = getCanonicalURL();
+    return new URL(url).origin;
+  } catch(e) { return CANONICAL_URL; }
+}
 
 // ============================================================
 // SVG ICÔNES inline (aucune dépendance externe)
@@ -3637,6 +3718,10 @@ const MusicEngine = {
     tension: {
       voices: { droneTen: { freq: 116.54, vol: 0.32, harmonic: 164.81, harmVol: 0.20 },
                 bell: { notes: [233.08, 311.13], bpm: 30, vol: 0.10 } } },
+    // Pulse spécifique aux erreurs : note grave dissonante courte qui ne casse pas la musique de fond
+    wrong: {
+      voices: { chord: { freqs: [110.00, 116.54, 138.59], vol: 0.32, oneShot: true, dur: 0.7 } },
+      duration: 1.2, next: '__resume__' },
     indice: {
       voices: { bellLight: { notes: [523.25, 659.25, 783.99, 1046.50], bpm: 200, vol: 0.30, oneShot: true } },
       duration: 2.5, next: '__resume__' },
@@ -4583,6 +4668,29 @@ function GlossaryTerm({ word, children }) {
 }
 
 // ============================================================
+// SHAREABLE URL — version améliorée pour les partages
+// Détecte les protocoles non-web (Android coloros, file://, content://)
+// ============================================================
+function getShareableURL() {
+  if (typeof window === 'undefined') return CANONICAL_URL;
+  const href = window.location.href || '';
+  // Détecter les protocoles non-web (fichier local sur Android, iOS, Windows)
+  if (href.startsWith('content://') || href.startsWith('file://') || href.startsWith('android-app://')) {
+    return CANONICAL_URL;
+  }
+  // Détecter les chemins locaux suspects (téléchargement Android par exemple)
+  if (href.indexOf('coloros') !== -1 || href.indexOf('com.android') !== -1 || href.indexOf('downloads') !== -1) {
+    return CANONICAL_URL;
+  }
+  // Si ça ressemble à une URL web normale, on l'utilise
+  if (href.startsWith('http://') || href.startsWith('https://')) {
+    return href;
+  }
+  // Fallback : URL canonique
+  return CANONICAL_URL;
+}
+
+// ============================================================
 // PWA — Hook d'installation et indicateur offline
 // ============================================================
 function usePWAInstall() {
@@ -4591,6 +4699,33 @@ function usePWAInstall() {
   const [dismissed, setDismissed] = React.useState(() => {
     try { return localStorage.getItem('sq_install_dismissed') === '1'; } catch(e) { return false; }
   });
+
+  // Détection du système d'exploitation
+  const platform = React.useMemo(() => {
+    if (typeof window === 'undefined') return 'unknown';
+    const ua = window.navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isAndroid = /Android/.test(ua);
+    const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);
+    const isMac = /Macintosh/.test(ua) && !isIOS;
+    const isWindows = /Windows/.test(ua);
+    const isFirefox = /Firefox/.test(ua);
+    const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/Edg/.test(ua);
+    const isChrome = /Chrome/.test(ua) && !/Edg/.test(ua);
+    const isEdge = /Edg/.test(ua);
+    const isSamsung = /SamsungBrowser/.test(ua);
+    if (isIOS) return 'ios';
+    if (isAndroid && (isChrome || isEdge || isSamsung)) return 'android-chrome';
+    if (isAndroid && isFirefox) return 'android-firefox';
+    if (isAndroid) return 'android-other';
+    if (isMac && isSafari) return 'mac-safari';
+    if (isMac) return 'mac';
+    if (isWindows && (isChrome || isEdge)) return 'windows-chrome';
+    if (isWindows && isFirefox) return 'windows-firefox';
+    if (isWindows) return 'windows';
+    if (isFirefox) return 'firefox-desktop';
+    return 'desktop';
+  }, []);
 
   React.useEffect(() => {
     // Détecter si déjà installée (mode standalone)
@@ -4607,7 +4742,10 @@ function usePWAInstall() {
     };
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeinstallprompt', handler);
-      window.addEventListener('appinstalled', () => setInstalled(true));
+      window.addEventListener('appinstalled', () => {
+        setInstalled(true);
+        setInstallPrompt(null);
+      });
     }
     return () => {
       if (typeof window !== 'undefined') window.removeEventListener('beforeinstallprompt', handler);
@@ -4630,7 +4768,10 @@ function usePWAInstall() {
     try { localStorage.setItem('sq_install_dismissed', '1'); } catch(e) {}
   };
 
-  return { canInstall: !!installPrompt && !installed && !dismissed, installed, promptInstall, dismiss };
+  // canInstall = soit on a l'event natif, soit on est sur iOS (instructions manuelles)
+  const canInstall = !installed && !dismissed && (!!installPrompt || platform === 'ios' || platform === 'mac-safari');
+
+  return { canInstall, installed, promptInstall, dismiss, platform, hasNativePrompt: !!installPrompt };
 }
 
 function useOnlineStatus() {
@@ -4649,7 +4790,157 @@ function useOnlineStatus() {
   return online;
 }
 
-function InstallBanner({ onInstall, onDismiss }) {
+// Instructions d'installation par plateforme.
+// Important : on ne mentionne « le bouton ci-dessous » QUE si le navigateur l'a réellement fourni
+// (sinon l'instruction serait mensongère et perdrait l'utilisateur).
+function getInstallInstructions(platform, hasNativePrompt) {
+  const all = {
+    'ios': {
+      title: 'Sur iPhone / iPad (Safari)',
+      note: "Important : Safari uniquement (pas Chrome ni Firefox sur iOS)",
+      steps: [
+        "Touche l'icône de Partage en bas de l'écran (un carré avec une flèche vers le haut)",
+        "Fais défiler la liste et touche « Sur l'écran d'accueil » (icône avec un + et un carré)",
+        "Modifie le nom si tu veux, puis touche « Ajouter » en haut à droite",
+        "L'icône de Science Quest apparaît sur ton écran d'accueil — touche-la pour lancer l'app"
+      ]
+    },
+    'mac-safari': {
+      title: 'Sur Mac (Safari)',
+      steps: [
+        "Dans la barre de menu Safari, ouvre « Fichier »",
+        "Choisis « Ajouter au Dock » (sur macOS Sonoma ou plus récent)",
+        "L'application s'ajoute dans le Dock comme une vraie app",
+        "Si l'option n'apparaît pas, mets à jour macOS ou utilise Chrome / Edge"
+      ]
+    },
+    'android-chrome': hasNativePrompt ? {
+      title: 'Sur Android (Chrome / Edge / Samsung Internet)',
+      steps: [
+        "Touche le bouton « Installer maintenant » ci-dessous",
+        "Confirme l'installation dans la fenêtre qui apparaît",
+        "Si tu rates la fenêtre : ouvre le menu du navigateur (3 points en haut à droite)",
+        "Choisis « Installer l'application » ou « Ajouter à l'écran d'accueil »"
+      ]
+    } : {
+      title: 'Sur Android (Chrome / Edge / Samsung Internet)',
+      note: "Le bouton automatique n'apparaît pas pour ton navigateur. Suis les étapes manuelles ci-dessous.",
+      steps: [
+        "Ouvre le menu du navigateur (icône avec 3 points verticaux, en haut à droite)",
+        "Cherche et touche « Installer l'application » ou « Ajouter à l'écran d'accueil »",
+        "Confirme l'installation",
+        "Si l'option n'apparaît pas, vérifie que tu utilises bien Chrome, Edge ou Samsung Internet (pas un autre navigateur)"
+      ]
+    },
+    'android-firefox': {
+      title: 'Sur Android (Firefox)',
+      steps: [
+        "Ouvre le menu (3 points en haut à droite)",
+        "Touche « Installer »",
+        "Confirme avec « Ajouter à l'écran d'accueil »"
+      ]
+    },
+    'android-other': {
+      title: 'Sur Android (autre navigateur)',
+      steps: [
+        "Ouvre Science Quest dans Chrome, Edge ou Samsung Internet pour la meilleure expérience",
+        "Une fois dans le bon navigateur, ouvre le menu (3 points)",
+        "Touche « Installer l'application » ou « Ajouter à l'écran d'accueil »"
+      ]
+    },
+    'windows-chrome': hasNativePrompt ? {
+      title: 'Sur Windows (Chrome / Edge)',
+      steps: [
+        "Clique sur le bouton « Installer maintenant » ci-dessous",
+        "Confirme l'installation dans la fenêtre qui apparaît",
+        "Sinon : cherche l'icône d'installation à droite de la barre d'adresse",
+        "Ou ouvre le menu du navigateur (3 points en haut à droite) → « Installer Science Quest »"
+      ]
+    } : {
+      title: 'Sur Windows (Chrome / Edge)',
+      note: "Le bouton automatique n'apparaît pas. Suis les étapes manuelles ci-dessous.",
+      steps: [
+        "Regarde à droite de la barre d'adresse : cherche une petite icône (un écran avec une flèche vers le bas, ou un + dans un carré)",
+        "Clique dessus, puis sur « Installer »",
+        "Sinon : ouvre le menu du navigateur (3 points en haut à droite)",
+        "Choisis « Installer Science Quest » ou « Applications » → « Installer ce site comme une application »"
+      ]
+    },
+    'windows-firefox': {
+      title: 'Sur Windows (Firefox)',
+      steps: [
+        "Firefox sur ordinateur ne supporte pas l'installation PWA",
+        "Tu peux continuer à utiliser Science Quest dans Firefox normalement",
+        "Pour l'installer, ouvre Science Quest dans Chrome, Edge ou Brave"
+      ]
+    },
+    'mac': hasNativePrompt ? {
+      title: 'Sur Mac (Chrome / Edge / Brave)',
+      steps: [
+        "Clique sur « Installer maintenant » ci-dessous",
+        "Confirme l'installation",
+        "Sinon : cherche l'icône d'installation à droite de la barre d'adresse",
+        "Ou menu Chrome → « Installer Science Quest »"
+      ]
+    } : {
+      title: 'Sur Mac (Chrome / Edge / Brave)',
+      note: "Le bouton automatique n'apparaît pas. Suis les étapes manuelles ci-dessous.",
+      steps: [
+        "Cherche l'icône d'installation à droite de la barre d'adresse (une petite flèche vers le bas dans un écran)",
+        "Clique dessus, puis sur « Installer »",
+        "Ou ouvre le menu du navigateur (3 points) → « Installer Science Quest »",
+        "L'app s'ajoute au Launchpad et au Dock"
+      ]
+    },
+    'firefox-desktop': {
+      title: 'Sur Firefox (ordinateur)',
+      steps: [
+        "Firefox sur ordinateur ne supporte pas encore l'installation PWA",
+        "Pour installer Science Quest, ouvre-la dans Chrome, Edge ou Brave",
+        "Tu peux continuer à utiliser Science Quest dans Firefox sans installation"
+      ]
+    },
+    'windows': {
+      title: 'Sur Windows',
+      steps: [
+        "Pour installer, utilise Chrome ou Edge (pas Firefox)",
+        "Une fois dans le bon navigateur, cherche l'icône d'installation à droite de la barre d'adresse",
+        "Ou ouvre le menu (3 points) → « Installer Science Quest »"
+      ]
+    },
+    'desktop': {
+      title: 'Sur ordinateur',
+      steps: [
+        "Utilise Chrome, Edge ou Brave (pas Firefox sur ordinateur)",
+        "Cherche l'icône d'installation à droite de la barre d'adresse",
+        "Ou utilise le menu du navigateur (3 points) → « Installer Science Quest »"
+      ]
+    },
+    'unknown': {
+      title: 'Installation',
+      steps: [
+        "Cherche dans le menu de ton navigateur (icône avec 3 points) l'option « Installer », « Installer l'application » ou « Ajouter à l'écran d'accueil »",
+        "Si elle n'apparaît pas, ton navigateur ne supporte peut-être pas l'installation PWA",
+        "Sur ordinateur : essaie Chrome, Edge ou Brave",
+        "Sur mobile : essaie Chrome (Android) ou Safari (iPhone)"
+      ]
+    }
+  };
+  return all[platform] || all.unknown;
+}
+
+// Pour rétrocompatibilité (anciens appels), version par défaut sans bouton natif
+const INSTALL_INSTRUCTIONS = {};
+['ios', 'mac-safari', 'android-chrome', 'android-firefox', 'android-other', 'windows-chrome', 'windows-firefox', 'mac', 'firefox-desktop', 'windows', 'desktop', 'unknown'].forEach(p => {
+  INSTALL_INSTRUCTIONS[p] = getInstallInstructions(p, false);
+});
+
+function InstallBanner({ onInstall, onDismiss, platform, hasNativePrompt }) {
+  const [showInstructions, setShowInstructions] = React.useState(false);
+  const isIOS = platform === 'ios' || platform === 'mac-safari';
+  // Utiliser getInstallInstructions avec hasNativePrompt pour avoir les bonnes instructions
+  const instructions = getInstallInstructions(platform, hasNativePrompt);
+
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-40 anim-in">
       <div className="rounded-2xl p-4 shadow-2xl"
@@ -4663,18 +4954,41 @@ function InstallBanner({ onInstall, onDismiss }) {
           <div className="flex-1 min-w-0">
             <p className="font-display text-sm text-amber-100 mb-1">Installer Science Quest</p>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              Ajoute-la sur ton téléphone et joue même sans Internet, comme une vraie application.
+              Ajoute-la sur ton appareil et joue sans Internet, comme une vraie application.
             </p>
           </div>
         </div>
+
+        {showInstructions && (
+          <div className="anim-in mb-3 rounded-lg p-3" style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid rgba(245, 158, 11, 0.2)'}}>
+            <p className="text-[10px] uppercase tracking-wider text-amber-400 mb-2 font-bold">{instructions.title}</p>
+            {instructions.note && (
+              <p className="text-[11px] text-amber-300/90 italic mb-2 leading-relaxed">⚠️ {instructions.note}</p>
+            )}
+            <ol className="text-[11px] text-slate-200 leading-relaxed space-y-1.5 list-decimal pl-4">
+              {instructions.steps.map((s, i) => <li key={i}>{s}</li>)}
+            </ol>
+          </div>
+        )}
+
         <div className="flex items-center gap-2">
-          <button
-            onClick={onInstall}
-            className="btn-primary flex-1 px-3 py-2 rounded-lg text-xs"
-            style={{opacity: 1, visibility: 'visible'}}
-          >
-            Installer
-          </button>
+          {hasNativePrompt && !isIOS ? (
+            <button
+              onClick={onInstall}
+              className="btn-primary flex-1 px-3 py-2 rounded-lg text-xs"
+              style={{opacity: 1, visibility: 'visible'}}
+            >
+              Installer maintenant
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowInstructions(s => !s)}
+              className="btn-primary flex-1 px-3 py-2 rounded-lg text-xs"
+              style={{opacity: 1, visibility: 'visible'}}
+            >
+              {showInstructions ? 'Masquer' : 'Voir comment installer'}
+            </button>
+          )}
           <button
             onClick={onDismiss}
             className="btn-ghost px-3 py-2 rounded-lg text-xs"
@@ -4866,7 +5180,8 @@ function useGameState() {
     xpHistory: [],
     bestStreak: 0,
     totalQuestionsAnswered: 0,
-    totalCorrectAnswers: 0
+    totalCorrectAnswers: 0,
+    outboxMessages: []
   };
   const [state, setState] = useState(function() {
     try {
@@ -5024,7 +5339,7 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
     setMissionLives(l => Math.max(0, l - 1));
     setPhaseAnswered(p => ({ ...p, [step]: { correct: false, xp: 0 } }));
     SoundManager.play('wrong');
-    MusicEngine.pulse('tension');
+    MusicEngine.pulse('wrong');
     setCorrectStreak(0);
     // Tracking stats globales
     setState(s => ({
@@ -5256,13 +5571,14 @@ function MissionPrologue({ mission, onNext }) {
 // BRIEFING
 // ============================================================
 function MissionBriefing({ mission, onNext }) {
+  const pertinence = getMissionPertinence(mission.id);
   return (
     <div className="max-w-2xl mx-auto">
       <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
         <span style={{fontSize: '16px'}}>🎯</span> <span>Briefing GENECODE</span>
       </div>
       <h2 className="anim-in delay-100 font-display text-2xl md:text-3xl mb-2 text-amber-100">Tes objectifs</h2>
-      <p className="anim-in delay-200 text-slate-400 text-sm mb-6">À la fin de cette mission, tu seras capable de :</p>
+      <p className="anim-in delay-200 text-slate-400 text-sm mb-6">À la fin de cette mission, tu sauras :</p>
       <div className="space-y-3 mb-8">
         {mission.briefing.objectifs.map((obj, i) => (
           <div key={i} className={`anim-in delay-${(i+3)*100} card-border rounded-lg p-4 flex items-start gap-3`}>
@@ -5271,6 +5587,12 @@ function MissionBriefing({ mission, onNext }) {
           </div>
         ))}
       </div>
+
+      {/* « Pourquoi ça compte » — la signature pédagogique */}
+      {pertinence && pertinence.why && (
+        <WhyItMatters title={pertinence.why.title} points={pertinence.why.points} color="#fbbf24" />
+      )}
+
       <div className="card-border rounded-xl p-5 mb-8 text-center" style={{background: 'rgba(217, 119, 6, 0.05)'}}>
         <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold mb-2">Récompenses</p>
         <p className="text-amber-100 text-lg font-display">+ {mission.briefing.recompenses.xp} XP · ⚡ {mission.briefing.recompenses.power}</p>
@@ -5284,6 +5606,615 @@ function MissionBriefing({ mission, onNext }) {
         >
           Commencer →
         </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PHASE NARRATIVE — Texte d'histoire / progression sans question
+// ============================================================
+// ============================================================
+// MISSION_PERTINENCE — Banque de "Pourquoi ça compte" par mission
+// Répond à la question fondamentale : « À quoi ça sert dans ma vie ? »
+// ============================================================
+const MISSION_PERTINENCE = {
+  // ===== TUTORIEL DRÉPANOCYTOSE =====
+  drepanocytose: {
+    why: {
+      title: "Pourquoi comprendre la drépanocytose change ta vie",
+      points: [
+        "1 Africain sur 4 porte le gène de la drépanocytose. Comprendre cette maladie, c'est protéger ta famille future.",
+        "Avant tout mariage, un test génétique simple peut éviter des années de souffrance à un enfant.",
+        "Cette connaissance te transforme en relais d'information dans ta communauté — la science n'a de valeur que partagée."
+      ]
+    },
+    careers: ['Médecin', 'Sage-femme', 'Conseiller génétique', 'Pharmacien', 'Infirmier', 'Chercheur en hématologie', 'Éducateur sanitaire', 'Journaliste scientifique'],
+    situations: [
+      "Lorsque ton ami parle de mariage, tu peux lui suggérer un test prénuptial — geste qui peut sauver une génération",
+      "Quand tu lis une notice de médicament, tu comprends pourquoi certains traitements sont contre-indiqués pour les drépanocytaires",
+      "Si un enfant de ta famille naît avec la maladie, tu sais ce qu'il faut éviter (déshydratation, altitude, infections) et comment l'accompagner"
+    ]
+  },
+
+  // ===== GENECODE — GÉNÉTIQUE =====
+  'gc-1-1': {
+    why: {
+      title: "Pourquoi maîtriser l'alphabet génétique te rend autonome",
+      points: [
+        "Un médecin te tend un pédigrée familial : sans cet alphabet, tu signes sans comprendre. Avec lui, tu peux questionner, vérifier, choisir.",
+        "Lire un arbre généalogique, c'est lire l'histoire invisible d'une famille — qui est porteur, qui est à risque, qui ne l'est pas.",
+        "Cette compétence te donne accès aux conseils génétiques, aux tests prénataux, aux décisions médicales éclairées."
+      ]
+    },
+    careers: ['Conseiller génétique', 'Médecin de famille', 'Sage-femme', 'Anthropologue', 'Généalogiste', 'Avocat (litiges familiaux)', 'Travailleur social'],
+    situations: [
+      "À l'hôpital, tu peux suivre la conversation entre un médecin et un patient sur les risques héréditaires",
+      "Pour ton arbre généalogique personnel ou familial, tu sais représenter chaque membre correctement",
+      "Tu deviens ressource dans ta famille pour comprendre les maladies récurrentes (drépanocytose, hémophilie, daltonisme...)"
+    ]
+  },
+  'gc-1-2': {
+    why: {
+      title: "Pourquoi savoir construire un pédigrée peut sauver une vie",
+      points: [
+        "Une famille te raconte 30 ans d'histoire médicale. Sans pédigrée, c'est du chaos. Avec, c'est un diagnostic.",
+        "Le pédigrée révèle des transmissions cachées qu'aucune analyse ne peut deviner sans contexte familial.",
+        "Cette compétence est la BASE de toute génétique clinique — médecine de demain, médecine personnalisée."
+      ]
+    },
+    careers: ['Généticien clinicien', 'Conseiller génétique', 'Pédiatre', 'Oncologue (cancers héréditaires)', 'Sage-femme spécialisée'],
+    situations: [
+      "Avant un mariage entre cousins, tu peux poser les bonnes questions sur l'histoire familiale",
+      "Dans une consultation médicale, tu comprends pourquoi le médecin demande des informations sur grands-parents et oncles",
+      "Tu peux aider tes proches à reconstituer leur histoire médicale familiale — donnée précieuse pour la prévention"
+    ]
+  },
+
+  // ===== NEUROLINK — NEUROSCIENCES =====
+  'nl-1-1': {
+    why: {
+      title: "Pourquoi connaître ton système nerveux change tout",
+      points: [
+        "Un accident, un AVC, une chute — chaque seconde compte. Comprendre le système nerveux, c'est savoir ce qui arrive et comment réagir.",
+        "Ton cerveau prend des milliers de décisions par jour sans toi. Mais quand tu comprends ses mécanismes, tu peux mieux le protéger : sommeil, stress, nutrition, exercice.",
+        "Les troubles neurologiques touchent 1 milliard de personnes dans le monde. Cette connaissance fait de toi un citoyen informé."
+      ]
+    },
+    careers: ['Neurologue', 'Neurochirurgien', 'Kinésithérapeute', 'Psychiatre', 'Neuropsychologue', 'Infirmier urgentiste', 'Chercheur en neurosciences', 'Ergothérapeute'],
+    situations: [
+      "Devant un proche victime d'un AVC, tu identifies les premiers signes (bouche tordue, parole confuse, faiblesse d'un côté) et tu agis vite",
+      "Quand tu lis un article sur Alzheimer ou la migraine, tu comprends vraiment de quoi on parle",
+      "Pour optimiser ton apprentissage et ta concentration, tu connais les leviers : sommeil profond, hydratation, mouvement"
+    ]
+  },
+
+  // ===== EXEMPLE PHYSIQUE-CHIMIE — la question de ton élève =====
+  'reactions-substitution-addition-combustion': {
+    why: {
+      title: "Pourquoi les réactions chimiques sont partout dans ta vie",
+      points: [
+        "Quand tu cuisines, tu fais des réactions de combustion (gaz) et des réactions de transformation (pâte qui lève, viande qui dore).",
+        "Quand tu prends un médicament, ton corps effectue des réactions de substitution pour le rendre actif — ou inoffensif.",
+        "Quand tu sens un parfum, c'est de l'addition chimique de molécules dans ton nez. Quand tu vois la rouille, c'est de l'oxydation. La chimie n'est pas dans un labo — elle est dans ta vie."
+      ]
+    },
+    careers: ['Pharmacien', 'Aromaticien', 'Cuisinier moléculaire', 'Ingénieur agroalimentaire', 'Pompier (combustions)', 'Restaurateur d\'art', 'Toxicologue', 'Ingénieur environnement', 'Biologiste'],
+    situations: [
+      "Quand un enfant avale un produit ménager, tu sais s'il faut neutraliser, diluer, ou simplement attendre — la chimie sauve",
+      "Pour bien conserver les aliments, tu comprends pourquoi le sel, le vinaigre ou le froid bloquent certaines réactions",
+      "Quand tu vois une fuite de gaz, tu connais le danger réel : combustion explosive en présence d'une étincelle",
+      "Pour acheter des produits cosmétiques, tu lis les étiquettes et tu reconnais les composés potentiellement dangereux"
+    ]
+  }
+};
+
+function getMissionPertinence(missionId) {
+  return MISSION_PERTINENCE[missionId] || null;
+}
+
+// ============================================================
+// PERTINENCE — Composants pour répondre à « À quoi ça sert ? »
+// La signature pédagogique de Science Quest
+// ============================================================
+
+// Encart "Pourquoi ça compte" — affiché au début ou pendant une mission
+function WhyItMatters({ title, points, color }) {
+  if (!points || !points.length) return null;
+  const themeColor = color || '#fbbf24';
+  return (
+    <div className="anim-in card-border rounded-2xl p-5 mb-6"
+      style={{
+        background: `linear-gradient(145deg, ${themeColor}15, rgba(2, 6, 23, 0.6))`,
+        borderColor: `${themeColor}66`
+      }}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xl">💎</span>
+        <p className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{color: themeColor}}>
+          Pourquoi ça compte
+        </p>
+      </div>
+      <p className="font-display text-base text-amber-100 mb-3">{title || 'Pourquoi cette mission est importante pour toi'}</p>
+      <ul className="space-y-2.5">
+        {points.map((p, i) => (
+          <li key={i} className="flex items-start gap-2.5 text-sm text-slate-200 leading-relaxed">
+            <span className="shrink-0 mt-0.5" style={{color: themeColor}}>▸</span>
+            <span>{p}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// Encart "Métiers et applications" — fin de mission
+function CareersAndApplications({ careers, situations, color }) {
+  if ((!careers || !careers.length) && (!situations || !situations.length)) return null;
+  const themeColor = color || '#10b981';
+  return (
+    <div className="anim-in card-border rounded-2xl p-5 mb-6"
+      style={{background: `${themeColor}10`, borderColor: `${themeColor}55`}}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xl">🌍</span>
+        <p className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{color: themeColor}}>
+          Cette compétence dans la vraie vie
+        </p>
+      </div>
+      {careers && careers.length > 0 && (
+        <div className="mb-4">
+          <p className="text-xs text-amber-200/80 mb-2 font-bold">💼 Métiers qui s'appuient sur ce savoir</p>
+          <div className="flex flex-wrap gap-1.5">
+            {careers.map((c, i) => (
+              <span key={i} className="text-xs px-2.5 py-1 rounded-full"
+                style={{background: 'rgba(2, 6, 23, 0.5)', border: `1px solid ${themeColor}55`, color: '#e2e8f0'}}>
+                {c}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      {situations && situations.length > 0 && (
+        <div>
+          <p className="text-xs text-amber-200/80 mb-2 font-bold">🎯 Situations concrètes où ça te servira</p>
+          <ul className="space-y-2">
+            {situations.map((s, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs text-slate-300 leading-relaxed">
+                <span className="shrink-0 mt-0.5" style={{color: themeColor}}>•</span>
+                <span>{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Bouton "Pose ta question à Kotchami" — fin de mission
+// ============================================================
+// SYSTÈME DE MESSAGERIE — Envoi sécurisé vers l'admin (Kotchami)
+// Stockage local immédiat + envoi cloud (Web3Forms à venir avec la clé)
+// ============================================================
+
+// Configuration messagerie — Web3Forms activé avec la clé de Kotchami
+// La clé est protégée par le filtre de domaine kotchamiogougbe-a11y.github.io
+const MESSAGING_CONFIG = {
+  accessKey: '3fb37fa4-912d-4fca-877f-df4f7c091222', // Web3Forms — Science Quest - Messages
+  endpoint: 'https://api.web3forms.com/submit',
+  fallbackEmail: 'kotchamiogougbe@gmail.com'
+};
+
+// Type de message : 'question' | 'bug' | 'suggestion' | 'temoignage'
+async function sendMessageToInbox(messageData, setState) {
+  const message = {
+    id: 'msg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+    date: new Date().toISOString(),
+    type: messageData.type || 'question',
+    from: messageData.from || 'Anonyme',
+    subject: messageData.subject || '',
+    body: messageData.body || '',
+    context: messageData.context || '',
+    status: 'pending', // 'pending' | 'sent' | 'failed' | 'local-only'
+    sentAt: null
+  };
+
+  // 1. Toujours sauvegarder localement immédiatement (sécurité)
+  if (setState) {
+    setState(s => ({
+      ...s,
+      outboxMessages: [...(s.outboxMessages || []), message].slice(-100) // garde les 100 derniers
+    }));
+  }
+
+  // 2. Si Web3Forms est configuré, tenter l'envoi cloud
+  if (MESSAGING_CONFIG.accessKey && navigator.onLine) {
+    try {
+      const formData = new FormData();
+      formData.append('access_key', MESSAGING_CONFIG.accessKey);
+      formData.append('subject', `[Science Quest] ${message.type.toUpperCase()} — ${message.subject}`);
+      formData.append('from_name', message.from);
+      formData.append('email', MESSAGING_CONFIG.fallbackEmail);
+      formData.append('message', `Type : ${message.type}
+De : ${message.from}
+Date : ${new Date(message.date).toLocaleString('fr-FR')}
+
+Objet : ${message.subject}
+
+Message :
+${message.body}
+
+Contexte technique :
+${message.context}`);
+      formData.append('botcheck', '');
+
+      const response = await fetch(MESSAGING_CONFIG.endpoint, {
+        method: 'POST',
+        body: formData
+      });
+      const result = await response.json();
+      if (result.success) {
+        // Marquer comme envoyé dans le stockage local
+        if (setState) {
+          setState(s => ({
+            ...s,
+            outboxMessages: (s.outboxMessages || []).map(m =>
+              m.id === message.id ? { ...m, status: 'sent', sentAt: new Date().toISOString() } : m
+            )
+          }));
+        }
+        return { success: true, message };
+      }
+    } catch(e) {
+      // Échec : le message reste en local, sera retransmis plus tard
+      if (setState) {
+        setState(s => ({
+          ...s,
+          outboxMessages: (s.outboxMessages || []).map(m =>
+            m.id === message.id ? { ...m, status: 'failed' } : m
+          )
+        }));
+      }
+    }
+  } else if (setState) {
+    // Pas de clé configurée : marquer en mode local
+    setState(s => ({
+      ...s,
+      outboxMessages: (s.outboxMessages || []).map(m =>
+        m.id === message.id ? { ...m, status: 'local-only' } : m
+      )
+    }));
+  }
+  return { success: false, message, fallbackToMailto: true };
+}
+
+function MessageComposer({ type, defaultSubject, defaultContext, missionTitle, state, setState, onSent, compact }) {
+  const [subject, setSubject] = React.useState(defaultSubject || '');
+  const [body, setBody] = React.useState('');
+  const [from, setFrom] = React.useState(state?.playerName || '');
+  const [sending, setSending] = React.useState(false);
+  const [sent, setSent] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState('');
+
+  const labels = {
+    'question': { icon: '❓', title: 'Pose ta question', placeholder: 'Pose ta question ici. Aucune question n\'est bête. Sois précis pour que Kotchami puisse bien te répondre.', subjectPlaceholder: 'Sujet de ta question' },
+    'bug': { icon: '🐛', title: 'Signaler un problème', placeholder: 'Décris ce qui ne fonctionne pas. Plus tu es précis (étapes, écran, appareil), plus vite ça sera corrigé.', subjectPlaceholder: 'Résumé du problème' },
+    'suggestion': { icon: '💡', title: 'Proposer une amélioration', placeholder: 'Quelle amélioration ou nouvelle fonctionnalité aimerais-tu voir ? Ton idée peut transformer Science Quest.', subjectPlaceholder: 'Résumé de ton idée' },
+    'temoignage': { icon: '✍️', title: 'Laisser un témoignage', placeholder: 'Raconte ton expérience avec Science Quest, ce que tu as appris, ce qui t\'a marqué.', subjectPlaceholder: 'Sujet de ton témoignage' }
+  };
+  const meta = labels[type] || labels.question;
+
+  const handleSend = async () => {
+    if (!body.trim() || body.trim().length < 5) {
+      setErrorMsg('Ton message doit contenir au moins quelques mots.');
+      return;
+    }
+    setErrorMsg('');
+    setSending(true);
+    try {
+      const ctx = `${defaultContext || ''}${missionTitle ? '\nMission : ' + missionTitle : ''}\nApp version : Science Quest`;
+      const result = await sendMessageToInbox({
+        type,
+        from: from.trim() || 'Agent anonyme',
+        subject: subject.trim() || (defaultSubject || meta.subjectPlaceholder),
+        body: body.trim(),
+        context: ctx
+      }, setState);
+      setSent(true);
+      SoundManager.play('complete');
+      // Si pas de clé Web3Forms et le message est en local-only, proposer mailto en fallback
+      if (result.fallbackToMailto && !MESSAGING_CONFIG.accessKey) {
+        setTimeout(() => {
+          const mailtoSubject = `[Science Quest] ${type.toUpperCase()} — ${subject || meta.subjectPlaceholder}`;
+          const mailtoBody = `De : ${from || 'Anonyme'}\n\n${body}\n\n---\n${ctx}`;
+          const mailto = `mailto:${MESSAGING_CONFIG.fallbackEmail}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`;
+          if (typeof window !== 'undefined') window.location.href = mailto;
+        }, 1500);
+      }
+      if (onSent) setTimeout(onSent, 2500);
+    } catch(e) {
+      setErrorMsg('Une erreur est survenue. Ton message a été sauvegardé localement et sera retransmis plus tard.');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (sent) {
+    return (
+      <div className="rounded-2xl p-5 text-center anim-in"
+        style={{background: 'rgba(16, 185, 129, 0.10)', border: '1px solid rgba(16, 185, 129, 0.4)'}}>
+        <p className="text-3xl mb-2">✅</p>
+        <p className="font-display text-base text-emerald-300 mb-1">Message envoyé</p>
+        <p className="text-xs text-slate-300 leading-relaxed">
+          {MESSAGING_CONFIG.accessKey
+            ? "Kotchami recevra ton message dans sa boîte de réception."
+            : "Ton message est sauvegardé. Une fenêtre email va s'ouvrir pour le finaliser."}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl p-5 anim-in"
+      style={{background: 'rgba(139, 92, 246, 0.06)', border: '1px solid rgba(139, 92, 246, 0.4)'}}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xl">{meta.icon}</span>
+        <p className="font-display text-base text-amber-100">{meta.title}</p>
+      </div>
+      {!compact && (
+        <p className="text-[11px] text-slate-400 mb-3">
+          Ton message va directement à Kotchami. Une réponse pourra venir par email si tu indiques une adresse dans ton message.
+        </p>
+      )}
+      <div className="space-y-2 mb-3">
+        <input
+          type="text"
+          value={from}
+          onChange={(e) => setFrom(e.target.value)}
+          placeholder="Ton prénom (facultatif)"
+          className="w-full p-2 rounded-lg text-sm"
+          style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fff'}}
+          maxLength={50}
+        />
+        <input
+          type="text"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder={meta.subjectPlaceholder}
+          className="w-full p-2 rounded-lg text-sm"
+          style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fff'}}
+          maxLength={100}
+        />
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder={meta.placeholder}
+          rows={5}
+          className="w-full p-2.5 rounded-lg text-sm leading-relaxed"
+          style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fff', resize: 'vertical', minHeight: '100px'}}
+          maxLength={2000}
+        />
+        <p className="text-[10px] text-slate-500 text-right">{body.length}/2000</p>
+      </div>
+      {errorMsg && (
+        <p className="text-xs text-red-400 mb-2">⚠️ {errorMsg}</p>
+      )}
+      <button
+        onClick={handleSend}
+        disabled={sending || body.trim().length < 5}
+        className="btn-primary w-full p-3 rounded-xl text-sm"
+        style={{opacity: sending || body.trim().length < 5 ? 0.4 : 1, visibility: 'visible'}}
+      >
+        {sending ? 'Envoi en cours...' : '📤 Envoyer à Kotchami'}
+      </button>
+      <p className="text-[10px] text-slate-500 italic text-center mt-2">
+        🔐 Ton message est sauvegardé localement et envoyé de façon sécurisée.
+      </p>
+    </div>
+  );
+}
+
+function MessageInbox({ state, setState }) {
+  const [filter, setFilter] = React.useState('all');
+  const messages = (state.outboxMessages || []).slice().reverse();
+  const filtered = filter === 'all' ? messages : messages.filter(m => m.type === filter);
+
+  const handleDelete = (id) => {
+    if (typeof window !== 'undefined' && !window.confirm('Supprimer ce message définitivement ?')) return;
+    setState(s => ({ ...s, outboxMessages: (s.outboxMessages || []).filter(m => m.id !== id) }));
+  };
+
+  const handleResend = async (msg) => {
+    SoundManager.play('click');
+    if (!MESSAGING_CONFIG.accessKey) {
+      const mailtoSubject = `[Science Quest] ${msg.type.toUpperCase()} — ${msg.subject}`;
+      const mailtoBody = `De : ${msg.from}\n\n${msg.body}\n\n---\n${msg.context || ''}`;
+      const mailto = `mailto:${MESSAGING_CONFIG.fallbackEmail}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`;
+      if (typeof window !== 'undefined') window.location.href = mailto;
+      return;
+    }
+    // Tenter renvoi cloud
+    await sendMessageToInbox({
+      type: msg.type,
+      from: msg.from,
+      subject: msg.subject,
+      body: msg.body,
+      context: msg.context
+    }, setState);
+  };
+
+  const TYPE_META = {
+    question: { icon: '❓', label: 'Question', color: '#a5b4fc' },
+    bug: { icon: '🐛', label: 'Bug', color: '#fca5a5' },
+    suggestion: { icon: '💡', label: 'Suggestion', color: '#fbbf24' },
+    temoignage: { icon: '✍️', label: 'Témoignage', color: '#86efac' }
+  };
+
+  if (messages.length === 0) {
+    return (
+      <div className="card-border rounded-2xl p-8 text-center"
+        style={{background: 'rgba(15, 23, 42, 0.5)'}}>
+        <p className="text-4xl mb-3">📭</p>
+        <p className="font-display text-base text-amber-100 mb-2">Boîte de réception vide</p>
+        <p className="text-xs text-slate-400 leading-relaxed">
+          Aucun message envoyé pour l'instant.<br/>
+          Les messages des élèves apparaîtront ici.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Filtres */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {['all', 'question', 'bug', 'suggestion', 'temoignage'].map(f => {
+          const isActive = filter === f;
+          const count = f === 'all' ? messages.length : messages.filter(m => m.type === f).length;
+          const label = f === 'all' ? 'Tous' : (TYPE_META[f]?.label || f);
+          return (
+            <button
+              key={f}
+              onClick={() => { SoundManager.play('click'); setFilter(f); }}
+              className="px-3 py-1.5 rounded-full text-xs transition-all"
+              style={{
+                opacity: 1,
+                background: isActive ? 'rgba(245, 158, 11, 0.15)' : 'rgba(15, 23, 42, 0.4)',
+                border: '1px solid ' + (isActive ? '#f59e0b' : '#334155'),
+                color: isActive ? '#fbbf24' : '#94a3b8'
+              }}
+            >
+              {label} ({count})
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Liste des messages */}
+      <div className="space-y-3">
+        {filtered.length === 0 ? (
+          <p className="text-xs text-slate-500 italic text-center py-4">Aucun message dans cette catégorie</p>
+        ) : (
+          filtered.map(msg => {
+            const meta = TYPE_META[msg.type] || TYPE_META.question;
+            const dateStr = new Date(msg.date).toLocaleString('fr-FR', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+            const statusBadge = msg.status === 'sent' ? '✓ Envoyé' :
+                                msg.status === 'failed' ? '⚠️ Échec' :
+                                msg.status === 'local-only' ? '💾 Local' : '⏳ En cours';
+            const statusColor = msg.status === 'sent' ? '#10b981' :
+                                msg.status === 'failed' ? '#ef4444' :
+                                msg.status === 'local-only' ? '#94a3b8' : '#fbbf24';
+            return (
+              <div key={msg.id} className="card-border rounded-xl p-4"
+                style={{background: 'rgba(15, 23, 42, 0.5)'}}>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-lg shrink-0">{meta.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-amber-100 font-bold truncate">{msg.subject || '(sans sujet)'}</p>
+                      <p className="text-[10px] text-slate-500">
+                        {msg.from} · {dateStr}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[9px] px-2 py-0.5 rounded-full shrink-0"
+                    style={{background: 'rgba(2, 6, 23, 0.6)', color: statusColor, border: `1px solid ${statusColor}55`}}>
+                    {statusBadge}
+                  </span>
+                </div>
+                <p className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap mb-3" style={{wordBreak: 'break-word'}}>
+                  {msg.body}
+                </p>
+                {msg.context && (
+                  <details className="mb-2">
+                    <summary className="text-[10px] text-slate-500 cursor-pointer">Contexte</summary>
+                    <p className="text-[10px] text-slate-400 mt-1 whitespace-pre-wrap font-mono-sci">{msg.context}</p>
+                  </details>
+                )}
+                <div className="flex gap-2 mt-2 pt-2 border-t border-slate-700/40">
+                  <button
+                    onClick={() => handleResend(msg)}
+                    className="btn-ghost px-3 py-1 rounded-full text-[10px] flex-1"
+                    style={{opacity: 1}}
+                    title="Renvoyer ce message"
+                  >
+                    📤 Renvoyer
+                  </button>
+                  <button
+                    onClick={() => handleDelete(msg.id)}
+                    className="btn-ghost px-3 py-1 rounded-full text-[10px]"
+                    style={{opacity: 1, color: '#fca5a5'}}
+                    title="Supprimer"
+                  >
+                    🗑️ Supprimer
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Indicateur configuration cloud */}
+      <div className="mt-6 rounded-xl p-3"
+        style={{background: MESSAGING_CONFIG.accessKey ? 'rgba(16, 185, 129, 0.06)' : 'rgba(245, 158, 11, 0.06)', border: '1px dashed ' + (MESSAGING_CONFIG.accessKey ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)')}}>
+        <p className="text-[11px] leading-relaxed">
+          {MESSAGING_CONFIG.accessKey ? (
+            <><span className="text-emerald-400">✓</span> Envoi cloud activé — les messages arrivent aussi par email à <strong className="text-amber-300">{MESSAGING_CONFIG.fallbackEmail}</strong></>
+          ) : (
+            <><span className="text-amber-400">⚠️</span> Mode local uniquement — pour activer la réception cloud, configure une clé Web3Forms dans le code (variable <code className="text-amber-300">MESSAGING_CONFIG.accessKey</code>)</>
+          )}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// ASK KOTCHAMI — Bouton de fin de mission utilisant le système de messagerie
+// ============================================================
+function AskKotchamiButton({ missionTitle, state, setState }) {
+  const [showComposer, setShowComposer] = React.useState(false);
+  if (showComposer && setState) {
+    return (
+      <div className="anim-in mb-6">
+        <MessageComposer
+          type="question"
+          missionTitle={missionTitle}
+          defaultSubject={`Question sur la mission "${missionTitle || 'Mission'}"`}
+          defaultContext={`Mission : ${missionTitle || 'inconnu'}`}
+          state={state}
+          setState={setState}
+          onSent={() => setShowComposer(false)}
+        />
+        <button
+          onClick={() => setShowComposer(false)}
+          className="btn-ghost w-full mt-2 px-3 py-2 rounded-full text-xs"
+          style={{opacity: 1}}
+        >
+          Annuler
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="anim-in card-border rounded-2xl p-5 mb-6"
+      style={{background: 'rgba(139, 92, 246, 0.06)', borderColor: 'rgba(139, 92, 246, 0.4)'}}>
+      <div className="flex items-start gap-3">
+        <span className="text-2xl shrink-0">❓</span>
+        <div className="flex-1">
+          <p className="font-display text-sm text-amber-100 mb-1">Cette mission ne répond pas à ta question ?</p>
+          <p className="text-xs text-slate-300 leading-relaxed mb-3">
+            Pose-la directement à Kotchami. Ta question pourrait inspirer une prochaine vidéo de
+            <strong className="text-amber-300"> Science Vivante</strong> ou une amélioration de Science Quest.
+          </p>
+          <button
+            onClick={() => { SoundManager.play('click'); setShowComposer(true); }}
+            className="btn-primary px-4 py-2 rounded-full text-xs inline-flex items-center gap-2"
+            style={{opacity: 1, visibility: 'visible'}}
+          >
+            ❓ Poser ma question
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -5623,6 +6554,7 @@ function MissionPhaseQuestion({ phase, phaseIdx, totalPhases, answered, onCorrec
 // ============================================================
 function MissionEpilogue({ mission, missionXP, state, setState, onComplete }) {
   const [showEngagement, setShowEngagement] = React.useState(false);
+  const pertinence = getMissionPertinence(mission.id);
   return (
     <div className="max-w-2xl mx-auto" style={{paddingTop: '2vh'}}>
       <div className="anim-in text-center mb-8">
@@ -5656,6 +6588,18 @@ function MissionEpilogue({ mission, missionXP, state, setState, onComplete }) {
       <p className="anim-in delay-600 font-display italic text-center text-amber-200/70 text-sm mb-8 px-4">
         — {mission.epilogue.philo} —
       </p>
+
+      {/* « Cette compétence dans la vraie vie » — métiers + situations concrètes */}
+      {pertinence && (
+        <CareersAndApplications
+          careers={pertinence.careers}
+          situations={pertinence.situations}
+          color="#10b981"
+        />
+      )}
+
+      {/* « Pose ta question à Kotchami » — bouton mailto */}
+      <AskKotchamiButton missionTitle={mission.title || mission.epilogue.titre} state={state} setState={setState} />
 
       {/* Bouton pour révéler le système d'engagement */}
       {!showEngagement && (
@@ -5815,12 +6759,14 @@ function EngagementEchange({ missionTitle, missionId, state, setState }) {
       setKotchamiReply(generateKotchamiReply(testimonyText));
     }
     if (mec.id === 'invitation') {
-      const url = window.location.href;
+      const url = getCanonicalURL();
       const text = mec.shareText + url;
       if (navigator.share) {
         navigator.share({ title: 'Science Quest', text: text, url: url }).catch(() => {});
-      } else if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => alert('Lien copié ! Colle-le dans WhatsApp.')).catch(() => {});
+      } else {
+        // Fallback : ouvrir directement WhatsApp Web/App avec le texte pré-rempli
+        const waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+        window.open(waUrl, '_blank');
       }
     }
     if (mec.id === 'bug') {
@@ -5926,6 +6872,18 @@ function App() {
     const t = setTimeout(() => setShowInstallBanner(true), 30000);
     return () => clearTimeout(t);
   }, [pwa.canInstall]);
+  // Gérer la classe body pour le padding quand mode enseignant actif
+  React.useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (state.freeMode && screen !== 'settings') {
+      document.body.classList.add('sq-teacher-mode-active');
+    } else {
+      document.body.classList.remove('sq-teacher-mode-active');
+    }
+    return () => {
+      if (typeof document !== 'undefined') document.body.classList.remove('sq-teacher-mode-active');
+    };
+  }, [state.freeMode, screen]);
   // Mettre à jour la streak ET régénérer les vies au démarrage
   React.useEffect(() => {
     if (state.playerName) {
@@ -6029,7 +6987,7 @@ function App() {
   const addXP = (n) => setMissionData(d => ({ ...d, missionXP: d.missionXP + n }));
 
   return (
-    <div className="min-h-screen w-full text-white relative overflow-x-hidden" style={{background: '#020617'}}>
+    <div className="min-h-screen w-full text-white relative overflow-x-hidden" style={{background: '#020617', paddingBottom: state.freeMode && screen !== 'settings' ? '40px' : '0'}}>
       <div className="absolute inset-0 bg-grain pointer-events-none"></div>
 
       {/* Header global (sauf welcome) */}
@@ -6076,8 +7034,28 @@ function App() {
               <button onClick={() => setScreen('help')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Aide & tutoriel">
                 <span style={{fontSize: '15px', lineHeight: 1}}>❓</span>
               </button>
-              <button onClick={() => setScreen('settings')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Profil & réglages">
-                <Icon name="user" size={18} />
+              {!pwa.installed && (
+                <button
+                  onClick={() => { setScreen('help'); setTimeout(() => { try { window.dispatchEvent(new CustomEvent('sq-open-install-tab')); } catch(e) {} }, 100); }}
+                  className="text-slate-400 hover:text-amber-400 transition-colors relative"
+                  title="Installer Science Quest sur mon appareil"
+                  style={{padding: 0, background: 'transparent', border: 'none'}}
+                >
+                  <span style={{fontSize: '15px', lineHeight: 1}}>📱</span>
+                  <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-amber-400" style={{animation: 'musicPulse 2s ease-in-out infinite'}}></span>
+                </button>
+              )}
+              <button
+                onClick={() => setScreen('settings')}
+                className="transition-transform hover:scale-110"
+                title="Profil & réglages"
+                style={{padding: 0, background: 'transparent', border: 'none'}}
+              >
+                <PlayerAvatar
+                  emoji={state.avatarEmoji || '🧬'}
+                  color={state.avatarColor || '#f59e0b'}
+                  size={28}
+                />
               </button>
               <button onClick={() => setScreen('contact')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Contact">
                 <Icon name="info" size={18} />
@@ -6087,7 +7065,7 @@ function App() {
         </div>
       )}
 
-      <div className="relative z-10 max-w-4xl mx-auto px-5 py-8 md:py-12">
+      <div className="relative z-10 max-w-4xl mx-auto px-5 py-8 md:py-12" style={{paddingBottom: state.freeMode ? '80px' : ''}}>
 
         {/* ========== WELCOME ========== */}
         {screen === 'welcome' && (
@@ -6115,7 +7093,7 @@ function App() {
 
         {/* ========== CONTACT ========== */}
         {screen === 'contact' && (
-          <ContactScreen onBack={() => setScreen('home')} />
+          <ContactScreen onBack={() => setScreen('home')} state={state} setState={setState} />
         )}
 
         {/* ========== HELP ========== */}
@@ -6185,6 +7163,8 @@ function App() {
       {/* ========== PWA — Bannière d'installation ========== */}
       {showInstallBanner && pwa.canInstall && (
         <InstallBanner
+          platform={pwa.platform}
+          hasNativePrompt={pwa.hasNativePrompt}
           onInstall={async () => {
             await pwa.promptInstall();
             setShowInstallBanner(false);
@@ -6195,6 +7175,20 @@ function App() {
 
       {/* ========== PWA — Indicateur offline ========== */}
       <OfflineIndicator online={online} />
+
+      {/* ========== Bandeau Mode enseignant actif (en bas — élégant, ne cache rien) ========== */}
+      {state.freeMode && screen !== 'settings' && (
+        <div className="fixed bottom-0 left-0 right-0 z-30 anim-in"
+          style={{background: 'linear-gradient(90deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95))', backdropFilter: 'blur(8px)', boxShadow: '0 -4px 12px rgba(0,0,0,0.3)'}}>
+          <button
+            onClick={() => setScreen('settings')}
+            className="w-full px-4 py-2 text-center text-[11px] font-bold text-slate-950"
+            style={{opacity: 1, visibility: 'visible'}}
+          >
+            🎓 Mode enseignant actif — Toucher pour gérer
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -6282,8 +7276,15 @@ function HomeScreen({ state, onStartMission, onContact, onDailyQuiz, onChallenge
 
   return (
     <div>
-      {/* Hero */}
+      {/* Hero avec avatar */}
       <div className="anim-in text-center mb-10">
+        <div className="flex justify-center mb-3">
+          <PlayerAvatar
+            emoji={state.avatarEmoji || '🧬'}
+            color={state.avatarColor || '#f59e0b'}
+            size={72}
+          />
+        </div>
         <p className="text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-3">Agent {state.playerName}</p>
         <h1 className="font-display text-4xl md:text-5xl mb-3"><span className="shimmer-text">Mission Science</span></h1>
         <p className="text-slate-400 max-w-xl mx-auto">{T('homeIntro')}</p>
@@ -6761,6 +7762,58 @@ function DailyQuizScreen({ state, setState, onBack }) {
 // ============================================================
 // SHARE SCREEN — Partage de progression (carte avec stats)
 // ============================================================
+// ============================================================
+// QR CODE — Génération d'un QR code pour faciliter le partage
+// Utilise l'API publique qr-server.com (avec fallback texte si offline)
+// ============================================================
+function QRCode({ url, size, label }) {
+  const [imgError, setImgError] = React.useState(false);
+  const sz = size || 180;
+  const target = url || getCanonicalURL();
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${sz}x${sz}&data=${encodeURIComponent(target)}&format=svg&color=020617&bgcolor=fbbf24&margin=4`;
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="rounded-xl p-3" style={{background: '#fbbf24', boxShadow: '0 4px 16px rgba(251, 191, 36, 0.3)'}}>
+        {!imgError ? (
+          <img
+            src={qrUrl}
+            alt="QR Code Science Quest"
+            width={sz}
+            height={sz}
+            onError={() => setImgError(true)}
+            style={{display: 'block', width: sz + 'px', height: sz + 'px'}}
+          />
+        ) : (
+          <div
+            style={{
+              width: sz + 'px',
+              height: sz + 'px',
+              background: '#020617',
+              color: '#fbbf24',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '12px',
+              textAlign: 'center'
+            }}
+          >
+            <p className="text-xs font-bold mb-2">QR indisponible hors-ligne</p>
+            <p className="text-[10px] break-all" style={{wordBreak: 'break-all'}}>{target}</p>
+          </div>
+        )}
+      </div>
+      {label && (
+        <p className="text-[11px] text-slate-400 mt-2 text-center px-2">{label}</p>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// SHARE SCREEN — Partage de progression (carte avec stats)
+// ============================================================
 function ShareScreen({ state, onBack }) {
   const [copied, setCopied] = React.useState(false);
   const totalQ = state.totalQuestionsAnswered || 0;
@@ -6779,7 +7832,7 @@ function ShareScreen({ state, onBack }) {
 « Comprendre avant de mémoriser — construire sur du roc, pas sur du sable. »
 
 Rejoins-moi sur Science Quest 👇
-${typeof window !== 'undefined' ? window.location.origin : ''}`;
+${getCanonicalURL()}`;
 
   const handleShare = async () => {
     SoundManager.play('click');
@@ -6880,6 +7933,30 @@ ${typeof window !== 'undefined' ? window.location.origin : ''}`;
         </button>
       </div>
 
+      {/* QR Code pour partage en présentiel (classes, événements) */}
+      <div className="mt-6 card-border rounded-2xl p-5"
+        style={{background: 'linear-gradient(145deg, rgba(245, 158, 11, 0.08), rgba(2, 6, 23, 0.6))', borderColor: 'rgba(245, 158, 11, 0.4)'}}>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xl">📲</span>
+          <p className="text-[10px] uppercase tracking-wider text-amber-400 font-bold">Partage en présentiel</p>
+        </div>
+        <p className="text-amber-100 font-display text-base mb-3">Scanne ce QR Code</p>
+        <p className="text-slate-300 text-xs leading-relaxed mb-4">
+          Idéal en classe, en conférence ou pour partager directement avec quelqu'un en face de toi.
+          L'autre personne pointe son téléphone, scanne, et arrive directement sur Science Quest.
+        </p>
+        <div className="flex justify-center my-4">
+          <QRCode
+            url={getCanonicalURL()}
+            size={200}
+            label="Pointe ton appareil photo sur ce code"
+          />
+        </div>
+        <p className="text-[10px] text-slate-500 text-center mt-2 break-all">
+          {getCanonicalURL()}
+        </p>
+      </div>
+
       <div className="mt-6 card-border rounded-xl p-4">
         <p className="text-[10px] uppercase tracking-wider text-amber-400/70 mb-2">Ce qui sera partagé</p>
         <pre className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-wrap font-mono-sci">{shareText}</pre>
@@ -6961,7 +8038,7 @@ function ChallengeScreen({ state, setState, onBack }) {
       }, 1000);
     } else {
       SoundManager.play('wrong');
-      MusicEngine.pulse('tension');
+      MusicEngine.pulse('wrong');
       setFailed(true);
       setTimeout(() => setPhase('finished'), 2000);
     }
@@ -7176,6 +8253,179 @@ function CertificateScreen({ state, themeId, themeName, onBack }) {
 }
 
 // ============================================================
+// INSTALL TAB — Comment installer Science Quest sur tous les OS
+// ============================================================
+function InstallTab() {
+  const pwa = usePWAInstall();
+  const [copied, setCopied] = React.useState(false);
+  const allInstructions = [
+    { id: 'android-chrome', flag: '🤖', label: 'Android (Chrome / Edge / Samsung)' },
+    { id: 'ios', flag: '🍎', label: 'iPhone / iPad (Safari)' },
+    { id: 'windows-chrome', flag: '🪟', label: 'Windows (Chrome / Edge)' },
+    { id: 'mac', flag: '💻', label: 'Mac (Chrome / Edge)' },
+    { id: 'mac-safari', flag: '🍎', label: 'Mac (Safari)' },
+    { id: 'android-firefox', flag: '🦊', label: 'Android (Firefox)' },
+  ];
+
+  const detected = getInstallInstructions(pwa.platform, pwa.hasNativePrompt);
+
+  const handleInstall = async () => {
+    if (pwa.hasNativePrompt) await pwa.promptInstall();
+  };
+
+  const copyURL = async () => {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(getCanonicalURL());
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch(e) {}
+  };
+
+  if (pwa.installed) {
+    return (
+      <div className="space-y-4 anim-in">
+        <div className="card-border rounded-2xl p-6 text-center" style={{background: 'rgba(16, 185, 129, 0.06)', borderColor: 'rgba(16, 185, 129, 0.4)'}}>
+          <div className="text-5xl mb-3">✅</div>
+          <p className="font-display text-xl text-emerald-300 mb-2">Application installée !</p>
+          <p className="text-slate-300 text-sm leading-relaxed">
+            Science Quest fonctionne maintenant comme une vraie application sur ton appareil.
+            Tu peux jouer même sans connexion Internet.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4 anim-in">
+      {/* Avertissement si ouvert depuis un fichier local */}
+      {(typeof window !== 'undefined' && (window.location.href.startsWith('file://') || window.location.href.startsWith('content://') || window.location.href.indexOf('downloads') !== -1)) && (
+        <div className="card-border rounded-2xl p-4" style={{background: 'rgba(220, 38, 38, 0.08)', borderColor: 'rgba(220, 38, 38, 0.4)'}}>
+          <div className="flex items-start gap-3">
+            <span className="text-2xl shrink-0">⚠️</span>
+            <div className="flex-1">
+              <p className="font-bold text-red-300 text-sm mb-1">Tu as ouvert le fichier localement</p>
+              <p className="text-slate-200 text-xs leading-relaxed">
+                L'installation PWA <strong>nécessite une URL web (HTTPS)</strong>, pas un fichier local sur ton téléphone.
+                Pour installer Science Quest, ouvre-la d'abord sur :
+              </p>
+              <a
+                href="https://kotchamiogougbe-a11y.github.io/science-quest/"
+                target="_blank"
+                rel="noopener"
+                className="inline-block mt-2 text-amber-300 underline text-xs break-all"
+              >
+                kotchamiogougbe-a11y.github.io/science-quest/
+              </a>
+              <p className="text-slate-300 text-xs leading-relaxed mt-2">
+                <strong>Une fois sur le site web</strong>, tu pourras installer Science Quest comme une vraie application.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Plateforme détectée — instructions principales */}
+      <div className="card-border rounded-2xl p-5" style={{background: 'rgba(245, 158, 11, 0.06)', borderColor: 'rgba(245, 158, 11, 0.4)'}}>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xl">📲</span>
+          <p className="text-[10px] uppercase tracking-wider text-amber-400 font-bold">Pour ton appareil</p>
+        </div>
+        <h2 className="font-display text-lg text-amber-100 mb-3">{detected.title}</h2>
+        {detected.note && (
+          <p className="text-[11px] text-amber-300/80 italic mb-3 px-2 py-1.5 rounded" style={{background: 'rgba(245, 158, 11, 0.06)'}}>
+            ℹ️ {detected.note}
+          </p>
+        )}
+        <ol className="space-y-2 mb-4 list-decimal pl-5">
+          {detected.steps.map((s, i) => (
+            <li key={i} className="text-sm text-slate-200 leading-relaxed">{s}</li>
+          ))}
+        </ol>
+        {pwa.hasNativePrompt ? (
+          <button onClick={handleInstall} className="btn-primary w-full p-3 rounded-xl"
+            style={{opacity: 1, visibility: 'visible'}}>
+            📱 Installer maintenant
+          </button>
+        ) : (
+          <div className="rounded-lg p-3 mt-2" style={{background: 'rgba(15, 23, 42, 0.5)', border: '1px solid #334155'}}>
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              <strong className="text-amber-300">💡 Pourquoi pas de bouton « Installer » ?</strong><br/>
+              Le bouton automatique ne s'affiche que sur certains navigateurs (Chrome, Edge, Brave) et nécessite une URL web (https://). Sur Safari (iPhone) ou si tu as ouvert un fichier local, suis les étapes manuelles ci-dessus — c'est tout aussi simple !
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Pourquoi installer ? */}
+      <div className="card-border rounded-2xl p-5">
+        <h3 className="font-display text-base text-amber-100 mb-3">✨ Pourquoi installer Science Quest ?</h3>
+        <ul className="space-y-2 text-sm text-slate-200 leading-relaxed">
+          <li>📡 <strong className="text-amber-300">Hors ligne</strong> — joue sans connexion Internet, idéal en classe ou en voyage</li>
+          <li>⚡ <strong className="text-amber-300">Plus rapide</strong> — ouverture instantanée depuis l'écran d'accueil</li>
+          <li>🎯 <strong className="text-amber-300">Sans navigateur</strong> — comme une vraie app, plein écran</li>
+          <li>🔒 <strong className="text-amber-300">Privé</strong> — tes progrès restent sur ton appareil, jamais envoyés</li>
+          <li>🆓 <strong className="text-amber-300">Léger</strong> — moins de 1 Mo, fonctionne sur les téléphones modestes</li>
+        </ul>
+      </div>
+
+      {/* Toutes les plateformes */}
+      <details className="card-border rounded-2xl p-5">
+        <summary className="font-display text-base text-amber-100 cursor-pointer">📚 Voir les instructions pour toutes les plateformes</summary>
+        <div className="mt-4 space-y-4">
+          {allInstructions.map(p => {
+            const inst = getInstallInstructions(p.id, false);
+            if (!inst) return null;
+            return (
+              <div key={p.id} className="rounded-lg p-4" style={{background: 'rgba(2, 6, 23, 0.4)', border: '1px solid #334155'}}>
+                <p className="text-sm font-bold text-amber-200 mb-2">{p.flag} {p.label}</p>
+                <ol className="space-y-1 list-decimal pl-5">
+                  {inst.steps.map((s, i) => (
+                    <li key={i} className="text-xs text-slate-300 leading-relaxed">{s}</li>
+                  ))}
+                </ol>
+              </div>
+            );
+          })}
+        </div>
+      </details>
+
+      {/* Partager le lien + QR Code */}
+      <div className="card-border rounded-2xl p-5">
+        <h3 className="font-display text-base text-amber-100 mb-2">🔗 Partager Science Quest</h3>
+        <p className="text-xs text-slate-400 mb-3">Envoie ce lien à tes amis ou scanne-le avec un autre appareil.</p>
+        <div className="flex gap-2 mb-4">
+          <button onClick={copyURL} className="btn-primary flex-1 px-3 py-2 rounded-lg text-xs"
+            style={{opacity: 1, visibility: 'visible'}}>
+            {copied ? '✓ Lien copié !' : '📋 Copier le lien'}
+          </button>
+          {typeof navigator !== 'undefined' && navigator.share && (
+            <button
+              onClick={() => {
+                try { navigator.share({ title: 'Science Quest', text: 'Découvre Science Quest, la plateforme éducative de Kotchami Ogougbe', url: getCanonicalURL() }); } catch(e) {}
+              }}
+              className="btn-ghost px-3 py-2 rounded-lg text-xs"
+              style={{opacity: 1, visibility: 'visible'}}
+            >
+              📤 Partager
+            </button>
+          )}
+        </div>
+        {/* QR Code intégré pour passer d'un appareil à l'autre */}
+        <div className="pt-3 border-t border-slate-700/40">
+          <p className="text-[10px] uppercase tracking-wider text-amber-400/70 mb-3 text-center font-bold">📲 Ou scanne ce QR Code</p>
+          <div className="flex justify-center mb-2">
+            <QRCode url={getCanonicalURL()} size={160} label="Pratique pour passer d'un téléphone à un ordinateur" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
 // HELP SCREEN — Tutoriel + FAQ + Mes Réflexions
 // ============================================================
 function HelpScreen({ state, setState, onBack }) {
@@ -7186,6 +8436,15 @@ function HelpScreen({ state, setState, onBack }) {
   const testimonyEntries = Object.entries(testimonies);
   const notes = state.notes || {};
   const noteEntries = Object.entries(notes);
+
+  // Listener pour ouvrir directement l'onglet Install depuis le bouton du header
+  React.useEffect(() => {
+    const handler = () => setActiveTab('install');
+    if (typeof window !== 'undefined') {
+      window.addEventListener('sq-open-install-tab', handler);
+      return () => window.removeEventListener('sq-open-install-tab', handler);
+    }
+  }, []);
 
   const saveNote = (chapterKey, text) => {
     if (!setState) return;
@@ -7216,6 +8475,7 @@ function HelpScreen({ state, setState, onBack }) {
       <div className="flex flex-wrap gap-2 mb-6">
         {[
           { id: 'tutorial', label: '🎓 Comment jouer' },
+          { id: 'install', label: '📱 Installer' },
           { id: 'faq', label: '❓ FAQ' },
           { id: 'reflections', label: '✍️ Réflexions' },
           { id: 'notes', label: '📓 Mes notes' },
@@ -7316,6 +8576,9 @@ function HelpScreen({ state, setState, onBack }) {
           </div>
         </div>
       )}
+
+      {/* INSTALL — Comment installer Science Quest */}
+      {activeTab === 'install' && <InstallTab />}
 
       {/* FAQ */}
       {activeTab === 'faq' && (
@@ -7472,49 +8735,265 @@ function HelpScreen({ state, setState, onBack }) {
         </div>
       )}
 
-      {/* À PROPOS */}
+      {/* À PROPOS — Vision, créateur, philosophie, engagement */}
       {activeTab === 'about' && (
         <div className="space-y-4 anim-in">
-          <div className="card-border rounded-2xl p-5">
-            <h2 className="font-display text-lg text-amber-100 mb-3">🌍 La mission de Science Quest</h2>
+          {/* Vision principale — élargie */}
+          <div className="card-border rounded-2xl p-6" style={{background: 'linear-gradient(145deg, rgba(245, 158, 11, 0.08), rgba(2, 6, 23, 0.6))', borderColor: 'rgba(245, 158, 11, 0.4)'}}>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-amber-400/80 mb-3 font-bold">🌍 Notre vision</p>
+            <h2 className="font-display text-2xl md:text-3xl text-amber-100 mb-3 leading-tight">
+              Démocratiser la science<br/>par la <span className="shimmer-text">compréhension</span>.
+            </h2>
             <p className="text-slate-200 text-sm leading-relaxed mb-3">
-              Science Quest est née d'une conviction : la science n'est pas réservée à une élite.
-              Elle est pour toi.
+              Science Quest s'adresse à <strong className="text-amber-300">toute personne curieuse, partout dans le monde</strong>.
+              Construite avec une <strong className="text-amber-300">sensibilité africaine francophone</strong>,
+              elle parle un langage universel : celui de la <strong className="text-amber-300">compréhension</strong>.
             </p>
-            <p className="text-slate-300 text-sm leading-relaxed italic">
-              « La science ne change pas le monde. Elle change le regard qu'on pose sur lui.
-              Et ce nouveau regard — une fois que tu l'as acquis — personne ne pourra jamais te l'enlever. »
-            </p>
-          </div>
-
-          <div className="card-border rounded-2xl p-5">
-            <h2 className="font-display text-lg text-amber-100 mb-3">👤 Le créateur</h2>
-            <p className="text-slate-200 text-sm leading-relaxed mb-2">
-              <strong className="text-amber-300">Kotchami Ogougbe</strong> — Le Passeur de sciences
-            </p>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              Enseignant de Sciences (Physique-Chimie, SVT, Mathématiques) à Niamey, Niger.
-              Créateur de la chaîne YouTube <strong className="text-amber-300">Science Vivante</strong>,
-              dédiée à rendre la science accessible à tous, partout en Afrique francophone.
+            <p className="text-slate-300 text-xs leading-relaxed italic">
+              Pas réciter des formules. Construire un regard nouveau, libre et durable sur le monde —
+              un regard qui appartient à tout le monde, sans distinction d'origine, de classe ou de culture.
             </p>
           </div>
 
+          {/* Le manifeste de la pertinence — la signature pédagogique */}
+          <div className="card-border rounded-2xl p-5" style={{background: 'rgba(139, 92, 246, 0.06)', borderColor: 'rgba(139, 92, 246, 0.4)'}}>
+            <p className="text-[10px] uppercase tracking-[0.3em] mb-3 font-bold" style={{color: '#c4b5fd'}}>💎 Notre engagement pédagogique</p>
+            <h3 className="font-display text-lg text-amber-100 mb-3">Le Manifeste de la Pertinence</h3>
+            <p className="text-slate-200 text-sm leading-relaxed mb-3">
+              Science Quest répond systématiquement à <strong className="text-amber-300">4 questions</strong> :
+            </p>
+            <div className="space-y-2 text-sm leading-relaxed mb-3">
+              <p className="rounded-lg p-2.5" style={{background: 'rgba(2, 6, 23, 0.4)'}}>
+                <strong style={{color: '#fbbf24'}}>① Quoi ?</strong> <span className="text-slate-300">— Le contenu, comme partout.</span>
+              </p>
+              <p className="rounded-lg p-2.5" style={{background: 'rgba(2, 6, 23, 0.4)'}}>
+                <strong style={{color: '#fbbf24'}}>② Comment ?</strong> <span className="text-slate-300">— La méthode, comme dans tous les bons cours.</span>
+              </p>
+              <p className="rounded-lg p-2.5" style={{background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)'}}>
+                <strong style={{color: '#fbbf24'}}>③ Pourquoi ?</strong> <span className="text-slate-200">— Le sens. Rarement abordé ailleurs.</span>
+              </p>
+              <p className="rounded-lg p-2.5" style={{background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)'}}>
+                <strong style={{color: '#fbbf24'}}>④ À quoi ça sert ?</strong> <span className="text-slate-200">— La pertinence dans ta vie. Presque jamais traité.</span>
+              </p>
+            </div>
+            <p className="text-slate-300 text-xs leading-relaxed italic">
+              Si une mission ne répond pas à ces 4 questions, elle n'a pas sa place ici.
+            </p>
+          </div>
+
+          {/* Les 4 piliers */}
           <div className="card-border rounded-2xl p-5">
-            <h2 className="font-display text-lg text-amber-100 mb-3">📜 La philosophie</h2>
-            <div className="space-y-2.5 text-sm text-slate-200 leading-relaxed italic">
-              <p>« Comprendre avant de mémoriser — construire sur du roc, pas sur du sable. »</p>
-              <p>« La science n'est pas une collection de formules. C'est une façon de penser qui appartient à tout le monde. »</p>
-              <p>« Plusieurs matières, une seule réalité. »</p>
-              <p>« La science n'est pas réservée à une élite. Elle est pour toi. »</p>
+            <h3 className="font-display text-lg text-amber-100 mb-4">🏛️ Les 4 piliers</h3>
+            <div className="space-y-3">
+              <div className="rounded-lg p-3" style={{background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.25)'}}>
+                <p className="font-bold text-sm" style={{color: '#6ee7b7'}}>🧠 Comprendre</p>
+                <p className="text-slate-300 text-xs leading-relaxed mt-1">
+                  Avant la mémorisation. Construire sur du roc, pas sur du sable.
+                  Chaque mission est conçue pour que tu saisisses le « pourquoi », pas seulement le « comment ».
+                </p>
+              </div>
+              <div className="rounded-lg p-3" style={{background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.25)'}}>
+                <p className="font-bold text-sm" style={{color: '#93c5fd'}}>📡 Transmettre</p>
+                <p className="text-slate-300 text-xs leading-relaxed mt-1">
+                  Le savoir n'a de valeur que partagé. Science Quest t'invite à raconter ce que tu apprends
+                  à tes proches : trois personnes par mission, et la connaissance devient communauté.
+                </p>
+              </div>
+              <div className="rounded-lg p-3" style={{background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.25)'}}>
+                <p className="font-bold text-sm" style={{color: '#c4b5fd'}}>🔗 Connecter</p>
+                <p className="text-slate-300 text-xs leading-relaxed mt-1">
+                  Plusieurs matières, une seule réalité. La drépanocytose, c'est de la génétique
+                  (SVT) <em>et</em> de la chimie (hémoglobine) <em>et</em> des statistiques (probabilités).
+                  Apprends à voir les ponts.
+                </p>
+              </div>
+              <div className="rounded-lg p-3" style={{background: 'rgba(236, 72, 153, 0.08)', border: '1px solid rgba(236, 72, 153, 0.25)'}}>
+                <p className="font-bold text-sm" style={{color: '#f9a8d4'}}>✨ Transformer</p>
+                <p className="text-slate-300 text-xs leading-relaxed mt-1">
+                  La science change le regard. Et ce nouveau regard, personne ne pourra jamais te l'enlever.
+                  Chaque mission est un petit pas vers une transformation durable de ta façon de voir.
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="card-border rounded-2xl p-5 text-center">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-amber-400/70 mb-2">Engagement</p>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              Science Quest ne prendra jamais parti contre une religion, une culture ou une identité.
-              C'est un espace neutre, accueillant, conçu pour servir la curiosité.
+          {/* Le créateur — voix directe à la première personne */}
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">👤 Le créateur</h2>
+            <div className="flex items-start gap-4 mb-4">
+              <div className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center font-bold text-2xl"
+                style={{background: 'linear-gradient(135deg, #fbbf24, #d97706)', color: '#020617'}}>
+                K
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-amber-300 font-bold text-base">Kotchami Ogougbe</p>
+                <p className="text-amber-200/80 text-xs italic mb-3">« Le Passeur de sciences »</p>
+                <p className="text-slate-200 text-sm leading-relaxed mb-3">
+                  Je suis <strong className="text-amber-300">Kotchami Ogougbe</strong>,
+                  <strong className="text-amber-300"> promoteur de ce projet</strong> et
+                  <strong className="text-amber-300"> précepteur de sciences</strong>.
+                  Profondément <strong className="text-amber-300">amoureux de la science</strong>,
+                  je suis engagé dans la <strong className="text-amber-300">vulgarisation à grande échelle</strong> pour rendre
+                  le savoir accessible à toutes et tous, partout dans le monde.
+                </p>
+                <p className="text-slate-300 text-xs leading-relaxed">
+                  Basé à <strong className="text-amber-300">Niamey, au Niger</strong>, je crée du contenu
+                  ancré dans la sensibilité africaine francophone — avec une portée résolument universelle.
+                  Mon engagement : que chaque mission de Science Quest réponde à la question qui hante tous les élèves : <em className="text-amber-300/90">« À quoi ça va me servir dans la vie ? »</em>
+                </p>
+              </div>
+            </div>
+
+            {/* Chaînes YouTube — 2 chaînes complémentaires */}
+            <p className="text-[10px] uppercase tracking-wider text-amber-400/70 font-bold mb-2 mt-4">📺 Découvre mes chaînes YouTube</p>
+            <div className="space-y-2">
+              <a
+                href="https://youtube.com/@sciencevivante"
+                target="_blank"
+                rel="noopener"
+                className="block rounded-xl p-3 transition-all hover:scale-[1.01]"
+                style={{background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.3)'}}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl shrink-0">🔬</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-amber-100 font-bold text-sm">Science Vivante</p>
+                    <p className="text-[11px] text-slate-300">Vulgarisation scientifique — transformer la science en aventure</p>
+                  </div>
+                  <span className="text-red-400 text-xs">▶</span>
+                </div>
+              </a>
+              <a
+                href="https://youtube.com/@internationalsuccessinstitute"
+                target="_blank"
+                rel="noopener"
+                className="block rounded-xl p-3 transition-all hover:scale-[1.01]"
+                style={{background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)'}}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl shrink-0">🌟</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-amber-100 font-bold text-sm">International Success Institute</p>
+                    <p className="text-[11px] text-slate-300">Développement personnel — vision, succès, transformation intérieure</p>
+                  </div>
+                  <span className="text-amber-400 text-xs">▶</span>
+                </div>
+              </a>
+            </div>
+            <p className="text-[10px] text-slate-500 italic mt-3 text-center">
+              Deux chaînes, une même conviction : <strong className="text-amber-300/80">le savoir transforme</strong>.
             </p>
+          </div>
+
+          {/* Pour qui */}
+          <div className="card-border rounded-2xl p-5">
+            <h3 className="font-display text-lg text-amber-100 mb-3">👥 Pour qui ?</h3>
+            <ul className="space-y-2 text-sm text-slate-200">
+              <li>🎓 <strong className="text-amber-300">Élèves</strong> de la 3ème à la Terminale — partout dans le monde francophone et au-delà</li>
+              <li>👨‍🏫 <strong className="text-amber-300">Enseignants</strong> qui cherchent à compléter leur cours par du jeu sérieux</li>
+              <li>🏠 <strong className="text-amber-300">Parents</strong> qui veulent accompagner les progrès de leurs enfants</li>
+              <li>🌱 <strong className="text-amber-300">Autodidactes</strong> de tout âge qui veulent (re)découvrir la science</li>
+              <li>🌍 <strong className="text-amber-300">Toute personne curieuse</strong>, sans distinction d'origine, de classe, de culture ou de religion</li>
+            </ul>
+          </div>
+
+          {/* Philosophie */}
+          <div className="card-border rounded-2xl p-5">
+            <h2 className="font-display text-lg text-amber-100 mb-3">📜 La philosophie en 4 phrases</h2>
+            <div className="space-y-2.5 text-sm text-slate-200 leading-relaxed italic">
+              <p className="border-l-2 border-amber-500/40 pl-3">« Comprendre avant de mémoriser — construire sur du roc, pas sur du sable. »</p>
+              <p className="border-l-2 border-amber-500/40 pl-3">« La science n'est pas une collection de formules. C'est une façon de penser qui appartient à tout le monde. »</p>
+              <p className="border-l-2 border-amber-500/40 pl-3">« Plusieurs matières, une seule réalité. »</p>
+              <p className="border-l-2 border-amber-500/40 pl-3">« La science n'est pas réservée à une élite. Elle est pour toi. »</p>
+            </div>
+          </div>
+
+          {/* MANIFESTE DE LA PERTINENCE — la signature pédagogique unique de Science Quest */}
+          <div className="card-border rounded-2xl p-5" style={{background: 'linear-gradient(145deg, rgba(245, 158, 11, 0.10), rgba(2, 6, 23, 0.6))', borderColor: 'rgba(245, 158, 11, 0.4)'}}>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-2xl">💎</span>
+              <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-amber-400">Manifeste de la Pertinence</p>
+            </div>
+            <h2 className="font-display text-xl text-amber-100 mb-3 leading-tight">
+              Pourquoi Science Quest est <span className="shimmer-text">différente</span>
+            </h2>
+            <p className="text-slate-200 text-sm leading-relaxed mb-4">
+              Une question hante tous les élèves du monde, qu'ils soient à Niamey, Dakar, Paris, Montréal ou Manille :
+            </p>
+            <div className="rounded-lg p-4 mb-4" style={{background: 'rgba(220, 38, 38, 0.10)', border: '1px solid rgba(220, 38, 38, 0.3)'}}>
+              <p className="text-amber-100 italic text-base text-center">
+                « À quoi ça va me servir dans la vie ? »
+              </p>
+            </div>
+            <p className="text-slate-200 text-sm leading-relaxed mb-4">
+              La plupart des plateformes éducatives répondent à <strong className="text-amber-300">« quoi ? »</strong> (le contenu) et <strong className="text-amber-300">« comment ? »</strong> (la méthode). Mais elles oublient les deux questions les plus importantes : <strong className="text-amber-300">« pourquoi ? »</strong> et <strong className="text-amber-300">« à quoi ça sert ? »</strong>.
+            </p>
+            <p className="text-slate-200 text-sm leading-relaxed mb-4">
+              Science Quest fait le pari opposé : <strong className="text-amber-200">répondre systématiquement aux 4 questions</strong>.
+            </p>
+
+            <div className="space-y-2.5 mb-4">
+              <div className="flex items-start gap-3 rounded-lg p-3" style={{background: 'rgba(15, 23, 42, 0.5)'}}>
+                <span className="font-display text-xl text-amber-300 shrink-0">1</span>
+                <div className="flex-1">
+                  <p className="text-amber-100 font-bold text-sm">Quoi ?</p>
+                  <p className="text-slate-300 text-xs leading-relaxed">Le contenu scientifique rigoureux — comme dans tout bon cours.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-lg p-3" style={{background: 'rgba(15, 23, 42, 0.5)'}}>
+                <span className="font-display text-xl text-amber-300 shrink-0">2</span>
+                <div className="flex-1">
+                  <p className="text-amber-100 font-bold text-sm">Comment ?</p>
+                  <p className="text-slate-300 text-xs leading-relaxed">La méthode rigoureuse — démarche scientifique, raisonnement, démonstration.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-lg p-3" style={{background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)'}}>
+                <span className="font-display text-xl text-amber-300 shrink-0">3</span>
+                <div className="flex-1">
+                  <p className="text-amber-200 font-bold text-sm">Pourquoi ? ✨</p>
+                  <p className="text-slate-200 text-xs leading-relaxed">Le sens profond — pourquoi cette compétence existe, pourquoi elle a été inventée, pourquoi elle persiste.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-lg p-3" style={{background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)'}}>
+                <span className="font-display text-xl text-amber-300 shrink-0">4</span>
+                <div className="flex-1">
+                  <p className="text-amber-200 font-bold text-sm">À quoi ça sert dans MA vie ? ✨</p>
+                  <p className="text-slate-200 text-xs leading-relaxed">La pertinence concrète — métiers, situations du quotidien, décisions à prendre. La science qui sert.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-3 mt-4" style={{background: 'rgba(2, 6, 23, 0.5)', border: '1px dashed rgba(245, 158, 11, 0.3)'}}>
+              <p className="text-amber-200/90 text-sm italic leading-relaxed text-center">
+                « Si une mission ne répond pas à ces 4 questions,<br/>elle n'a pas sa place ici. »
+              </p>
+              <p className="text-[10px] text-slate-500 italic text-center mt-2">— L'engagement de Kotchami</p>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed mt-4 text-center">
+              Tu retrouveras dans chaque mission un encart <strong className="text-amber-300">« Pourquoi ça compte »</strong> et une section <strong className="text-amber-300">« Cette compétence dans la vraie vie »</strong>. Si une mission ne te répond pas, tu peux toujours <strong className="text-amber-300">poser ta question directement à Kotchami</strong>.
+            </p>
+          </div>
+
+          {/* Engagement éthique */}
+          <div className="card-border rounded-2xl p-5" style={{background: 'rgba(99, 102, 241, 0.06)', borderColor: 'rgba(99, 102, 241, 0.3)'}}>
+            <p className="text-[10px] uppercase tracking-[0.3em] mb-2 font-bold" style={{color: '#a5b4fc'}}>🛡️ Notre engagement</p>
+            <ul className="space-y-2 text-sm text-slate-200 leading-relaxed">
+              <li>• Science Quest restera <strong className="text-amber-300">gratuit</strong> pour les élèves</li>
+              <li>• Science Quest ne prendra <strong className="text-amber-300">jamais parti</strong> contre une religion, une culture ou une identité</li>
+              <li>• Science Quest <strong className="text-amber-300">ne vend pas tes données</strong> — tes progrès restent sur ton appareil</li>
+              <li>• Science Quest est un <strong className="text-amber-300">espace neutre</strong>, accueillant, conçu pour servir la curiosité</li>
+              <li>• Science Quest valorise les <strong className="text-amber-300">contextes africains</strong> (noms, exemples, géographie ancrés dans la réalité du Niger et du Sahel) <strong className="text-amber-300">tout en honorant les valeurs universelles</strong> : la science est un langage commun à toute l'humanité</li>
+            </ul>
+          </div>
+
+          {/* Signature de fermeture */}
+          <div className="text-center py-4">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-amber-400/60 mb-2">Science Vivante</p>
+            <p className="text-amber-300/80 text-xs italic px-4 leading-relaxed">
+              « La science ne change pas le monde. Elle change le regard qu'on pose sur lui.
+              Et ce nouveau regard — une fois que tu l'as acquis — personne ne pourra jamais te l'enlever. »
+            </p>
+            <p className="text-[10px] text-slate-600 mt-3">© 2026 Kotchami Ogougbe — Le Passeur de sciences</p>
           </div>
         </div>
       )}
@@ -7571,6 +9050,192 @@ function XPSparkline({ history }) {
       <p className="text-[10px] text-amber-300/80 text-center">
         Total semaine : <span className="font-mono-sci">+{totalWeek} XP</span>
       </p>
+    </div>
+  );
+}
+
+// ============================================================
+// TEACHER MODE SECTION — Sécurisé par code + question pédagogique
+// ============================================================
+function TeacherModeSection({ state, setState }) {
+  const [showForm, setShowForm] = React.useState(false);
+  const [code, setCode] = React.useState('');
+  const [answer, setAnswer] = React.useState('');
+  const [error, setError] = React.useState('');
+  const [success, setSuccess] = React.useState(false);
+
+  const TEACHER_CODE = 'KOTCHAMI-PROF-2026';
+  // Question pédagogique : « Quel mot vient après "Comprendre avant de" ? »
+  const PEDAGOGICAL_ANSWER = 'mémoriser';
+
+  const handleSubmit = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setError('');
+    const codeOk = code.trim().toUpperCase() === TEACHER_CODE.toUpperCase();
+    // Comparaison souple sur la réponse : minuscules, sans accents
+    const normalize = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    const answerOk = normalize(answer) === normalize(PEDAGOGICAL_ANSWER);
+    if (!codeOk && !answerOk) {
+      setError('Le code et la réponse pédagogique sont incorrects.');
+      SoundManager.play('wrong');
+      return;
+    }
+    if (!codeOk) {
+      setError('Le code enseignant est incorrect.');
+      SoundManager.play('wrong');
+      return;
+    }
+    if (!answerOk) {
+      setError('La réponse à la question pédagogique est incorrecte. Indice : c\'est dans la philosophie de Science Quest.');
+      SoundManager.play('wrong');
+      return;
+    }
+    SoundManager.play('complete');
+    setState(s => ({ ...s, freeMode: true }));
+    setSuccess(true);
+    setShowForm(false);
+    setCode('');
+    setAnswer('');
+    setTimeout(() => setSuccess(false), 4000);
+  };
+
+  const deactivate = () => {
+    SoundManager.play('click');
+    setState(s => ({ ...s, freeMode: false }));
+  };
+
+  // Si le mode est déjà actif
+  if (state.freeMode) {
+    return (
+      <>
+        <div className="card-glow rounded-2xl p-5 mb-4 anim-in" style={{background: 'rgba(245, 158, 11, 0.08)', borderColor: 'rgba(245, 158, 11, 0.4)'}}>
+          <div className="flex items-start gap-3 mb-3">
+            <span className="text-2xl shrink-0">🎓</span>
+            <div className="flex-1">
+              <p className="font-display text-base text-amber-100">Mode enseignant actif</p>
+              <p className="text-[11px] text-slate-300 leading-relaxed mt-1">
+                Toutes les missions sont déverrouillées sans suivre l'ordre pédagogique. Cet accès est réservé aux enseignants qui souhaitent tester ou démontrer.
+              </p>
+            </div>
+          </div>
+          <div className="rounded-lg p-3 mb-3" style={{background: 'rgba(220, 38, 38, 0.06)', border: '1px solid rgba(220, 38, 38, 0.2)'}}>
+            <p className="text-[10px] text-red-300 leading-relaxed">
+              ⚠️ Si tu es élève, ce mode te prive de l'expérience pédagogique progressive. Désactive-le pour retrouver la chaîne d'apprentissage.
+            </p>
+          </div>
+          <button onClick={deactivate} className="btn-ghost w-full p-2 rounded-lg text-xs" style={{opacity: 1, color: '#fca5a5'}}>
+            Désactiver le mode enseignant
+          </button>
+        </div>
+
+        {/* Boîte de réception admin — visible uniquement en mode enseignant */}
+        <div className="card-glow rounded-2xl p-5 mb-4 anim-in" style={{background: 'rgba(99, 102, 241, 0.06)', borderColor: 'rgba(99, 102, 241, 0.3)'}}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl">📬</span>
+            <p className="font-display text-base text-amber-100">Boîte de réception</p>
+            <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full"
+              style={{background: 'rgba(245, 158, 11, 0.15)', border: '1px solid rgba(245, 158, 11, 0.3)', color: '#fbbf24'}}>
+              {(state.outboxMessages || []).length} message(s)
+            </span>
+          </div>
+          <p className="text-[11px] text-slate-400 leading-relaxed mb-4">
+            Tous les messages, questions, bugs, suggestions et témoignages envoyés depuis cet appareil sont stockés ici. Filtre par catégorie, renvoie ou supprime.
+          </p>
+          <MessageInbox state={state} setState={setState} />
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <div className="card-glow rounded-2xl p-5 mb-4 anim-in">
+      <div className="flex items-start gap-3 mb-3">
+        <span className="text-2xl shrink-0">🎓</span>
+        <div className="flex-1">
+          <p className="text-xs uppercase tracking-wider text-amber-400/70 font-bold">Mode enseignant</p>
+          <p className="text-[11px] text-slate-400 leading-relaxed mt-1">
+            Réservé aux enseignants qui veulent tester l'ensemble des missions sans suivre l'ordre pédagogique.
+            <strong className="block text-amber-300/80 mt-1">Pour les élèves : ce mode prive de l'expérience pédagogique. Reste sur la progression normale.</strong>
+          </p>
+        </div>
+      </div>
+
+      {success && (
+        <div className="anim-in rounded-lg p-3 mb-3" style={{background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.4)'}}>
+          <p className="text-emerald-300 text-xs">✓ Mode enseignant activé.</p>
+        </div>
+      )}
+
+      {!showForm ? (
+        <button
+          onClick={() => setShowForm(true)}
+          className="btn-ghost w-full p-2.5 rounded-lg text-xs inline-flex items-center justify-center gap-2"
+          style={{opacity: 1, visibility: 'visible'}}
+        >
+          🔐 Activer le mode enseignant (code requis)
+        </button>
+      ) : (
+        <div className="space-y-3 anim-in">
+          <div>
+            <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">
+              Code enseignant
+            </label>
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Code fourni par Kotchami"
+              className="w-full p-2.5 rounded-lg text-sm font-mono-sci"
+              style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fbbf24'}}
+              autoComplete="off"
+              spellCheck="false"
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">
+              Question pédagogique
+            </label>
+            <p className="text-xs text-slate-300 mb-2 italic">
+              Quel mot vient après « Comprendre avant de... » dans la philosophie Science Quest ?
+            </p>
+            <input
+              type="text"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              placeholder="Un seul mot"
+              className="w-full p-2.5 rounded-lg text-sm"
+              style={{background: 'rgba(2, 6, 23, 0.6)', border: '1px solid #334155', color: '#fff'}}
+              autoComplete="off"
+              spellCheck="false"
+              onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(e); }}
+            />
+          </div>
+          {error && (
+            <div className="rounded-lg p-2.5" style={{background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.3)'}}>
+              <p className="text-red-300 text-xs">⚠️ {error}</p>
+            </div>
+          )}
+          <div className="flex gap-2">
+            <button
+              onClick={handleSubmit}
+              className="btn-primary flex-1 p-2.5 rounded-lg text-xs"
+              style={{opacity: 1, visibility: 'visible'}}
+            >
+              Valider
+            </button>
+            <button
+              onClick={() => { setShowForm(false); setCode(''); setAnswer(''); setError(''); }}
+              className="btn-ghost px-4 p-2.5 rounded-lg text-xs"
+              style={{opacity: 1, visibility: 'visible'}}
+            >
+              Annuler
+            </button>
+          </div>
+          <p className="text-[10px] text-slate-600 italic text-center">
+            Pour obtenir le code enseignant, contacte Kotchami : kotchamiogougbe@gmail.com
+          </p>
+        </div>
+      )}
     </div>
   );
 }
@@ -7682,19 +9347,37 @@ function SettingsScreen({ state, setState, onBack, onShare, onCertificate }) {
       {/* Personnaliser avatar */}
       <div className="card-glow rounded-2xl p-5 mb-4 anim-in">
         <p className="text-xs uppercase tracking-wider text-amber-400/70 mb-3">🎨 Personnaliser mon avatar</p>
-        <div className="mb-3">
-          <p className="text-[10px] uppercase text-slate-500 mb-2">Choisir un emoji</p>
+
+        {/* Aperçu en temps réel — grand format */}
+        <div className="flex items-center justify-center mb-5 p-4 rounded-xl"
+          style={{background: 'rgba(2, 6, 23, 0.5)', border: '1px dashed rgba(245, 158, 11, 0.3)'}}>
+          <div className="text-center">
+            <PlayerAvatar
+              emoji={state.avatarEmoji || '🧬'}
+              color={state.avatarColor || '#f59e0b'}
+              size={88}
+            />
+            <p className="text-[10px] uppercase tracking-wider text-amber-400/60 mt-3">Aperçu</p>
+            <p className="text-[10px] text-emerald-400 mt-1">✓ Sauvegardé automatiquement</p>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <p className="text-[10px] uppercase text-slate-500 mb-2">Choisir un emoji ({AVATAR_EMOJIS.length} options)</p>
           <div className="flex flex-wrap gap-2">
             {AVATAR_EMOJIS.map(e => (
               <button
                 key={e}
                 onClick={() => { SoundManager.play('click'); setState(s => ({ ...s, avatarEmoji: e })); }}
-                className="w-10 h-10 rounded-lg transition-all hover:scale-110"
+                className="w-11 h-11 rounded-lg transition-all hover:scale-110"
                 style={{
-                  fontSize: '20px',
+                  fontSize: '22px',
                   background: state.avatarEmoji === e ? (state.avatarColor || '#f59e0b') + '33' : 'rgba(15, 23, 42, 0.4)',
-                  border: '2px solid ' + (state.avatarEmoji === e ? (state.avatarColor || '#f59e0b') : '#334155')
+                  border: '2px solid ' + (state.avatarEmoji === e ? (state.avatarColor || '#f59e0b') : '#334155'),
+                  cursor: 'pointer'
                 }}
+                aria-label={e}
+                title={`Avatar ${e}`}
               >
                 {e}
               </button>
@@ -7702,23 +9385,27 @@ function SettingsScreen({ state, setState, onBack, onShare, onCertificate }) {
           </div>
         </div>
         <div>
-          <p className="text-[10px] uppercase text-slate-500 mb-2">Choisir une couleur</p>
+          <p className="text-[10px] uppercase text-slate-500 mb-2">Choisir une couleur ({AVATAR_COLORS.length} options)</p>
           <div className="flex flex-wrap gap-2">
             {AVATAR_COLORS.map(c => (
               <button
                 key={c}
                 onClick={() => { SoundManager.play('click'); setState(s => ({ ...s, avatarColor: c })); }}
-                className="w-9 h-9 rounded-full transition-all hover:scale-110"
+                className="w-10 h-10 rounded-full transition-all hover:scale-110"
                 style={{
                   background: c,
                   border: state.avatarColor === c ? '3px solid #fbbf24' : '2px solid rgba(255,255,255,0.1)',
-                  boxShadow: state.avatarColor === c ? '0 0 0 2px rgba(251, 191, 36, 0.3)' : 'none'
+                  boxShadow: state.avatarColor === c ? '0 0 0 2px rgba(251, 191, 36, 0.3)' : 'none',
+                  cursor: 'pointer'
                 }}
-                aria-label={c}
+                aria-label={`Couleur ${c}`}
               />
             ))}
           </div>
         </div>
+        <p className="text-[10px] text-slate-500 italic mt-3 text-center">
+          Ton avatar apparaît dans le menu, sur l'accueil et sur ton certificat.
+        </p>
       </div>
 
       {/* Actions : partage et certificat */}
@@ -7855,15 +9542,11 @@ function SettingsScreen({ state, setState, onBack, onShare, onCertificate }) {
             </span>
             <input type="checkbox" checked={!!state.musicEnabled} onChange={() => toggle('musicEnabled')} className="w-5 h-5 accent-amber-500 cursor-pointer" />
           </label>
-          <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-slate-800">
-            <span className="text-sm text-slate-200">
-              🔓 Mode libre exploration
-              <span className="block text-[10px] text-slate-500 mt-0.5">Pour les enseignants : déverrouille toutes les missions sans suivre l'ordre. Désactivé par défaut pour préserver la progression pédagogique.</span>
-            </span>
-            <input type="checkbox" checked={!!state.freeMode} onChange={() => toggle('freeMode')} className="w-5 h-5 accent-amber-500 cursor-pointer" />
-          </label>
         </div>
       </div>
+
+      {/* Mode enseignant — sécurisé par code et question pédagogique */}
+      <TeacherModeSection state={state} setState={setState} />
 
       {/* Sauvegarde info */}
       <div className="rounded-xl p-4 mb-4 text-xs text-emerald-300/90 anim-in" style={{background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)'}}>
@@ -7898,33 +9581,129 @@ function SettingsScreen({ state, setState, onBack, onShare, onCertificate }) {
 // ============================================================
 // CONTACT SCREEN
 // ============================================================
-function ContactScreen({ onBack }) {
+function ContactScreen({ onBack, state, setState }) {
+  const [activeForm, setActiveForm] = React.useState(null); // 'question' | 'bug' | 'suggestion' | 'temoignage' | null
+
   return (
-    <div className="max-w-xl mx-auto text-center" style={{paddingTop: '5vh'}}>
-      <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-6">
-        <Icon name="mail" size={16} />
-        <span>{T('contactTitle')}</span>
-      </div>
-      <h1 className="anim-in delay-100 font-display text-4xl md:text-5xl mb-6"><span className="shimmer-text">Contact</span></h1>
-      <p className="anim-in delay-200 text-slate-300 mb-10">{T('contactText')}</p>
-
-      <div className="anim-in delay-300 card-border rounded-2xl p-6 md:p-8 mb-8 text-left">
-        <div className="mb-5">
-          <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold mb-1">Créateur</p>
-          <p className="font-display text-xl text-amber-100">{T('contactName')}</p>
-        </div>
-        <div>
-          <p className="text-xs uppercase tracking-wider text-amber-400/80 font-bold mb-1">E-mail</p>
-          <a href={`mailto:${T('contactEmail')}`} className="font-mono-sci text-amber-300 hover:text-amber-200 transition-colors text-base break-all">
-            {T('contactEmail')}
-          </a>
-        </div>
-      </div>
-
-      <button onClick={onBack} className="btn-primary px-8 py-3 rounded-full inline-flex items-center gap-2">
-        <Icon name="home" size={16} /> {T('contactBack')}
+    <div className="max-w-2xl mx-auto" style={{paddingTop: '3vh', paddingBottom: '4vh'}}>
+      <button onClick={onBack} className="btn-ghost px-3 py-1.5 rounded-full text-xs inline-flex items-center gap-1.5 mb-6"
+        style={{opacity: 1, visibility: 'visible'}}>
+        ← Retour à l'Académie
       </button>
-      <p className="anim-in delay-500 mt-16 text-[10px] tracking-[0.3em] uppercase text-slate-700">{T('brand')}</p>
+      <div className="text-center mb-8">
+        <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-4">
+          <Icon name="mail" size={16} />
+          <span>{T('contactTitle')}</span>
+        </div>
+        <h1 className="anim-in delay-100 font-display text-3xl md:text-4xl mb-3"><span className="shimmer-text">Contact & Échanges</span></h1>
+        <p className="anim-in delay-200 text-slate-400 text-sm max-w-md mx-auto">{T('contactText')}</p>
+      </div>
+
+      {/* Carte créateur */}
+      <div className="anim-in delay-300 card-border rounded-2xl p-5 mb-6">
+        <div className="flex items-start gap-4 mb-4">
+          <div className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center font-bold text-2xl"
+            style={{background: 'linear-gradient(135deg, #fbbf24, #d97706)', color: '#020617'}}>
+            K
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-amber-300 font-bold text-base">{T('contactName')}</p>
+            <p className="text-amber-200/80 text-xs italic mb-2">« Le Passeur de sciences »</p>
+            <a href={`mailto:${T('contactEmail')}`} className="font-mono-sci text-amber-300 hover:text-amber-200 transition-colors text-xs break-all">
+              {T('contactEmail')}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Formulaire actif ou choix de catégorie */}
+      {activeForm && setState ? (
+        <div className="anim-in mb-4">
+          <MessageComposer
+            type={activeForm}
+            state={state}
+            setState={setState}
+            onSent={() => setTimeout(() => setActiveForm(null), 2500)}
+          />
+          <button
+            onClick={() => setActiveForm(null)}
+            className="btn-ghost w-full mt-2 px-3 py-2 rounded-full text-xs"
+            style={{opacity: 1}}
+          >
+            ← Retour aux catégories
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <p className="text-[11px] uppercase tracking-wider text-amber-400/70 font-bold mb-2">📨 Envoyer un message à Kotchami</p>
+          <button
+            onClick={() => { SoundManager.play('click'); setActiveForm('question'); }}
+            className="w-full text-left p-4 rounded-xl transition-all hover:scale-[1.01]"
+            style={{background: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.3)'}}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">❓</span>
+              <div className="flex-1">
+                <p className="text-amber-100 font-bold text-sm">Poser une question</p>
+                <p className="text-[11px] text-slate-400">Une notion floue, une curiosité, un sujet hors-cours</p>
+              </div>
+              <Icon name="chevron" size={16} color="#a5b4fc" />
+            </div>
+          </button>
+          <button
+            onClick={() => { SoundManager.play('click'); setActiveForm('bug'); }}
+            className="w-full text-left p-4 rounded-xl transition-all hover:scale-[1.01]"
+            style={{background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.3)'}}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🐛</span>
+              <div className="flex-1">
+                <p className="text-amber-100 font-bold text-sm">Signaler un problème</p>
+                <p className="text-[11px] text-slate-400">Un bouton qui marche mal, une réponse incorrecte, un texte coupé</p>
+              </div>
+              <Icon name="chevron" size={16} color="#fca5a5" />
+            </div>
+          </button>
+          <button
+            onClick={() => { SoundManager.play('click'); setActiveForm('suggestion'); }}
+            className="w-full text-left p-4 rounded-xl transition-all hover:scale-[1.01]"
+            style={{background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)'}}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">💡</span>
+              <div className="flex-1">
+                <p className="text-amber-100 font-bold text-sm">Proposer une amélioration</p>
+                <p className="text-[11px] text-slate-400">Une nouvelle fonctionnalité, un ajustement, une mission qui manque</p>
+              </div>
+              <Icon name="chevron" size={16} color="#fbbf24" />
+            </div>
+          </button>
+          <button
+            onClick={() => { SoundManager.play('click'); setActiveForm('temoignage'); }}
+            className="w-full text-left p-4 rounded-xl transition-all hover:scale-[1.01]"
+            style={{background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)'}}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">✍️</span>
+              <div className="flex-1">
+                <p className="text-amber-100 font-bold text-sm">Laisser un témoignage</p>
+                <p className="text-[11px] text-slate-400">Raconter ton expérience, ce que tu as appris, ce qui t'a marqué</p>
+              </div>
+              <Icon name="chevron" size={16} color="#86efac" />
+            </div>
+          </button>
+        </div>
+      )}
+
+      {/* Information sur la sécurité et le suivi des messages */}
+      <div className="mt-6 rounded-xl p-3"
+        style={{background: 'rgba(15, 23, 42, 0.5)', border: '1px dashed rgba(245, 158, 11, 0.2)'}}>
+        <p className="text-[11px] text-slate-300 leading-relaxed">
+          🔐 <strong className="text-amber-300">Confidentialité</strong> : ton message est sauvegardé localement sur ton appareil et envoyé directement à Kotchami. Aucune donnée n'est partagée avec des tiers.
+        </p>
+      </div>
+
+      <p className="text-center mt-8 text-[10px] tracking-[0.3em] uppercase text-slate-700">{T('brand')}</p>
     </div>
   );
 }
@@ -7999,7 +9778,7 @@ function MissionFlow({ phase, setPhase, state, setState, missionData, setMission
   };
   const handleWrong = () => {
     SoundManager.play('wrong');
-    MusicEngine.pulse('tension');
+    MusicEngine.pulse('wrong');
     loseLife();
     setCorrectStreak(0);
     showMentorFrom('wrong', Math.floor(Math.random() * mentorRotation.length));
@@ -8161,6 +9940,7 @@ function Prologue({ onNext }) {
 // BRIEFING
 // ============================================================
 function Briefing({ onNext }) {
+  const pertinence = getMissionPertinence('drepanocytose');
   return (
     <div className="max-w-2xl mx-auto">
       <h2 className="anim-in font-display text-3xl md:text-4xl text-center mb-8"><span className="shimmer-text">{T('briefingTitle')}</span></h2>
@@ -8185,6 +9965,11 @@ function Briefing({ onNext }) {
           </div>
         </div>
       </div>
+
+      {/* « Pourquoi ça compte » */}
+      {pertinence && pertinence.why && (
+        <WhyItMatters title={pertinence.why.title} points={pertinence.why.points} color="#dc2626" />
+      )}
 
       <div className="anim-in delay-300 card-border rounded-2xl p-5 mb-8">
         <div className="flex items-start gap-4">
@@ -8602,7 +10387,8 @@ function Phase5Punnett({ data, setData, onCorrect, onWrong, onNext }) {
 // ============================================================
 // EPILOGUE
 // ============================================================
-function Epilogue({ xp, onComplete }) {
+function Epilogue({ xp, onComplete, state, setState }) {
+  const pertinence = getMissionPertinence('drepanocytose');
   return (
     <div className="max-w-2xl mx-auto text-center">
       <div className="anim-in inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-emerald-400/80 mb-4">
@@ -8643,6 +10429,18 @@ function Epilogue({ xp, onComplete }) {
         </div>
         <p className="text-slate-200 leading-relaxed text-sm">{T('epilogueMVRText')}</p>
       </div>
+
+      {/* « Cette compétence dans la vraie vie » + « Pose ta question à Kotchami » */}
+      {pertinence && (
+        <div className="text-left">
+          <CareersAndApplications
+            careers={pertinence.careers}
+            situations={pertinence.situations}
+            color="#dc2626"
+          />
+          <AskKotchamiButton missionTitle="Drépanocytose — Tutoriel" />
+        </div>
+      )}
 
       <button onClick={onComplete} className="anim-in delay-500 btn-primary px-8 py-3.5 rounded-full inline-flex items-center gap-3">
         <Icon name="home" size={16} /> {T('backHome')}
