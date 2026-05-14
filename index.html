@@ -481,6 +481,41 @@
 
     /* --- Scrollbars discrètes sur mobile --- */
     ::-webkit-scrollbar { width: 0; height: 0; background: transparent; }
+
+    /* ═══════════════════════════════════════════
+       BARRE HEADER : SCROLL HORIZONTAL SWIPEABLE
+       Permet d'accéder à tous les boutons sur petit écran
+       ═══════════════════════════════════════════ */
+    .sq-header-bar {
+      justify-content: flex-start !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      flex-wrap: nowrap !important;
+      gap: 0.625rem !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      padding-right: 1.5rem !important;
+      scroll-snap-type: x proximity;
+      /* Indication visuelle qu'on peut scroller : dégradé droit */
+      -webkit-mask-image: linear-gradient(90deg, black 0%, black 90%, transparent 100%);
+              mask-image: linear-gradient(90deg, black 0%, black 90%, transparent 100%);
+    }
+    .sq-header-bar::-webkit-scrollbar {
+      display: none !important;
+      height: 0 !important;
+    }
+    .sq-header-bar > * {
+      flex-shrink: 0 !important;
+      scroll-snap-align: start;
+    }
+    /* Le logo Science Quest reste visible en début de scroll */
+    .sq-header-bar > button:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: rgba(2, 6, 23, 0.95);
+      padding-right: 0.5rem;
+    }
   }
 
   /* ═══════════════════════════════════════════════
@@ -606,7 +641,7 @@ const { useState, useEffect } = React;
 // APP_VERSION — change à chaque livraison pour aider au diagnostic
 // (visible dans Aide → FAQ pour confirmer la version installée)
 // ============================================================
-const APP_VERSION = 'PLANIF FINAL + Mobile · 2026-05 (Responsive 360px + Campagne PLANIF complète)';
+const APP_VERSION = 'MOBILE-FIX · 2026-05 (Header swipeable + détection webview WhatsApp/Facebook)';
 
 // ============================================================
 const CANONICAL_URL = 'https://kotchamiogougbe-a11y.github.io/science-quest/';
@@ -9395,6 +9430,21 @@ function usePWAInstall() {
   const platform = React.useMemo(() => {
     if (typeof window === 'undefined') return 'unknown';
     const ua = window.navigator.userAgent || '';
+    // Détection des webviews in-app (WhatsApp, Facebook, Instagram, etc.)
+    // Ces webviews ne supportent PAS l'installation PWA — l'utilisateur doit ouvrir dans un vrai navigateur
+    const isInAppWebView = (
+      /FBAN|FBAV|FB_IAB|FB4A|FBIOS/i.test(ua) ||           // Facebook
+      /Instagram/i.test(ua) ||                              // Instagram
+      /WhatsApp/i.test(ua) ||                               // WhatsApp
+      /Telegram/i.test(ua) ||                               // Telegram
+      /Line\//i.test(ua) ||                                 // Line
+      /TikTok/i.test(ua) || /Musical_ly/i.test(ua) ||      // TikTok
+      /Twitter|TwitterAndroid/i.test(ua) ||                 // Twitter / X
+      /LinkedInApp/i.test(ua) ||                            // LinkedIn
+      /Snapchat/i.test(ua) ||                               // Snapchat
+      /MessengerForiOS|MessengerLiteForiOS/i.test(ua)      // Messenger
+    );
+    if (isInAppWebView) return 'inapp-webview';
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
     const isAndroid = /Android/.test(ua);
     const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);
@@ -9486,6 +9536,17 @@ function useOnlineStatus() {
 // (sinon l'instruction serait mensongère et perdrait l'utilisateur).
 function getInstallInstructions(platform, hasNativePrompt) {
   const all = {
+    'inapp-webview': {
+      title: '⚠️ Ouvre Science Quest dans un vrai navigateur',
+      note: "Tu as ouvert Science Quest depuis WhatsApp, Facebook, Instagram, Telegram ou une autre app de messagerie. Ces apps ne permettent PAS d'installer Science Quest comme une vraie application.",
+      steps: [
+        "Touche les 3 points en haut à droite de l'écran (menu de l'app)",
+        "Cherche « Ouvrir dans le navigateur » ou « Ouvrir dans Chrome »",
+        "Touche cette option — Science Quest s'ouvre alors dans Chrome (ou ton navigateur par défaut)",
+        "Une fois dans Chrome, ouvre encore le menu (3 points) → « Installer l'application » ou « Ajouter à l'écran d'accueil »",
+        "✅ L'app Science Quest apparaîtra dans le TIROIR D'APPS de ton téléphone (pas dans Downloads, pas dans Fichiers — dans tes applications avec un logo SQ doré)"
+      ]
+    },
     'ios': {
       title: 'Sur iPhone / iPad (Safari)',
       note: "Important : Safari uniquement (pas Chrome ni Firefox sur iOS)",
@@ -9511,7 +9572,8 @@ function getInstallInstructions(platform, hasNativePrompt) {
         "Touche le bouton « Installer maintenant » ci-dessous",
         "Confirme l'installation dans la fenêtre qui apparaît",
         "Si tu rates la fenêtre : ouvre le menu du navigateur (3 points en haut à droite)",
-        "Choisis « Installer l'application » ou « Ajouter à l'écran d'accueil »"
+        "Choisis « Installer l'application » ou « Ajouter à l'écran d'accueil »",
+        "✅ APRÈS INSTALLATION : cherche l'icône Science Quest (logo SQ doré) dans le TIROIR D'APPS de ton téléphone — PAS dans Downloads ! C'est une vraie app maintenant."
       ]
     } : {
       title: 'Sur Android (Chrome / Edge / Samsung Internet)',
@@ -9520,7 +9582,8 @@ function getInstallInstructions(platform, hasNativePrompt) {
         "Ouvre le menu du navigateur (icône avec 3 points verticaux, en haut à droite)",
         "Cherche et touche « Installer l'application » ou « Ajouter à l'écran d'accueil »",
         "Confirme l'installation",
-        "Si l'option n'apparaît pas, vérifie que tu utilises bien Chrome, Edge ou Samsung Internet (pas un autre navigateur)"
+        "Si l'option n'apparaît pas, vérifie que tu utilises bien Chrome, Edge ou Samsung Internet (pas un autre navigateur)",
+        "✅ APRÈS INSTALLATION : cherche l'icône Science Quest (logo SQ doré) dans le TIROIR D'APPS de ton téléphone — PAS dans Downloads !"
       ]
     },
     'android-firefox': {
@@ -12266,7 +12329,7 @@ function App() {
       {/* Header global (sauf welcome) */}
       {screen !== 'welcome' && (
         <div className="relative z-20 border-b border-amber-500/10 sticky top-0" style={{background: 'rgba(2, 6, 23, 0.92)', backdropFilter: 'blur(10px)'}}>
-          <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between sq-header-bar">
             <button onClick={() => setScreen('home')} className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors">
               <Icon name="dna" size={22} />
               <span className="font-display text-amber-100 text-base">Science Quest</span>
@@ -13589,10 +13652,18 @@ function InstallTab() {
         <div className="card-border rounded-2xl p-6 text-center" style={{background: 'rgba(16, 185, 129, 0.06)', borderColor: 'rgba(16, 185, 129, 0.4)'}}>
           <div className="text-5xl mb-3">✅</div>
           <p className="font-display text-xl text-emerald-300 mb-2">Application installée !</p>
-          <p className="text-slate-300 text-sm leading-relaxed">
+          <p className="text-slate-300 text-sm leading-relaxed mb-3">
             Science Quest fonctionne maintenant comme une vraie application sur ton appareil.
             Tu peux jouer même sans connexion Internet.
           </p>
+          <div className="rounded-lg p-3 mt-3 text-left" style={{background: 'rgba(2, 6, 23, 0.5)', border: '1px solid rgba(245, 158, 11, 0.3)'}}>
+            <p className="text-amber-200 font-bold text-xs mb-2">📍 Où trouver Science Quest ?</p>
+            <ul className="text-xs text-slate-200 leading-relaxed space-y-1">
+              <li>📱 <strong>Android</strong> : dans ton <strong>tiroir d'apps</strong> (toutes les applications) — icône SQ dorée. Pas dans Downloads !</li>
+              <li>🍎 <strong>iPhone / iPad</strong> : sur ton <strong>écran d'accueil</strong> — icône SQ dorée</li>
+              <li>💻 <strong>Windows / Mac</strong> : dans tes applications (menu Démarrer / Launchpad)</li>
+            </ul>
+          </div>
         </div>
       </div>
     );
@@ -13600,6 +13671,35 @@ function InstallTab() {
 
   return (
     <div className="space-y-4 anim-in">
+      {/* Avertissement si ouvert depuis un webview in-app (WhatsApp, Facebook, etc.) */}
+      {pwa.platform === 'inapp-webview' && (
+        <div className="card-border rounded-2xl p-4" style={{background: 'rgba(220, 38, 38, 0.10)', borderColor: 'rgba(220, 38, 38, 0.5)'}}>
+          <div className="flex items-start gap-3">
+            <span className="text-3xl shrink-0">⚠️</span>
+            <div className="flex-1">
+              <p className="font-bold text-red-300 text-sm mb-2">Tu utilises une app de messagerie (WhatsApp, Facebook, Instagram...)</p>
+              <p className="text-slate-200 text-xs leading-relaxed mb-3">
+                Les apps comme WhatsApp ouvrent les liens dans leur <strong>propre fenêtre interne</strong> qui ne permet pas d'installer Science Quest comme une vraie application.
+              </p>
+              <p className="text-amber-200 text-xs font-bold mb-2">👇 Pour installer correctement :</p>
+              <ol className="list-decimal pl-5 space-y-1.5 text-xs text-slate-200 leading-relaxed">
+                <li>Touche les <strong>3 points</strong> en haut à droite de cette page</li>
+                <li>Choisis <strong>« Ouvrir dans Chrome »</strong> (ou ton navigateur)</li>
+                <li>Une fois dans Chrome, touche le menu → <strong>« Installer l'application »</strong></li>
+                <li>✅ L'app apparaîtra dans ton <strong>tiroir d'apps</strong> avec un logo doré SQ</li>
+              </ol>
+              <button
+                onClick={copyURL}
+                className="mt-3 px-3 py-2 rounded-lg text-xs font-bold w-full"
+                style={{background: 'rgba(245, 158, 11, 0.2)', border: '1px solid rgba(245, 158, 11, 0.5)', color: '#fbbf24'}}
+              >
+                {copied ? '✓ Lien copié !' : '📋 Copier le lien (pour le coller dans Chrome)'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Avertissement si ouvert depuis un fichier local */}
       {(typeof window !== 'undefined' && (window.location.href.startsWith('file://') || window.location.href.startsWith('content://') || window.location.href.indexOf('downloads') !== -1)) && (
         <div className="card-border rounded-2xl p-4" style={{background: 'rgba(220, 38, 38, 0.08)', borderColor: 'rgba(220, 38, 38, 0.4)'}}>
