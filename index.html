@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Science Quest">
@@ -393,6 +393,191 @@
 
   /* Locks on upcoming missions */
   .mission-locked { opacity: 0.4; filter: grayscale(0.7); }
+
+  /* ════════════════════════════════════════════════════════════════════════════
+     RESPONSIVE DESIGN — Optimisation mobile (Niger, Afrique de l'Ouest)
+     Cible : smartphones d'entrée de gamme (Tecno Spark, Itel A56, Samsung A03)
+     Breakpoints :
+       — 640px : adaptation mobile standard
+       — 380px : très petits écrans (360px de large effectif)
+     ════════════════════════════════════════════════════════════════════════════ */
+
+  /* --- Prévention du débordement horizontal sur tous écrans --- */
+  html, body { max-width: 100vw; overflow-x: hidden; }
+
+  /* --- Images, vidéos, SVG : adaptatifs par défaut --- */
+  img, video, svg, canvas { max-width: 100%; height: auto; }
+
+  /* ════════════════════════════════════════
+     BREAKPOINT 1 — Mobile standard (≤ 640px)
+     ════════════════════════════════════════ */
+  @media (max-width: 640px) {
+    /* --- Tailles de polices réduites pour mobile --- */
+    .text-7xl { font-size: 2.5rem !important; line-height: 1.1 !important; }
+    .text-6xl { font-size: 2rem !important; line-height: 1.15 !important; }
+    .text-5xl { font-size: 1.75rem !important; line-height: 1.2 !important; }
+    .text-4xl { font-size: 1.5rem !important; line-height: 1.25 !important; }
+    .text-3xl { font-size: 1.375rem !important; line-height: 1.3 !important; }
+    .text-2xl { font-size: 1.25rem !important; line-height: 1.35 !important; }
+    .text-xl { font-size: 1.125rem !important; line-height: 1.4 !important; }
+    .text-lg { font-size: 1rem !important; line-height: 1.45 !important; }
+
+    /* --- Emojis très grands : réduction --- */
+    .text-8xl { font-size: 3.5rem !important; }
+    .text-9xl { font-size: 4rem !important; }
+
+    /* --- Paddings de containers réduits --- */
+    .p-12, .p-10, .p-8 { padding: 1rem !important; }
+    .p-6 { padding: 0.875rem !important; }
+    .px-12, .px-10, .px-8 { padding-left: 1rem !important; padding-right: 1rem !important; }
+    .px-6 { padding-left: 0.875rem !important; padding-right: 0.875rem !important; }
+    .py-12, .py-10 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+    .py-8 { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
+
+    /* --- Containers : 100% largeur --- */
+    .max-w-2xl, .max-w-3xl, .max-w-4xl, .max-w-5xl, .max-w-6xl, .max-w-7xl {
+      max-width: 100% !important;
+    }
+
+    /* --- Grilles : 1 colonne forcée sur mobile --- */
+    .grid.grid-cols-2,
+    .grid.grid-cols-3,
+    .grid.grid-cols-4,
+    .md\:grid-cols-2,
+    .md\:grid-cols-3,
+    .lg\:grid-cols-2,
+    .lg\:grid-cols-3 { grid-template-columns: 1fr !important; }
+
+    /* --- Réduction des gaps --- */
+    .gap-12 { gap: 1rem !important; }
+    .gap-10 { gap: 0.875rem !important; }
+    .gap-8 { gap: 0.75rem !important; }
+    .gap-6 { gap: 0.625rem !important; }
+    .gap-4 { gap: 0.5rem !important; }
+
+    /* --- Marges verticales (space-y) réduites --- */
+    .space-y-12 > * + * { margin-top: 1.5rem !important; }
+    .space-y-10 > * + * { margin-top: 1.25rem !important; }
+    .space-y-8 > * + * { margin-top: 1rem !important; }
+    .space-y-6 > * + * { margin-top: 0.875rem !important; }
+
+    /* --- Boutons : touch target minimum 44×44px (norme accessibilité) --- */
+    button, [role="button"] { min-height: 44px; }
+    .btn-primary, .btn-ghost {
+      padding: 0.75rem 1.125rem !important;
+      font-size: 0.9375rem !important;
+    }
+
+    /* --- Marges réduites --- */
+    .mb-12, .mb-10 { margin-bottom: 1.5rem !important; }
+    .mb-8 { margin-bottom: 1.25rem !important; }
+    .mt-12, .mt-10 { margin-top: 1.5rem !important; }
+    .mt-8 { margin-top: 1.25rem !important; }
+
+    /* --- Inputs : zoom auto désactivé (font-size minimum 16px) --- */
+    input[type="text"], input[type="number"], textarea, select {
+      font-size: 16px !important;
+    }
+
+    /* --- Scrollbars discrètes sur mobile --- */
+    ::-webkit-scrollbar { width: 0; height: 0; background: transparent; }
+  }
+
+  /* ═══════════════════════════════════════════════
+     BREAKPOINT 2 — Petit écran (≤ 380px) AFRIQUE
+     Cible : Tecno Spark 8C, Itel A56, Samsung A03
+     ═══════════════════════════════════════════════ */
+  @media (max-width: 380px) {
+    /* --- Tailles de polices encore plus compactes --- */
+    .text-7xl { font-size: 2rem !important; }
+    .text-6xl { font-size: 1.75rem !important; }
+    .text-5xl { font-size: 1.5rem !important; }
+    .text-4xl { font-size: 1.375rem !important; }
+    .text-3xl { font-size: 1.25rem !important; }
+    .text-2xl { font-size: 1.125rem !important; }
+
+    /* --- Emojis géants encore plus petits --- */
+    .text-8xl { font-size: 2.75rem !important; }
+    .text-9xl { font-size: 3.25rem !important; }
+
+    /* --- Paddings ultra-réduits --- */
+    .p-12, .p-10, .p-8, .p-6 { padding: 0.75rem !important; }
+    .p-5, .p-4 { padding: 0.625rem !important; }
+    .px-12, .px-10, .px-8, .px-6 {
+      padding-left: 0.75rem !important;
+      padding-right: 0.75rem !important;
+    }
+
+    /* --- Espacements verticaux ultra-compacts --- */
+    .space-y-8 > * + * { margin-top: 0.75rem !important; }
+    .space-y-6 > * + * { margin-top: 0.625rem !important; }
+
+    /* --- Flex avec gap : wrap automatique --- */
+    .flex.gap-4, .flex.gap-6, .flex.gap-8 { flex-wrap: wrap; }
+
+    /* --- Boutons : pleine largeur sur très petits écrans --- */
+    .btn-primary, .btn-ghost {
+      width: 100% !important;
+      padding: 0.75rem 1rem !important;
+      font-size: 0.875rem !important;
+    }
+
+    /* --- Flex justify-end devient stack --- */
+    .flex.justify-end.gap-3,
+    .flex.justify-end.gap-4 {
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+    .flex.justify-end.gap-3 > *,
+    .flex.justify-end.gap-4 > * {
+      width: 100%;
+    }
+
+    /* --- Marges réduites --- */
+    .mb-12, .mb-10, .mb-8 { margin-bottom: 1rem !important; }
+    .mt-12, .mt-10, .mt-8 { margin-top: 1rem !important; }
+
+    /* --- Réduction des border-radius excessifs --- */
+    .rounded-3xl { border-radius: 1rem !important; }
+    .rounded-2xl { border-radius: 0.875rem !important; }
+  }
+
+  /* ═══════════════════════════════════════════════
+     TOUCH DEVICES — Amélioration ergonomique
+     ═══════════════════════════════════════════════ */
+  @media (hover: none) and (pointer: coarse) {
+    /* Pas d'effet hover sur mobile (pas pertinent) */
+    button:hover, .card-border:hover { transform: none; }
+
+    /* Touch targets minimum 44×44px (WCAG 2.1) */
+    button, [role="button"], a.button-like { min-height: 44px; min-width: 44px; }
+
+    /* Suppression du surlignage bleu au tap sur Android */
+    * { -webkit-tap-highlight-color: rgba(251, 191, 36, 0.2); }
+  }
+
+  /* ═══════════════════════════════════════════════
+     ORIENTATION PORTRAIT MOBILE — Optimisations
+     ═══════════════════════════════════════════════ */
+  @media (max-width: 640px) and (orientation: portrait) {
+    /* Tableaux : scroll horizontal si besoin */
+    table { display: block; overflow-x: auto; white-space: nowrap; }
+
+    /* Cards : pleine largeur */
+    .card-border { width: 100%; box-sizing: border-box; }
+  }
+
+  /* ═══════════════════════════════════════════════
+     SAFE AREAS iOS (notch iPhone)
+     ═══════════════════════════════════════════════ */
+  @supports (padding: env(safe-area-inset-top)) {
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+  }
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -421,7 +606,7 @@ const { useState, useEffect } = React;
 // APP_VERSION — change à chaque livraison pour aider au diagnostic
 // (visible dans Aide → FAQ pour confirmer la version installée)
 // ============================================================
-const APP_VERSION = 'PLANIF FINAL · 2026-05 (Campagne complète : 17 missions PLANIF + 16 fragments)';
+const APP_VERSION = 'PLANIF FINAL + Mobile · 2026-05 (Responsive 360px + Campagne PLANIF complète)';
 
 // ============================================================
 const CANONICAL_URL = 'https://kotchamiogougbe-a11y.github.io/science-quest/';
