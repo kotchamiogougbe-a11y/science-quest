@@ -641,7 +641,7 @@ const { useState, useEffect } = React;
 // APP_VERSION — change à chaque livraison pour aider au diagnostic
 // (visible dans Aide → FAQ pour confirmer la version installée)
 // ============================================================
-const APP_VERSION = 'MOBILE-FIX · 2026-05 (Header swipeable + détection webview WhatsApp/Facebook)';
+const APP_VERSION = 'EXCELLENCE · 2026-05 (Slogan vision + Mobile fix complet)';
 
 // ============================================================
 const CANONICAL_URL = 'https://kotchamiogougbe-a11y.github.io/science-quest/';
@@ -12559,8 +12559,19 @@ function WelcomeScreen({ nameInput, setNameInput, countryInput, setCountryInput,
         <span className="shimmer-text">Science Quest</span>
       </h1>
 
-      <p className="anim-in delay-200 text-amber-200/70 text-sm tracking-widest uppercase font-bold mb-10">
+      <p className="anim-in delay-200 text-amber-200/70 text-sm tracking-widest uppercase font-bold mb-3">
         Sauver le monde par la connaissance
+      </p>
+
+      <p className="anim-in delay-200 mb-10" style={{
+        fontStyle: 'italic',
+        fontSize: '0.95rem',
+        color: '#fbbf24',
+        letterSpacing: '0.02em',
+        lineHeight: 1.4,
+        textShadow: '0 0 20px rgba(251, 191, 36, 0.25)'
+      }}>
+        ✨ La révolution naît là où s'installe l'excellence ✨
       </p>
 
       <p className="anim-in delay-300 text-slate-300 text-base mb-8">{T('welcomeSubtitle')}</p>
@@ -12637,6 +12648,9 @@ function HomeScreen({ state, onStartMission, onContact, onDailyQuiz, onChallenge
         </div>
         <p className="text-xs uppercase tracking-[0.3em] text-amber-400/70 mb-3">Agent {state.playerName}</p>
         <h1 className="font-display text-4xl md:text-5xl mb-3"><span className="shimmer-text">Mission Science</span></h1>
+        <p className="text-amber-300/70 text-xs italic mb-3" style={{letterSpacing: '0.01em'}}>
+          ✨ La révolution naît là où s'installe l'excellence ✨
+        </p>
         <p className="text-slate-400 max-w-xl mx-auto">{T('homeIntro')}</p>
       </div>
 
