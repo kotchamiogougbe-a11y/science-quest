@@ -641,7 +641,7 @@ const { useState, useEffect } = React;
 // APP_VERSION — change à chaque livraison pour aider au diagnostic
 // (visible dans Aide → FAQ pour confirmer la version installée)
 // ============================================================
-const APP_VERSION = 'MUSIC-STYLES · 2026-05 (3 styles musicaux + Slogan + Mobile fix)';
+const APP_VERSION = 'FIX-NL-TUTO · 2026-05 (Tuto NEUROLINK ajouté + Mission Quotidienne)';
 
 // ============================================================
 const CANONICAL_URL = 'https://kotchamiogougbe-a11y.github.io/science-quest/';
@@ -6518,6 +6518,116 @@ const MISSIONS_DATA = {
   // Rang 0 (Observateur) → Rang 5 (Directeur Clinique NEUROLINK)
   // ═══════════════════════════════════════════════════════════
 
+
+  // ═══════════════════════════════════════════════════════════
+  // NEUROLINK — TUTORIEL : Bienvenue au centre des neurosciences
+  // Présentation de NEUROLINK + équipe + cas fil rouge Amadou Mahamane
+  // ═══════════════════════════════════════════════════════════
+
+  'nl-tuto': {
+    id: 'nl-tuto', arc: 0, arcTitle: 'TUTORIEL', number: '0',
+    title: "Bienvenue à NEUROLINK",
+    subtitle: "Centre des neurosciences cliniques de Niamey",
+    icon: '🧠',
+    rank: { from: 0, to: 0, name: 'Stagiaire — Observateur en neurosciences' },
+    power: 'Initiation aux neurosciences cliniques',
+    signature: "Le cerveau pèse 1,4 kg. Mais c'est lui qui pense, ressent, décide. Comprendre le cerveau, c'est comprendre l'humain.",
+    prologue: [
+      "Tu pousses la porte de NEUROLINK, le centre des neurosciences cliniques de Niamey, situé à Talladjé. L'odeur des couloirs hospitaliers, le silence concentré des consultations.",
+      "Au mur, la devise du centre : « Voir, comprendre, restaurer. »",
+      "Dr Hamza t'accueille. « Bienvenue. Ici, on ne soigne pas seulement des nerfs et des cerveaux. On accompagne des vies qui basculent après un AVC, un accident, une maladie neurologique. Tu es prêt ? »"
+    ],
+    briefing: {
+      objectifs: [
+        "Comprendre la mission spécifique de NEUROLINK : neurologie clinique préventive et curative",
+        "Rencontrer l'équipe : Dr Hamza, Dr Bernadette, Dr Émilienne, Nicole...",
+        "Découvrir le cas fil rouge : Amadou Mahamane, 52 ans, victime d'un AVC",
+        "Saisir l'enjeu : les troubles neurologiques explosent en Afrique sub-saharienne et demandent des soignants compétents"
+      ],
+      recompenses: { xp: 250, badge: 'Stagiaire NEUROLINK', power: 'Initiation aux neurosciences cliniques' }
+    },
+    phases: [
+      { type: 'narrative',
+        icon: '🏛️',
+        title: "L'esprit du centre",
+        subtitle: "NEUROLINK — Voir, comprendre, restaurer",
+        paragraphs: [
+          "Dr Hamza te guide dans les couloirs de NEUROLINK. « Tu vas découvrir un univers passionnant — celui du système nerveux. Le cerveau, la moelle épinière, les nerfs périphériques. Tout ce qui te fait MARCHER, PARLER, PENSER, RESSENTIR. »",
+          "« Notre mission ici, c'est de prendre soin de ce qui rend l'homme humain. Quand un AVC frappe, en quelques minutes, une vie peut basculer. Quand un nerf est sectionné dans un accident, la fonction est perdue. Mais avec la rigueur scientifique et la compassion humaine, on peut SOUVENT restaurer — au moins en partie. »",
+          "« Cette campagne va te transformer. À la fin, tu sauras reconnaître les urgences neurologiques, comprendre les mécanismes du tissu nerveux, accompagner les familles dans des moments difficiles. »"
+        ],
+        character: { emoji: '👨‍⚕️', name: 'Dr Hamza', line: "Les neurosciences ne sont pas qu'une affaire d'experts. Chaque citoyen formé devient une vie potentiellement sauvée dans son entourage. C'est notre vision de la santé publique." } },
+
+      { type: 'question',
+        title: "Phase 1 — Qu'est-ce que la neurologie clinique ?",
+        question: "Comment définirais-tu la NEUROLOGIE CLINIQUE comparée aux autres spécialités médicales ?",
+        options: [
+          "C'est uniquement l'étude des maladies mentales",
+          "La NEUROLOGIE CLINIQUE est la spécialité médicale qui étudie, diagnostique et traite les maladies du SYSTÈME NERVEUX (cerveau, moelle épinière, nerfs périphériques, jonction neuromusculaire). Elle se distingue de : (1) la PSYCHIATRIE qui s'occupe des troubles mentaux et du comportement (souvent sans lésion neurologique visible), (2) la NEUROCHIRURGIE qui opère le système nerveux, (3) la NEUROSCIENCE qui est la recherche fondamentale. La neurologie clinique traite : AVC, épilepsie, sclérose en plaques, maladie de Parkinson, Alzheimer, neuropathies périphériques (diabétiques notamment), céphalées, traumatismes crâniens. Spécialement importante en Afrique car les AVC et neuropathies diabétiques explosent.",
+          "C'est juste l'étude du cerveau",
+          "Aucune des réponses"
+        ],
+        correctIdx: 1, xp: 80,
+        hint: "La neurologie clinique couvre tout le système nerveux : cerveau + moelle + nerfs périphériques.",
+        explain: "LA NEUROLOGIE CLINIQUE — définition et champ : (1) DÉFINITION : spécialité médicale qui diagnostique et traite les pathologies du système nerveux central (encéphale, moelle épinière) ET du système nerveux périphérique (nerfs crâniens et spinaux, jonctions neuromusculaires). (2) PATHOLOGIES PRINCIPALES : (a) Vasculaires : AVC ischémique (80%) et hémorragique (20%), première cause de handicap acquis dans le monde. (b) Dégénératives : Maladie d'Alzheimer, Parkinson, sclérose latérale amyotrophique. (c) Inflammatoires : sclérose en plaques, encéphalites, méningites. (d) Épilepsie : 50 millions de personnes touchées mondialement, dont 80% en pays à revenu faible. (e) Neuropathies périphériques : diabétiques, alcooliques, infectieuses (lèpre, VIH). (f) Céphalées : migraines, céphalées de tension, algies vasculaires. (g) Tumeurs cérébrales, traumatismes crâniens, troubles du sommeil. (3) DIFFÉRENCE AVEC LA PSYCHIATRIE : la psychiatrie traite les troubles du comportement et de l'humeur (dépression, schizophrénie, troubles anxieux) qui n'ont souvent pas de lésion neurologique visible. La frontière est parfois floue (démences, troubles neurodégénératifs avec composante psychiatrique). (4) DIFFÉRENCE AVEC LA NEUROCHIRURGIE : le neurologue diagnostique et traite médicalement ; le neurochirurgien opère (tumeurs, hématomes, malformations). (5) ENJEU EN AFRIQUE : (a) Les AVC explosent (hypertension non traitée, diabète, tabac). (b) Les neuropathies diabétiques touchent 30-50% des diabétiques après 10 ans. (c) L'épilepsie est stigmatisée (souvent attribuée à la sorcellerie). (d) Manque criant de neurologues : 1 pour 5 millions d'habitants en Afrique sub-saharienne vs 1 pour 25 000 en Europe. Former de jeunes Africains aux neurosciences est une PRIORITÉ.",
+        successOutcome: "Dr Hamza acquiesce : « Bonne définition. Tu vois la richesse du domaine — du cerveau aux nerfs périphériques. »",
+        consequence: "Dr Hamza reprend : « Sans cette définition claire, on confond les disciplines et on oriente mal les patients. »" },
+
+      { type: 'narrative',
+        icon: '🤝',
+        title: "Rencontre avec Amadou Mahamane",
+        subtitle: "Le patient fil rouge de la campagne NEUROLINK",
+        paragraphs: [
+          "Dr Hamza t'introduit dans une chambre. Un homme d'âge mûr, allongé, le côté droit du visage légèrement affaissé. À côté de lui, sa femme Aïcha, inquiète.",
+          "« Voici Amadou Mahamane, 52 ans. Il y a 3 jours, il a fait un AVC ISCHÉMIQUE — un caillot a bouché une artère cérébrale. Heureusement, il a été emmené aux urgences rapidement. Mais il garde une hémiplégie droite partielle et des troubles du langage modérés. »",
+          "« Amadou est diabétique type 2 depuis 8 ans, mal équilibré. Hypertendu. Fumeur occasionnel. Le terrain parfait — malheureusement — pour un AVC. »",
+          "« Tu vas l'accompagner pendant toute cette campagne NEUROLINK. Tu vas voir comment on comprend ce qu'il s'est passé, comment on évalue, comment on REHABILITE. Tu apprendras les mécanismes du système nerveux à travers SA vie. »",
+          "Amadou te regarde, essaie de sourire. « B... bienvenue, jeune. » Ses mots sont lents mais clairs. Aïcha te tend la main. « Aide-nous à comprendre. »"
+        ],
+        character: { emoji: '👨', name: 'Amadou Mahamane', line: "Avant, je travaillais à la mairie de Talladjé. Marche, parle, écris. Tout normal. En quelques minutes, ma vie a basculé. Maintenant... je veux récupérer. Je veux comprendre." } },
+
+      { type: 'question',
+        title: "Phase 2 — Pourquoi NEUROLINK est-il essentiel en Afrique ?",
+        question: "Quels sont les TROIS facteurs principaux qui rendent les neurosciences cliniques particulièrement cruciales en Afrique sub-saharienne ?",
+        options: [
+          "L'Afrique n'a pas besoin de neurologues",
+          "(1) EXPLOSION DES MALADIES NON TRANSMISSIBLES : l'hypertension touche 30-40% des adultes, le diabète type 2 progresse rapidement, l'obésité urbaine augmente. Tous facteurs majeurs d'AVC et de neuropathies. (2) MANQUE CRIANT DE SPÉCIALISTES : 1 neurologue pour ~5 millions d'habitants en Afrique sub-saharienne (vs 1 pour 25 000 en Europe). Délais de consultation parfois de plusieurs mois. (3) TABOUS ET RETARDS DIAGNOSTIQUES : l'épilepsie est souvent attribuée à la sorcellerie, les AVC sont parfois traités tardivement par méconnaissance des urgences, les troubles cognitifs sont peu reconnus. Former de jeunes éducateurs et soignants africains aux neurosciences = MULTIPLIER l'impact par les communautés.",
+          "Les neurosciences sont moins importantes en Afrique",
+          "Aucun problème particulier"
+        ],
+        correctIdx: 1, xp: 90,
+        hint: "Maladies non transmissibles + manque de spécialistes + tabous = défi neurologique africain.",
+        explain: "TROIS DÉFIS NEUROLOGIQUES MAJEURS EN AFRIQUE : (1) EXPLOSION DES MALADIES NON TRANSMISSIBLES (MNT) : (a) HYPERTENSION ARTÉRIELLE : 30-40% des adultes africains de >40 ans, souvent NON DIAGNOSTIQUÉE et NON TRAITÉE — facteur de risque #1 d'AVC. (b) DIABÈTE TYPE 2 : prévalence en forte hausse (urbanisation, alimentation industrielle), 60-80% non équilibrés → neuropathies diabétiques (douloureuses, handicapantes) chez 30-50% des diabétiques après 10 ans. (c) OBÉSITÉ URBAINE : nouveau fléau qui s'ajoute à la malnutrition rurale. (d) TABAC, sédentarité, stress urbain. (e) Résultat : les AVC touchent maintenant des adultes JEUNES (40-55 ans) en Afrique, brisant des familles entières (perte du chef de famille actif). (2) MANQUE CRIANT DE SPÉCIALISTES : (a) Densité de NEUROLOGUES : Afrique sub-saharienne ~0,03/100 000 habitants (1 pour 3 millions) ; Europe ~5/100 000 (1 pour 25 000) — différence 150×. (b) Conséquences : délais de consultation 3-6 mois, examens (IRM, EEG) rares et chers, suivi insuffisant. (c) Le rôle des MÉDECINS GÉNÉRALISTES et INFIRMIERS formés est crucial pour le premier diagnostic. (3) TABOUS ET RETARDS DIAGNOSTIQUES : (a) ÉPILEPSIE souvent attribuée à la sorcellerie/possession dans certaines régions → patient honteux, non traité, isolé. (b) AVC : signes méconnus (« il s'est seulement endormi ») → arrivée tardive aux urgences (>6h = perte de la fenêtre thérapeutique de thrombolyse). (c) DÉMENCES traitées comme « vieillesse normale » sans diagnostic précis. (d) PARKINSON confondu avec vieillissement. (e) HANDICAP NEUROLOGIQUE stigmatisé socialement. (4) SOLUTION : ÉDUCATION DES JEUNES AFRICAINS → tu deviendras un MULTIPLICATEUR de connaissances dans ta communauté. Reconnaître un AVC en 5 secondes (test FAST : Face Arm Speech Time), conseiller un test de glycémie, expliquer scientifiquement l'épilepsie à une famille... ce sont des actes qui SAUVENT.",
+        successOutcome: "Dr Hamza valide : « Tu mesures l'enjeu. C'est exactement pour ça qu'on forme des jeunes comme toi. »",
+        consequence: "Dr Hamza reprend : « Sans cette conscience, on continue à perdre des Amadou par dizaines chaque jour. »" },
+
+      { type: 'narrative',
+        icon: '👥',
+        title: "L'équipe NEUROLINK",
+        subtitle: "Une mission collective au service du vivant",
+        paragraphs: [
+          "Avant de te laisser, Dr Hamza te présente l'équipe principale de NEUROLINK :",
+          "**Dr Bernadette** — neurologue senior. 30 ans d'expérience, spécialiste des AVC et de la rééducation. C'est elle qui suit Amadou au quotidien.",
+          "**Dr Émilienne** — pharmacienne clinicienne. Experte des médicaments neurologiques (antiépileptiques, antiparkinsoniens, anti-AVC). Pédagogue avec les familles.",
+          "**Nicole** — infirmière coordinatrice. Le cœur du centre. Elle accompagne chaque patient à travers son parcours, fait le lien entre l'hôpital et la maison.",
+          "**Dr Moustapha** — neurochirurgien. Pour les cas qui nécessitent une intervention (tumeurs, hématomes, hernies discales sévères).",
+          "« Tu vas tous les rencontrer en mission. Chacun t'apportera sa perspective unique. C'est ainsi qu'on construit un médecin complet : pas un solitaire — un membre d'équipe. »",
+          "« Maintenant — au travail. Amadou et beaucoup d'autres comptent sur toi. »"
+        ],
+        character: { emoji: '👨‍⚕️', name: 'Dr Hamza', line: "Le système nerveux est complexe — un soignant seul ne peut pas tout. Mais une ÉQUIPE bien coordonnée peut faire des miracles. Cherche toujours le travail collectif." } }
+    ],
+    epilogue: {
+      titre: "Stagiaire NEUROLINK validé !",
+      message: "Tu connais maintenant la mission de NEUROLINK, son équipe, et tu as rencontré Amadou Mahamane, ton patient fil rouge. La campagne neuroscience peut commencer : tu vas explorer le tissu nerveux, les messages électriques, la régulation de la glycémie, et accompagner Amadou dans sa rééducation post-AVC.",
+      conseilLabel: "Conseil de Dr Hamza",
+      conseilTexte: "Le système nerveux n'est pas un mystère réservé aux savants. C'est la science qui rend possible la marche, la parole, la pensée, l'amour. Chaque cours que tu maîtriseras te donnera le pouvoir d'AIDER ceux que tu aimes — quand l'AVC frappe, quand l'épilepsie isole, quand le diabète attaque les nerfs.",
+      grimoire: "Définition de la neurologie clinique + Trois défis africains + Présentation de l'équipe NEUROLINK + Cas fil rouge Amadou Mahamane",
+      fragmentMahamane: { numero: 0, texte: "Amadou Mahamane (52 ans, AVC ischémique, hémiplégie droite partielle, troubles du langage modérés) : diabète mal équilibré + HTA + tabac occasionnel. Pris en charge par Dr Bernadette en rééducation. Stagiaire en formation à NEUROLINK. La campagne neuroscience commence." },
+      philo: "Le cerveau pèse 1,4 kg. Mais c'est lui qui pense, ressent, décide. Et c'est à nous de le protéger — pour Amadou, pour Aïcha, pour toi et tes proches."
+    }
+  },
+
+
   // ═══════════════════════════════════════════════════════════
   // ARC 1 — L'ÉVEIL — Le langage du système nerveux
   // Rang 0 → Rang 1 : Technicien NEUROLINK
@@ -10036,7 +10146,11 @@ function useGameState() {
     bestStreak: 0,
     totalQuestionsAnswered: 0,
     totalCorrectAnswers: 0,
-    outboxMessages: []
+    outboxMessages: [],
+    // Mission Quotidienne — Duolingo-style
+    dailyQuestsProgress: {},   // { 'YYYY-MM-DD': { questId: progressNumber } }
+    dailyQuestsClaimed: {},    // { 'YYYY-MM-DD': true } - récompense combo réclamée
+    dailyQuestsBadges: 0       // Compteur de "missions du jour" complétées (collection)
   };
   const [state, setState] = useState(function() {
     try {
@@ -10061,6 +10175,26 @@ function useGameState() {
     MusicEngine.loadSavedStyle();  // Charger le style préféré (cosmique/murmure/africain)
     MusicEngine.setEnabled(!!state.musicEnabled);
   }, [state.musicEnabled]);
+
+  // Mission Quotidienne : auto-marquer le défi "streak" (te connecter aujourd'hui)
+  // dès que l'app se charge — une seule fois par jour
+  React.useEffect(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const prog = (state.dailyQuestsProgress || {})[today] || {};
+    if (!prog.streak) {
+      setState(s => {
+        const all = { ...(s.dailyQuestsProgress || {}) };
+        const todayProg = { ...(all[today] || {}) };
+        if (!todayProg.streak) {
+          todayProg.streak = 1;
+          all[today] = todayProg;
+          return { ...s, dailyQuestsProgress: all };
+        }
+        return s;
+      });
+    }
+  }, []);  // Une seule fois au montage
+
   return [state, setState];
 }
 
@@ -10180,13 +10314,22 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
     SoundManager.play('correct');
     MusicEngine.pulse('validation');
     setCorrectStreak(newStreak);
-    // Tracking stats globales
-    setState(s => ({
-      ...s,
-      totalQuestionsAnswered: (s.totalQuestionsAnswered || 0) + 1,
-      totalCorrectAnswers: (s.totalCorrectAnswers || 0) + 1,
-      bestStreak: Math.max(s.bestStreak || 0, newStreak)
-    }));
+    // Tracking stats globales + Mission Quotidienne (défis correct10 et xp200)
+    const today = new Date().toISOString().slice(0, 10);
+    setState(s => {
+      const all = { ...(s.dailyQuestsProgress || {}) };
+      const todayProg = { ...(all[today] || {}) };
+      todayProg['correct10'] = (todayProg['correct10'] || 0) + 1;
+      todayProg['xp200'] = (todayProg['xp200'] || 0) + finalXp;
+      all[today] = todayProg;
+      return {
+        ...s,
+        totalQuestionsAnswered: (s.totalQuestionsAnswered || 0) + 1,
+        totalCorrectAnswers: (s.totalCorrectAnswers || 0) + 1,
+        bestStreak: Math.max(s.bestStreak || 0, newStreak),
+        dailyQuestsProgress: all
+      };
+    });
     if (newStreak === 3) showMentorFrom('success3', 0); // mentor spécialiste
     else if (newStreak === 5) showMentorFrom('success5', 2); // Kotchami
   };
@@ -10231,6 +10374,15 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
       else xpHistory.push({ date: today, xp: finalXP });
       // Garder seulement les 30 derniers jours
       const recent = xpHistory.slice(-30);
+
+      // ─── Mission Quotidienne : incrémenter les défis "mission" et "grimoire" ───
+      const allQuests = { ...(updated.dailyQuestsProgress || {}) };
+      const todayQuests = { ...(allQuests[today] || {}) };
+      todayQuests['mission'] = (todayQuests['mission'] || 0) + 1;
+      todayQuests['grimoire'] = (todayQuests['grimoire'] || 0) + 1;
+      // Note : 'correct10' et 'xp200' sont déjà incrémentés par onPhaseCorrect au fil de la mission
+      allQuests[today] = todayQuests;
+
       return {
         ...updated,
         xp: s.xp + finalXP,
@@ -10245,7 +10397,8 @@ function MissionPlayer({ missionId, state, setState, onExit }) {
         currentRank: Math.max(s.currentRank || 0, mission.rank.to),
         missionRecords: records,
         badges,
-        xpHistory: recent
+        xpHistory: recent,
+        dailyQuestsProgress: allQuests
       };
     });
     onExit();
@@ -12522,6 +12675,7 @@ function App() {
         {screen === 'home' && (
           <HomeScreen
             state={state}
+            setState={setState}
             onStartMission={startMission}
             onContact={() => setScreen('contact')}
             onDailyQuiz={() => setScreen('dailyquiz')}
@@ -12775,7 +12929,232 @@ function WelcomeScreen({ nameInput, setNameInput, countryInput, setCountryInput,
 // ============================================================
 // HOME (Académie - carte des missions)
 // ============================================================
-function HomeScreen({ state, onStartMission, onContact, onDailyQuiz, onChallenge }) {
+// ============================================================
+// MISSION QUOTIDIENNE — Duolingo-style
+// 3 défis tirés du pool chaque jour (déterministes par date)
+// ============================================================
+const DAILY_QUEST_POOL = [
+  {
+    id: 'mission',
+    icon: '📚',
+    label: 'Terminer 1 mission complète',
+    description: 'Joue et termine n\'importe quelle mission',
+    target: 1,
+    xpReward: 30
+  },
+  {
+    id: 'xp200',
+    icon: '✨',
+    label: 'Gagner 200 XP aujourd\'hui',
+    description: 'Cumule 200 XP par tes activités',
+    target: 200,
+    xpReward: 30
+  },
+  {
+    id: 'quiz',
+    icon: '⚡',
+    label: 'Faire le quiz éclair quotidien',
+    description: '5 questions, 60 secondes',
+    target: 1,
+    xpReward: 30
+  },
+  {
+    id: 'correct10',
+    icon: '🎯',
+    label: 'Répondre juste à 10 questions',
+    description: 'Précision et persévérance',
+    target: 10,
+    xpReward: 30
+  },
+  {
+    id: 'grimoire',
+    icon: '📖',
+    label: 'Enrichir ton grimoire',
+    description: 'Ajoute 1 nouvelle entrée à ta collection',
+    target: 1,
+    xpReward: 30
+  },
+  {
+    id: 'streak',
+    icon: '🔥',
+    label: 'Te connecter aujourd\'hui',
+    description: 'Maintiens ta flamme — facile et essentiel',
+    target: 1,
+    xpReward: 30
+  }
+];
+
+// Récompense combo (les 3 défis complétés)
+const DAILY_COMBO_REWARD = 100;  // XP bonus combo
+const DAILY_BADGE_NAME = '🌟 Mission du jour';
+
+// Sélectionner 3 défis du jour (déterministe par date)
+function getDailyQuests(dateStr) {
+  if (!dateStr) dateStr = new Date().toISOString().slice(0, 10);
+  // Hash simple de la date → 3 indices différents
+  let h = 0;
+  for (let i = 0; i < dateStr.length; i++) h = ((h * 31) + dateStr.charCodeAt(i)) | 0;
+  h = Math.abs(h);
+  const n = DAILY_QUEST_POOL.length;
+  const selected = [];
+  const used = new Set();
+  let attempt = 0;
+  while (selected.length < 3 && attempt < 20) {
+    const idx = (h + attempt * 13) % n;
+    if (!used.has(idx)) {
+      used.add(idx);
+      selected.push(DAILY_QUEST_POOL[idx]);
+    }
+    attempt++;
+  }
+  return selected;
+}
+
+// Helper : récupérer la progression d'aujourd'hui pour un défi
+function getQuestProgress(state, questId) {
+  const today = new Date().toISOString().slice(0, 10);
+  const progress = (state.dailyQuestsProgress || {})[today] || {};
+  return progress[questId] || 0;
+}
+
+// Helper : incrémenter la progression (à appeler aux moments clés)
+function incrementDailyQuest(setState, questId, by = 1) {
+  const today = new Date().toISOString().slice(0, 10);
+  setState(s => {
+    const all = { ...(s.dailyQuestsProgress || {}) };
+    const todayProg = { ...(all[today] || {}) };
+    todayProg[questId] = (todayProg[questId] || 0) + by;
+    all[today] = todayProg;
+    return { ...s, dailyQuestsProgress: all };
+  });
+}
+
+// Helper : vérifier si tous les défis du jour sont complétés
+function isDailyComboComplete(state) {
+  const today = new Date().toISOString().slice(0, 10);
+  const quests = getDailyQuests(today);
+  const progress = (state.dailyQuestsProgress || {})[today] || {};
+  return quests.every(q => (progress[q.id] || 0) >= q.target);
+}
+
+// Helper : combien de défis sont complétés
+function countDailyCompleted(state) {
+  const today = new Date().toISOString().slice(0, 10);
+  const quests = getDailyQuests(today);
+  const progress = (state.dailyQuestsProgress || {})[today] || {};
+  return quests.filter(q => (progress[q.id] || 0) >= q.target).length;
+}
+
+// ============================================================
+// CARTE DES DÉFIS QUOTIDIENS — composant Home
+// ============================================================
+function DailyQuestsCard({ state, setState }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const quests = getDailyQuests(today);
+  const progress = (state.dailyQuestsProgress || {})[today] || {};
+  const claimed = !!(state.dailyQuestsClaimed || {})[today];
+  const allDone = quests.every(q => (progress[q.id] || 0) >= q.target);
+  const completedCount = quests.filter(q => (progress[q.id] || 0) >= q.target).length;
+
+  // Réclamer la récompense combo
+  const claimCombo = () => {
+    if (!allDone || claimed) return;
+    setState(s => {
+      const claimedMap = { ...(s.dailyQuestsClaimed || {}) };
+      claimedMap[today] = true;
+      // Ajouter XP combo + somme des XP individuels non encore comptés (déjà comptés via incrément des activités si on veut)
+      // On donne ici le bonus combo de 100 XP supplémentaires
+      // ET on ajoute 30 XP par défi terminé (récompense individuelle de chaque défi)
+      const individualReward = quests.reduce((sum, q) => sum + (q.xpReward || 30), 0);
+      return {
+        ...s,
+        xp: (s.xp || 0) + DAILY_COMBO_REWARD + individualReward,
+        dailyQuestsClaimed: claimedMap,
+        dailyQuestsBadges: (s.dailyQuestsBadges || 0) + 1
+      };
+    });
+    try { SoundManager.play('victory'); } catch(e) {}
+    try { MusicEngine.pulse('progression'); } catch(e) {}
+  };
+
+  return (
+    <div className="anim-in delay-100 card-border rounded-2xl p-4 mb-3" style={{
+      background: allDone
+        ? 'linear-gradient(145deg, rgba(16, 185, 129, 0.12), rgba(15, 23, 42, 0.6))'
+        : 'linear-gradient(145deg, rgba(245, 158, 11, 0.10), rgba(15, 23, 42, 0.6))',
+      borderColor: allDone ? 'rgba(16, 185, 129, 0.5)' : 'rgba(251, 191, 36, 0.4)'
+    }}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-2xl shrink-0">{allDone ? '🌟' : '🎯'}</span>
+          <div className="min-w-0">
+            <p className="text-[10px] uppercase tracking-wider text-amber-400/80 font-bold">Mission du jour</p>
+            <p className="font-display text-base text-amber-100 truncate">
+              {allDone && claimed ? 'Réclamée ✓' : allDone ? 'Combo complet ! 🎉' : `${completedCount}/3 défis`}
+            </p>
+          </div>
+        </div>
+        {(state.dailyQuestsBadges || 0) > 0 && (
+          <div className="shrink-0 text-right">
+            <p className="text-[9px] uppercase text-slate-500">Collection</p>
+            <p className="text-sm font-display text-amber-300">🌟 ×{state.dailyQuestsBadges}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Liste des 3 défis */}
+      <div className="space-y-2 mb-3">
+        {quests.map((q, idx) => {
+          const cur = progress[q.id] || 0;
+          const done = cur >= q.target;
+          const pct = Math.min(100, Math.round((cur / q.target) * 100));
+          return (
+            <div key={q.id} className="flex items-center gap-2.5 rounded-lg p-2 transition-colors" style={{
+              background: done ? 'rgba(16, 185, 129, 0.10)' : 'rgba(2, 6, 23, 0.4)',
+              border: '1px solid ' + (done ? 'rgba(16, 185, 129, 0.4)' : 'rgba(51, 65, 85, 0.5)')
+            }}>
+              <span className="text-xl shrink-0">{done ? '✅' : q.icon}</span>
+              <div className="flex-1 min-w-0">
+                <p className={`text-xs leading-tight ${done ? 'text-emerald-200' : 'text-slate-200'} truncate`}>{q.label}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="progress-bar flex-1" style={{height: '3px'}}>
+                    <div className="progress-bar-fill" style={{width: pct + '%', background: done ? '#10b981' : undefined}}></div>
+                  </div>
+                  <span className="text-[10px] text-slate-500 tabular-nums shrink-0 font-mono-sci">{Math.min(cur, q.target)}/{q.target}</span>
+                </div>
+              </div>
+              {done && <span className="text-[9px] text-emerald-400 font-bold shrink-0">+{q.xpReward} XP</span>}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Bouton réclamer combo */}
+      {allDone && !claimed && (
+        <button
+          onClick={claimCombo}
+          className="btn-primary w-full p-3 rounded-xl text-sm font-bold mega-pulse"
+          style={{visibility: 'visible'}}
+        >
+          🌟 Réclamer le combo — +{DAILY_COMBO_REWARD + quests.reduce((s, q) => s + (q.xpReward || 30), 0)} XP
+        </button>
+      )}
+      {allDone && claimed && (
+        <div className="text-center py-2 text-xs text-emerald-300/80 italic">
+          ✓ Combo réclamé. Reviens demain pour 3 nouveaux défis.
+        </div>
+      )}
+      {!allDone && (
+        <p className="text-[10px] text-slate-500 text-center italic mt-1">
+          Joue normalement — les défis se complètent automatiquement.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function HomeScreen({ state, setState, onStartMission, onContact, onDailyQuiz, onChallenge }) {
   const terminaleD = CURRICULUM.terminaleD;
   const totalMissions = terminaleD.subjects.reduce((sum, sub) =>
     sum + sub.parts.reduce((s, p) => s + p.themes.reduce((t, th) => t + th.chapters.length, 0), 0), 0
@@ -12817,6 +13196,9 @@ function HomeScreen({ state, onStartMission, onContact, onDailyQuiz, onChallenge
           {state.streakDays > 0 && <span className="text-orange-300">🔥 {state.streakDays}j</span>}
         </div>
       </div>
+
+      {/* Mission Quotidienne — 3 défis Duolingo-style */}
+      <DailyQuestsCard state={state} setState={setState} />
 
       {/* Quiz Éclair Quotidien */}
       <button
@@ -13160,12 +13542,20 @@ function DailyQuizScreen({ state, setState, onBack }) {
       // Badge "Quiz parfait" si 5/5
       const badges = [...(s.badges || [])];
       if (score === 5 && !badges.includes('badge:quiz-perfect')) badges.push('badge:quiz-perfect');
+      // ─── Mission Quotidienne : défis "quiz" et "xp200" et "correct10" ───
+      const allQuests = { ...(s.dailyQuestsProgress || {}) };
+      const todayQuests = { ...(allQuests[today] || {}) };
+      todayQuests['quiz'] = (todayQuests['quiz'] || 0) + 1;
+      todayQuests['xp200'] = (todayQuests['xp200'] || 0) + bonusXP;
+      todayQuests['correct10'] = (todayQuests['correct10'] || 0) + score;
+      allQuests[today] = todayQuests;
       return {
         ...s,
         xp: (s.xp || 0) + bonusXP,
         dailyQuizHistory: history,
         xpHistory: xpHistory.slice(-30),
-        badges
+        badges,
+        dailyQuestsProgress: allQuests
       };
     });
     onBack();
