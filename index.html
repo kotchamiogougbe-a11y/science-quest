@@ -641,7 +641,7 @@ const { useState, useEffect } = React;
 // APP_VERSION — change à chaque livraison pour aider au diagnostic
 // (visible dans Aide → FAQ pour confirmer la version installée)
 // ============================================================
-const APP_VERSION = 'EXCELLENCE · 2026-05 (Slogan vision + Mobile fix complet)';
+const APP_VERSION = 'MUSIC-STYLES · 2026-05 (3 styles musicaux + Slogan + Mobile fix)';
 
 // ============================================================
 const CANONICAL_URL = 'https://kotchamiogougbe-a11y.github.io/science-quest/';
@@ -8337,9 +8337,74 @@ const MusicEngine = {
   reverbReturn: null,
   enabled: false,
   currentMood: null,
+  currentStyle: 'cosmique',  // Style musical actif : 'cosmique', 'murmure', 'africain'
   voices: {},          // { voiceId: { stop(t), nodes:[] } }
   schedulers: [],      // setInterval IDs pour les voix rythmiques
   baseVolume: 0.18,    // Volume max global (gardé bas pour ne jamais agresser)
+
+  // ---- Styles musicaux : modificateurs appliqués aux recipes ----
+  styles: {
+    cosmique: {
+      label: '🌌 Cosmique',
+      description: 'Ambient orchestral immersif (par défaut)',
+      volMult: 1.0,
+      // Décalage de hauteur en demi-tons (0 = inchangé)
+      pitchShift: 0,
+      // Filtre passe-haut/bas pour adoucir ou clarifier
+      filterCutoff: null
+    },
+    murmure: {
+      label: '🤫 Murmure',
+      description: 'Très discret, à peine audible, pour ne pas distraire',
+      volMult: 0.35,
+      pitchShift: 0,
+      filterCutoff: 1800  // Coupe les aigus pour adoucir
+    },
+    africain: {
+      label: '🎵 Inspiration Africaine',
+      description: 'Évoque la kora et le balafon, gammes pentatoniques',
+      volMult: 0.9,
+      pitchShift: 0,
+      // Marqueur : les voix mélodiques utiliseront des gammes pentatoniques africaines
+      useAfricanScale: true,
+      filterCutoff: 3200  // Adoucit les harmoniques aigus pour un son plus chaud
+    }
+  },
+
+  // Récupère le multiplicateur de volume du style courant (utilisé par _startVoice)
+  _getStyleVolMult() {
+    const s = this.styles[this.currentStyle] || this.styles.cosmique;
+    return s.volMult || 1.0;
+  },
+  // Récupère le filtre de coupe du style courant
+  _getStyleFilterCutoff() {
+    const s = this.styles[this.currentStyle] || this.styles.cosmique;
+    return s.filterCutoff || null;
+  },
+  // Indique si on est en mode "inspiration africaine"
+  _isAfricanStyle() {
+    return this.currentStyle === 'africain';
+  },
+  // Transforme un tableau de notes en gamme pentatonique africaine si style africain actif
+  // Gamme pentatonique mineure : 1, b3, 4, 5, b7 (très répandue en Afrique de l'Ouest)
+  _styleNotes(notes) {
+    if (!this._isAfricanStyle() || !Array.isArray(notes)) return notes;
+    // On "snap" les fréquences vers la gamme pentatonique la plus proche basée sur Do
+    // Ratios pour pentatonique mineure : 1, 6/5, 4/3, 3/2, 9/5
+    const ratios = [1, 1.2, 1.333, 1.5, 1.8, 2.0];
+    return notes.map(f => {
+      const refOctave = Math.floor(Math.log2(f / 65.41));  // Octave par rapport à Do2 (~65 Hz)
+      const baseDo = 65.41 * Math.pow(2, refOctave);
+      const ratio = f / baseDo;
+      // Trouve le ratio penta le plus proche
+      let best = ratios[0]; let bestDist = Math.abs(ratio - ratios[0]);
+      for (const r of ratios) {
+        const d = Math.abs(ratio - r);
+        if (d < bestDist) { bestDist = d; best = r; }
+      }
+      return baseDo * best;
+    });
+  },
 
   // ---- Initialisation paresseuse ----
   ensureCtx() {
@@ -8479,6 +8544,29 @@ const MusicEngine = {
     this._applyMood(name, false);
   },
 
+  // ---- Changer le style musical à la volée ----
+  setStyle(styleName) {
+    if (!this.styles[styleName]) return;
+    if (this.currentStyle === styleName) return;
+    this.currentStyle = styleName;
+    // Sauvegarder le choix
+    try { localStorage.setItem('sq_music_style', styleName); } catch(e) {}
+    // Si la musique est active, re-appliquer le mood actuel pour entendre le changement
+    if (this.enabled && this.currentMood) {
+      const mood = this.currentMood;
+      this.currentMood = null;  // Force le réajustement
+      this.setMood(mood);
+    }
+  },
+
+  // ---- Récupérer le style sauvegardé au démarrage ----
+  loadSavedStyle() {
+    try {
+      const saved = localStorage.getItem('sq_music_style');
+      if (saved && this.styles[saved]) this.currentStyle = saved;
+    } catch(e) {}
+  },
+
   // Overlay temporaire (validation, indice, tension courte) qui revient au mood précédent
   pulse(name) {
     if (!this.recipes[name] || !this.enabled) return;
@@ -8524,6 +8612,19 @@ const MusicEngine = {
     if (this.voices[key]) return;
     const ctx = this.ensureCtx();
     if (!ctx) return;
+
+    // ─── Application du STYLE musical actif (volume + gamme africaine) ───
+    const styleMult = this._getStyleVolMult();
+    // Clone params pour ne pas muter l'original (utilisé dans recipes)
+    const p = { ...params };
+    if (typeof p.vol === 'number') p.vol = p.vol * styleMult;
+    if (typeof p.harmVol === 'number') p.harmVol = p.harmVol * styleMult;
+    // Style africain : convertir les notes vers gamme pentatonique
+    if (this._isAfricanStyle()) {
+      if (Array.isArray(p.notes)) p.notes = this._styleNotes(p.notes);
+      if (Array.isArray(p.freqs)) p.freqs = this._styleNotes(p.freqs);
+    }
+
     let voice = null;
     try {
       switch(type) {
@@ -8534,32 +8635,32 @@ const MusicEngine = {
         case 'padFinal':
         case 'padEnd':
         case 'padNav':
-          voice = this._makePad(params); break;
+          voice = this._makePad(p); break;
         case 'drone':
         case 'droneTen':
         case 'droneWarm':
-          voice = this._makeDrone(params); break;
+          voice = this._makeDrone(p); break;
         case 'shimmer':
-          voice = this._makeShimmer(params); break;
+          voice = this._makeShimmer(p); break;
         case 'ostinato':
         case 'arp':
         case 'piano':
         case 'folk':
         case 'bell':
-          voice = this._makeMelodicLoop(params, type); break;
+          voice = this._makeMelodicLoop(p, type); break;
         case 'kickSoft':
         case 'pulse':
-          voice = this._makePulse(params, type); break;
+          voice = this._makePulse(p, type); break;
         case 'riser':
-          voice = this._makeRiser(params); break;
+          voice = this._makeRiser(p); break;
         case 'hit':
-          voice = this._makeHit(params); break;
+          voice = this._makeHit(p); break;
         case 'bellLight':
         case 'fanfare':
         case 'resolve':
-          voice = this._makeOneShotMelody(params); break;
+          voice = this._makeOneShotMelody(p); break;
         case 'chord':
-          voice = this._makeChordHit(params); break;
+          voice = this._makeChordHit(p); break;
       }
     } catch(e) {}
     if (voice) this.voices[key] = voice;
@@ -9957,6 +10058,7 @@ function useGameState() {
   }, [state.soundsEnabled]);
   // Synchroniser musique adaptative avec l'état
   React.useEffect(() => {
+    MusicEngine.loadSavedStyle();  // Charger le style préféré (cosmique/murmure/africain)
     MusicEngine.setEnabled(!!state.musicEnabled);
   }, [state.musicEnabled]);
   return [state, setState];
@@ -12546,6 +12648,54 @@ function App() {
 // ============================================================
 // WELCOME SCREEN
 // ============================================================
+function MusicStyleSelector() {
+  const [activeStyle, setActiveStyle] = React.useState(() => {
+    try {
+      const saved = localStorage.getItem('sq_music_style');
+      return saved && MusicEngine.styles[saved] ? saved : 'cosmique';
+    } catch(e) { return 'cosmique'; }
+  });
+
+  const choose = (key) => {
+    setActiveStyle(key);
+    try { MusicEngine.setStyle(key); } catch(e) {}
+    try { SoundManager.play('click'); } catch(e) {}
+  };
+
+  const styles = MusicEngine.styles || {};
+  return (
+    <div className="mt-3 pt-3 border-t border-slate-800/50">
+      <p className="text-[11px] uppercase tracking-wider text-amber-400/70 mb-2">🎼 Style musical</p>
+      <p className="text-[10px] text-slate-500 mb-3 italic">Choisis l'ambiance qui te convient — chacun ses goûts.</p>
+      <div className="space-y-2">
+        {Object.entries(styles).map(([key, s]) => (
+          <label
+            key={key}
+            className="flex items-start gap-2 cursor-pointer p-2 rounded-lg transition-colors"
+            style={{
+              background: activeStyle === key ? 'rgba(245, 158, 11, 0.10)' : 'transparent',
+              border: '1px solid ' + (activeStyle === key ? 'rgba(245, 158, 11, 0.4)' : 'rgba(51, 65, 85, 0.4)')
+            }}
+          >
+            <input
+              type="radio"
+              name="music-style"
+              value={key}
+              checked={activeStyle === key}
+              onChange={() => choose(key)}
+              className="mt-1 accent-amber-500 cursor-pointer"
+            />
+            <span className="flex-1">
+              <span className="text-sm text-slate-200 font-medium">{s.label}</span>
+              <span className="block text-[10px] text-slate-500 mt-0.5">{s.description}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function WelcomeScreen({ nameInput, setNameInput, countryInput, setCountryInput, onStart }) {
   const handleKey = (e) => { if (e.key === 'Enter' && nameInput.trim()) onStart(); };
   return (
@@ -14999,6 +15149,9 @@ function SettingsScreen({ state, setState, onBack, onShare, onCertificate }) {
             </span>
             <input type="checkbox" checked={!!state.musicEnabled} onChange={() => toggle('musicEnabled')} className="w-5 h-5 accent-amber-500 cursor-pointer" />
           </label>
+
+          {/* Sélecteur de style musical (visible uniquement si musique activée) */}
+          {state.musicEnabled && <MusicStyleSelector />}
         </div>
       </div>
 
