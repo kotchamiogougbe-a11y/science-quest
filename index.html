@@ -699,6 +699,36 @@
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<!-- ============================================================ -->
+<!-- FIREBASE (compat) — comptes Google + synchronisation cloud   -->
+<!-- ============================================================ -->
+<script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore-compat.js"></script>
+<script>
+// Initialisation protégée : si le réseau échoue, l'app reste 100% utilisable hors-ligne.
+(function () {
+  try {
+    var firebaseConfig = {
+      apiKey: "AIzaSyC8W4zE5gLg0Aph62cqG8WLcOAqybr5xG8",
+      authDomain: "science-quest-1487c.firebaseapp.com",
+      projectId: "science-quest-1487c",
+      storageBucket: "science-quest-1487c.firebasestorage.app",
+      messagingSenderId: "610282035066",
+      appId: "1:610282035066:web:b83dcd182fb7f49eeea8c3"
+    };
+    if (typeof firebase !== "undefined" && firebase.initializeApp) {
+      firebase.initializeApp(firebaseConfig);
+      window.SQ_AUTH = firebase.auth();
+      window.SQ_DB = firebase.firestore();
+      // Récupère le résultat d'une connexion par redirection (mobile / PWA)
+      try { window.SQ_AUTH.getRedirectResult().catch(function(){}); } catch (e) {}
+    }
+  } catch (e) {
+    console.warn("Firebase non initialisé (mode hors-ligne) :", e);
+  }
+})();
+</script>
 </head>
 <body>
 <div id="root">
@@ -13781,6 +13811,116 @@ function regenLives(state) {
 // ============================================================
 const STORAGE_KEY = 'sq_player_state_v1';
 
+// ============================================================
+// FIREBASE SYNC — fusion intelligente (zéro perte de progression)
+// Combine l'état cloud et l'état local sans jamais perdre d'acquis.
+// ============================================================
+function sqMergeState(cloud, local) {
+  if (!cloud) return local;
+  if (!local) return cloud;
+  const out = { ...local };
+  const maxNum = (a, b) => Math.max(Number(a) || 0, Number(b) || 0);
+  ['xp','currentRank','streakDays','bestStreak','totalQuestionsAnswered','totalCorrectAnswers','dailyQuestsBadges','maxLives','lives']
+    .forEach(k => { out[k] = maxNum(cloud[k], local[k]); });
+  const unionArr = (a, b) => Array.from(new Set([...(a || []), ...(b || [])]));
+  ['completedMissions','grimoireEntries','badges','ibrahimFragments']
+    .forEach(k => { out[k] = unionArr(cloud[k], local[k]); });
+  ['xpHistory','outboxMessages'].forEach(k => {
+    const a = cloud[k] || [], b = local[k] || [];
+    out[k] = (a.length >= b.length) ? a : b;
+  });
+  const unionMap = (a, b) => ({ ...(a || {}), ...(b || {}) });
+  ['testimonies','notes','dailyQuizHistory','dailyQuestsProgress','dailyQuestsClaimed']
+    .forEach(k => { out[k] = unionMap(cloud[k], local[k]); });
+  out.missionRecords = (function () {
+    const a = cloud.missionRecords || {}, b = local.missionRecords || {};
+    const res = {};
+    new Set([...Object.keys(a), ...Object.keys(b)]).forEach(k => {
+      const ra = a[k], rb = b[k];
+      if (!ra) { res[k] = rb; return; }
+      if (!rb) { res[k] = ra; return; }
+      const sa = Number((ra && (ra.bestScore != null ? ra.bestScore : (ra.score != null ? ra.score : ra.stars))) || 0);
+      const sb = Number((rb && (rb.bestScore != null ? rb.bestScore : (rb.score != null ? rb.score : rb.stars))) || 0);
+      res[k] = (sb >= sa) ? rb : ra;
+    });
+    return res;
+  })();
+  ['playerName','country','avatarEmoji','avatarColor'].forEach(k => {
+    out[k] = (local[k] !== undefined && local[k] !== '' && local[k] !== null) ? local[k] : cloud[k];
+  });
+  ['lastPlayDate','lastLifeRegen'].forEach(k => {
+    const a = cloud[k], b = local[k];
+    if (!a) { out[k] = b; return; }
+    if (!b) { out[k] = a; return; }
+    out[k] = (new Date(a) > new Date(b)) ? a : b;
+  });
+  return out;
+}
+
+// ============================================================
+// BOUTON DE COMPTE (connexion Google) — intégré dans l'en-tête
+// ============================================================
+function SQHeaderAuth() {
+  const [user, setUser] = React.useState((typeof window !== 'undefined' && window.SQ_USER) || null);
+  const [busy, setBusy] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    if (!window.SQ_AUTH) return;
+    return window.SQ_AUTH.onAuthStateChanged(u => setUser(u || null));
+  }, []);
+  const signIn = async () => {
+    if (!window.SQ_AUTH) { return; }
+    setBusy(true);
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+      await window.SQ_AUTH.signInWithPopup(provider);
+    } catch (e) {
+      try { await window.SQ_AUTH.signInWithRedirect(provider); }
+      catch (e2) { console.warn('Auth:', e2); }
+    } finally { setBusy(false); }
+  };
+  const signOut = async () => { setOpen(false); try { await window.SQ_AUTH.signOut(); } catch (e) {} };
+
+  if (!user) {
+    return (
+      <button onClick={signIn} disabled={busy}
+        className="text-slate-400 hover:text-amber-400 transition-colors"
+        title="Se connecter pour synchroniser ma progression"
+        style={{padding:0, background:'transparent', border:'none', cursor:'pointer', lineHeight:1}}>
+        <span style={{fontSize:'15px', lineHeight:1}}>{busy ? '⏳' : '👤'}</span>
+      </button>
+    );
+  }
+  const initial = (user.displayName || user.email || '?').trim().charAt(0).toUpperCase();
+  return (
+    <div className="relative" style={{lineHeight:1}}>
+      <button onClick={() => setOpen(o => !o)} title={user.displayName || 'Mon compte'}
+        className="transition-transform hover:scale-110"
+        style={{padding:0, background:'transparent', border:'none', cursor:'pointer'}}>
+        {user.photoURL
+          ? <img src={user.photoURL} alt="" referrerPolicy="no-referrer"
+              style={{width:22, height:22, borderRadius:'50%', display:'block', border:'1.5px solid rgba(245,158,11,.6)'}} />
+          : <span style={{width:22, height:22, borderRadius:'50%', background:'#f59e0b', color:'#0f172a',
+              display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700}}>{initial}</span>}
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2"
+          style={{background:'rgba(15,23,42,.98)', border:'1px solid rgba(245,158,11,.25)', borderRadius:12,
+                  boxShadow:'0 8px 24px rgba(0,0,0,.4)', padding:8, minWidth:190, zIndex:60}}>
+          <div style={{padding:'4px 8px', fontSize:12, color:'#cbd5e1', fontWeight:600, wordBreak:'break-word'}}>{user.displayName || 'Mon compte'}</div>
+          <div style={{padding:'0 8px 6px', fontSize:11, color:'#64748b', wordBreak:'break-all'}}>{user.email}</div>
+          <div style={{padding:'4px 8px', fontSize:11, color:'#34d399'}}>✓ Progression synchronisée</div>
+          <button onClick={signOut}
+            style={{width:'100%', marginTop:6, background:'rgba(239,68,68,.12)', color:'#fca5a5',
+                    border:'1px solid rgba(239,68,68,.3)', borderRadius:8, padding:'7px', fontSize:12, fontWeight:600, cursor:'pointer'}}>
+            Se déconnecter
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function useGameState() {
   const initial = {
     playerName: '',
@@ -13830,6 +13970,45 @@ function useGameState() {
   // Sauvegarde automatique à chaque changement
   React.useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }, [state]);
+
+  // ── FIREBASE SYNC : à la connexion, lire le cloud → fusionner → réécrire ──
+  React.useEffect(() => {
+    if (!window.SQ_AUTH || !window.SQ_DB) return;
+    const auth = window.SQ_AUTH, db = window.SQ_DB;
+    const unsub = auth.onAuthStateChanged(async (user) => {
+      window.SQ_USER = user || null;
+      if (!user) return;
+      try {
+        const ref = db.collection('users').doc(user.uid);
+        const snap = await ref.get();
+        const cloud = (snap.exists && snap.data()) ? snap.data().state : null;
+        setState(prev => {
+          const merged = cloud ? sqMergeState(cloud, prev) : prev;
+          ref.set({
+            state: merged,
+            profile: { name: user.displayName || '', email: user.email || '', photoURL: user.photoURL || '' },
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true }).catch(() => {});
+          return merged;
+        });
+      } catch (e) { /* hors-ligne : on reste en local */ }
+    });
+    return () => { try { unsub(); } catch (e) {} };
+  }, []);
+
+  // ── FIREBASE SYNC : à chaque changement, si connecté, pousser (différé 1,5 s) ──
+  React.useEffect(() => {
+    if (!window.SQ_USER || !window.SQ_DB) return;
+    const t = setTimeout(() => {
+      try {
+        window.SQ_DB.collection('users').doc(window.SQ_USER.uid).set({
+          state: state,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(() => {});
+      } catch (e) {}
+    }, 1500);
+    return () => clearTimeout(t);
   }, [state]);
   // Synchroniser SoundManager avec l'état
   React.useEffect(() => {
@@ -16839,6 +17018,7 @@ function App() {
                   <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400" style={{animation: 'musicPulse 1.6s ease-in-out infinite'}}></span>
                 )}
               </button>
+              <SQHeaderAuth />
               <button onClick={() => setScreen('help')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Aide & tutoriel">
                 <span style={{fontSize: '15px', lineHeight: 1}}>❓</span>
               </button>
