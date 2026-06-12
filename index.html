@@ -11,10 +11,88 @@
 <meta name="theme-color" content="#020617">
 <meta name="author" content="Kotchami Ogougbe">
 <meta name="copyright" content="© 2026 Kotchami Ogougbe. Tous droits réservés.">
-<meta name="description" content="Science Quest — Plateforme éducative gamifiée. Sauver le monde par la connaissance.">
-<title>Science Quest — Mission Science</title>
+<meta name="description" content="Science Quest — Plateforme éducative gamifiée pour toutes les sciences : mathématiques, SVT, physique-chimie. Apprends en jouant, du collège au lycée. Comprendre avant de mémoriser.">
+<meta name="keywords" content="Science Quest, sciences, mathématiques, SVT, physique chimie, biologie, génétique, collège, lycée, Terminale D, BAC Niger, apprentissage gamifié, éducation Afrique, Kotchami Ogougbe, Le Passeur de sciences, science education, gamified learning, maths, Niamey">
+<meta name="robots" content="index, follow">
+<meta name="language" content="French">
+<link rel="canonical" href="https://kotchami.com/">
+<title>Science Quest — Apprends les sciences en jouant</title>
+
+<!-- ====== Open Graph (Facebook, WhatsApp, LinkedIn, Instagram, Telegram, Discord, Pinterest, médias) ====== -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Science Quest">
+<meta property="og:title" content="Science Quest — Apprends les sciences en jouant">
+<meta property="og:description" content="Plateforme éducative gamifiée pour toutes les sciences : mathématiques, SVT, physique-chimie. Du collège au lycée. Conçu par Kotchami Ogougbe, Le Passeur de sciences. Comprendre avant de mémoriser.">
+<meta property="og:url" content="https://kotchami.com/">
+<meta property="og:image" content="https://kotchami.com/og-image.png">
+<meta property="og:image:secure_url" content="https://kotchami.com/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Science Quest — Apprends les sciences en jouant">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+
+<!-- ====== Twitter / X Cards ====== -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Science Quest — Apprends les sciences en jouant">
+<meta name="twitter:description" content="Plateforme éducative gamifiée pour toutes les sciences : maths, SVT, physique-chimie. Apprends par le jeu. Comprendre avant de mémoriser.">
+<meta name="twitter:image" content="https://kotchami.com/og-image.png">
+<meta name="twitter:image:alt" content="Science Quest">
+
+<!-- ====== Pinterest ====== -->
+<meta name="pinterest-rich-pin" content="true">
+
+<!-- ====== Schema.org JSON-LD (Google enrichi) ====== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Science Quest",
+  "alternateName": "Science Quest — Le Passeur de sciences",
+  "url": "https://kotchami.com/",
+  "description": "Plateforme éducative gamifiée pour toutes les sciences du collège au lycée : mathématiques, SVT, physique-chimie. Missions interactives pour apprendre en jouant.",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "All",
+  "inLanguage": ["fr", "en"],
+  "educationalUse": ["interactive activity", "self-study"],
+  "teaches": ["Mathématiques", "Sciences de la Vie et de la Terre", "Physique-Chimie", "Génétique", "Biologie"],
+  "audience": {
+    "@type": "EducationalAudience",
+    "educationalRole": "student"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "XOF"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Kotchami Ogougbe",
+    "alternateName": "Le Passeur de sciences",
+    "email": "kotchamiogougbe@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Niamey",
+      "addressCountry": "NE"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Le Passeur de sciences",
+    "url": "https://kotchami.com/"
+  }
+}
+</script>
 
 <!-- ====== PWA : Icônes — multiples formats pour compatibilité maximale ====== -->
+<!-- Manifest statique (robuste pour PWA installable + future soumission Play Store) -->
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+<!-- Apple Touch Icon native 180x180 (iPhone/iPad) — PNG haute qualité -->
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
 <!-- Icône SVG vectorielle (Chrome, Firefox, Edge) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23f59e0b'/><stop offset='100%25' stop-color='%23d97706'/></linearGradient></defs><rect width='192' height='192' rx='40' fill='%23020617'/><circle cx='96' cy='96' r='62' fill='none' stroke='url(%23g)' stroke-width='5'/><text x='96' y='118' text-anchor='middle' font-family='Georgia,serif' font-size='80' font-weight='bold' fill='url(%23g)'>SQ</text></svg>">
 <!-- Apple touch icon (iOS) — sera remplacée dynamiquement par PNG généré -->
@@ -113,10 +191,14 @@
       // Encoder UTF-8 correctement avant base64
       const manifestBase64 = btoa(unescape(encodeURIComponent(manifestStr)));
       const manifestUri = 'data:application/manifest+json;base64,' + manifestBase64;
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = manifestUri;
-      document.head.appendChild(link);
+      // NOTE : un manifest.json statique est désormais déclaré dans le <head> (priorité).
+      // On n'ajoute le manifest dynamique QUE s'il n'existe pas déjà de lien manifest (fallback).
+      if (!document.querySelector('link[rel="manifest"]')) {
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestUri;
+        document.head.appendChild(link);
+      }
     } catch(e) { console.warn('Manifest non généré:', e); }
   })();
 </script>
@@ -129,8 +211,8 @@
     window.addEventListener('load', function() {
       try {
         const swCode = `
-          const CACHE_NAME = 'science-quest-v3';
-          const RUNTIME_CACHE = 'sq-runtime-v3';
+          const CACHE_NAME = 'science-quest-v4';
+          const RUNTIME_CACHE = 'sq-runtime-v4';
           self.addEventListener('install', function(e) { self.skipWaiting(); });
           self.addEventListener('activate', function(e) {
             e.waitUntil(
@@ -19850,14 +19932,21 @@ function ContactScreen({ onBack, state, setState }) {
         </p>
       </div>
 
-      <p className="text-center mt-8 text-[10px] tracking-[0.3em] uppercase text-slate-700">{T('brand')}</p>
+      {/* Liens légaux */}
+      <div className="mt-8 pt-6 text-center" style={{borderTop: '1px solid rgba(148, 163, 184, 0.12)'}}>
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[11px]">
+          <a href="/confidentialite.html" className="text-slate-400 hover:text-amber-300 transition-colors underline-offset-2 hover:underline">Confidentialité</a>
+          <span className="text-slate-700">•</span>
+          <a href="/conditions.html" className="text-slate-400 hover:text-amber-300 transition-colors underline-offset-2 hover:underline">Conditions d'utilisation</a>
+          <span className="text-slate-700">•</span>
+          <a href="/mentions-legales.html" className="text-slate-400 hover:text-amber-300 transition-colors underline-offset-2 hover:underline">Mentions légales</a>
+        </div>
+      </div>
+
+      <p className="text-center mt-6 text-[10px] tracking-[0.3em] uppercase text-slate-700">{T('brand')}</p>
     </div>
   );
 }
-
-// ============================================================
-// MISSION FLOW
-// ============================================================
 function MissionFlow({ phase, setPhase, state, setState, missionData, setMissionData, addXP, loseLife, onComplete, onExit, elapsedSeconds }) {
   const phases = ['intro', 'prologue', 'briefing', 'p1', 'p2', 'p3', 'p4', 'p5', 'epilogue'];
   const currentIdx = phases.indexOf(phase);

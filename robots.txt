@@ -1,0 +1,8 @@
+# robots.txt — Science Quest (kotchami.com)
+# Autorise tous les moteurs de recherche à indexer le site
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://kotchami.com/sitemap.xml

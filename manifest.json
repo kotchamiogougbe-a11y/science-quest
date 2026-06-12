@@ -1,0 +1,24 @@
+{
+  "name": "Science Quest — Apprends les sciences en jouant",
+  "short_name": "Science Quest",
+  "description": "Plateforme éducative gamifiée pour toutes les sciences : mathématiques, SVT, physique-chimie. Apprends en jouant, du collège au lycée. Comprendre avant de mémoriser.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["education", "games", "science"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "/og-image.png", "sizes": "1200x630", "type": "image/png", "form_factor": "wide" }
+  ]
+}
