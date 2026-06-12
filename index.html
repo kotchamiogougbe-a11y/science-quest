@@ -721,6 +721,9 @@
       firebase.initializeApp(firebaseConfig);
       window.SQ_AUTH = firebase.auth();
       window.SQ_DB = firebase.firestore();
+      // Réseau instable : forcer le long-polling — corrige les erreurs 400 WebChannel
+      // sur les connexions/proxys qui bufferisent le streaming par défaut de Firestore.
+      try { window.SQ_DB.settings({ experimentalForceLongPolling: true }); } catch (e) {}
       // Récupère le résultat d'une connexion par redirection (mobile / PWA)
       try { window.SQ_AUTH.getRedirectResult().catch(function(){}); } catch (e) {}
     }
