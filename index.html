@@ -18523,7 +18523,9 @@ function App() {
       missionId.startsWith('st-') ||
       missionId === 'sentinel-tuto' ||
       missionId.startsWith('ch-') ||
-      missionId === 'chromosoma-tuto'
+      missionId === 'chromosoma-tuto' ||
+      missionId.startsWith('pr-') ||
+      missionId === 'proteomics-tuto'
     )) {
       setActiveGenecodeMission(missionId);
       setScreen('genecode-mission');
