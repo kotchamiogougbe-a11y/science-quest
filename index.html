@@ -730,6 +730,23 @@
   }
 })();
 </script>
+<!-- ============================================================ -->
+<!-- FEDAPAY — paiement mobile money (Airtel) + carte bancaire     -->
+<!-- ============================================================ -->
+<script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+<script>
+// Configuration de paiement Science Quest.
+// La clé PUBLIQUE est faite pour le côté client (aucun risque à l'exposer).
+// MODE : "sandbox" pour les tests, "live" le jour du lancement réel.
+// PRIX : montant en francs CFA (XOF). Modifiable librement ici.
+window.SQ_FEDAPAY = {
+  publicKey: "pk_sandbox_xGgcn6XwmIwVXZNLs0foptB1",
+  environment: "sandbox",
+  currency: "XOF",
+  priceXOF: 1000,
+  label: "Premium élève — 1 mois"
+};
+</script>
 </head>
 <body>
 <div id="root">
@@ -13840,6 +13857,8 @@ function SQPremium() {
   const [user, setUser] = React.useState((typeof window !== 'undefined' && window.SQ_USER) || null);
   const [premium, setPremium] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [paid, setPaid] = React.useState(false);
+  const [payError, setPayError] = React.useState('');
   React.useEffect(() => {
     if (!window.SQ_AUTH) return;
     return window.SQ_AUTH.onAuthStateChanged(u => setUser(u || null));
@@ -13861,6 +13880,48 @@ function SQPremium() {
     { icon: '📜', t: 'Certificats', d: 'Des preuves de maîtrise vérifiables et partageables.' },
     { icon: '👨\u200d👩\u200d👧', t: 'Suivi parent / prof', d: 'Synchro et tableau de bord de progression.' }
   ];
+
+  const price = (typeof window !== 'undefined' && window.SQ_FEDAPAY && window.SQ_FEDAPAY.priceXOF) || 1000;
+
+  const launchPayment = () => {
+    const cfg = (typeof window !== 'undefined' && window.SQ_FEDAPAY) || {};
+    const FP = (typeof window !== 'undefined') ? window.FedaPay : null;
+    if (!user) { return; }
+    if (!FP || !cfg.publicKey) {
+      setPayError("Le module de paiement n'a pas pu se charger. Vérifie ta connexion et réessaie.");
+      return;
+    }
+    setPayError('');
+    const email = user.email || '';
+    const dn = (user.displayName || '').trim();
+    const parts = dn ? dn.split(/\s+/) : [];
+    const firstname = parts.length ? parts[0] : 'Eleve';
+    const lastname = parts.length > 1 ? parts.slice(1).join(' ') : 'Science Quest';
+    try {
+      const widget = FP.init({
+        public_key: cfg.publicKey,
+        environment: cfg.environment || 'sandbox',
+        locale: 'fr',
+        transaction: {
+          amount: cfg.priceXOF || 1000,
+          description: (cfg.label || 'Science Quest Premium') + ' - ' + (email || user.uid),
+          custom_metadata: { uid: user.uid, email: email, produit: 'premium' }
+        },
+        customer: { email: email, firstname: firstname, lastname: lastname },
+        currency: { iso: cfg.currency || 'XOF' },
+        onComplete: function (resp) {
+          try {
+            const reason = resp && resp.reason;
+            if (FP.DIALOG_DISMISSED && reason === FP.DIALOG_DISMISSED) { return; }
+          } catch (e) {}
+          setPaid(true);
+        }
+      });
+      widget.open();
+    } catch (e) {
+      setPayError("Le paiement n'a pas pu démarrer. Réessaie dans un instant.");
+    }
+  };
 
   return (
     <React.Fragment>
@@ -13918,14 +13979,32 @@ function SQPremium() {
             {!premium && (
               <div style={{marginTop:16}}>
                 {user ? (
-                  <div style={{background:'rgba(59,130,246,.1)', border:'1px solid rgba(59,130,246,.3)',
-                               borderRadius:12, padding:'12px', color:'#bfdbfe', fontSize:13}}>
-                    💳 Le paiement (mobile money &amp; carte) arrive très bientôt. En attendant, l'accès Premium est activé manuellement pour les premiers testeurs.
-                  </div>
+                  paid ? (
+                    <div style={{background:'rgba(16,185,129,.12)', border:'1px solid rgba(16,185,129,.35)',
+                                 borderRadius:12, padding:'12px', color:'#a7f3d0', fontSize:13}}>
+                      ✅ Paiement reçu, merci ! Ton accès Premium sera activé très bientôt — la couronne 👑 apparaîtra automatiquement ici, sans rien faire de ta part.
+                    </div>
+                  ) : (
+                    <React.Fragment>
+                      <button onClick={launchPayment}
+                        className="transition-transform hover:scale-105"
+                        style={{width:'100%', padding:'13px 16px', borderRadius:12, border:'none', cursor:'pointer',
+                                background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'#1f2937',
+                                fontWeight:800, fontSize:15, boxShadow:'0 6px 18px rgba(245,158,11,.35)'}}>
+                        👑 Devenir Premium · {price} FCFA / mois
+                      </button>
+                      <div style={{marginTop:8, textAlign:'center', color:'#94a3b8', fontSize:11}}>
+                        Paiement sécurisé par FedaPay · Airtel Money ou carte bancaire
+                      </div>
+                      {payError && (
+                        <div style={{marginTop:8, color:'#fca5a5', fontSize:12, textAlign:'center'}}>{payError}</div>
+                      )}
+                    </React.Fragment>
+                  )
                 ) : (
                   <div style={{background:'rgba(245,158,11,.1)', border:'1px solid rgba(245,158,11,.3)',
                                borderRadius:12, padding:'12px', color:'#fde68a', fontSize:13}}>
-                    👤 Connecte-toi d'abord (icône compte dans l'en-tête) pour activer le Premium.
+                    👤 Connecte-toi d'abord (icône compte dans l'en-tête) pour rattacher le Premium à ton compte.
                   </div>
                 )}
               </div>
