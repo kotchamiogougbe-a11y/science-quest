@@ -13838,6 +13838,111 @@ function sqMergeState(cloud, local) {
 // ============================================================
 // BOUTON DE COMPTE (connexion Google) — intégré dans l'en-tête
 // ============================================================
+function SQPremium() {
+  const [user, setUser] = React.useState((typeof window !== 'undefined' && window.SQ_USER) || null);
+  const [premium, setPremium] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    if (!window.SQ_AUTH) return;
+    return window.SQ_AUTH.onAuthStateChanged(u => setUser(u || null));
+  }, []);
+  React.useEffect(() => {
+    if (!user || !window.SQ_DB) { setPremium(false); window.SQ_PREMIUM = false; return; }
+    const ref = window.SQ_DB.collection('entitlements').doc(user.uid);
+    const unsub = ref.onSnapshot(
+      snap => { const d = snap.exists ? snap.data() : null; setPremium(!!(d && d.premium === true)); },
+      err => {}
+    );
+    return () => { try { unsub(); } catch (e) {} };
+  }, [user]);
+  React.useEffect(() => { window.SQ_PREMIUM = premium; }, [premium]);
+
+  const pillars = [
+    { icon: '🧠', t: 'Mentor IA', d: 'Un coach qui analyse tes erreurs et te guide.' },
+    { icon: '🎯', t: 'Prépa BAC / BEPC', d: 'Examens blancs, planning et corrigés sur mesure.' },
+    { icon: '📜', t: 'Certificats', d: 'Des preuves de maîtrise vérifiables et partageables.' },
+    { icon: '👨\u200d👩\u200d👧', t: 'Suivi parent / prof', d: 'Synchro et tableau de bord de progression.' }
+  ];
+
+  return (
+    <React.Fragment>
+      <button onClick={() => setOpen(true)}
+        className="transition-transform hover:scale-110"
+        title={premium ? 'Premium actif' : 'Découvrir Premium'}
+        style={{padding:0, background:'transparent', border:'none', cursor:'pointer', lineHeight:1}}>
+        <span style={{fontSize:'15px', lineHeight:1}}>{premium ? '👑' : '✨'}</span>
+      </button>
+      {open && (
+        <div onClick={() => setOpen(false)}
+          style={{position:'fixed', inset:0, background:'rgba(2,6,23,.75)', backdropFilter:'blur(4px)',
+                  zIndex:100000, display:'flex', alignItems:'center', justifyContent:'center', padding:16}}>
+          <div onClick={e => e.stopPropagation()}
+            style={{background:'#0f172a', border:'1px solid rgba(245,158,11,.3)', borderRadius:18,
+                    maxWidth:420, width:'100%', maxHeight:'85vh', overflowY:'auto', padding:22,
+                    boxShadow:'0 20px 60px rgba(0,0,0,.5)'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+              <div style={{fontSize:21, fontWeight:800, color:'#fbbf24'}}>
+                {premium ? '👑 Premium actif' : '✨ Science Quest Premium'}
+              </div>
+              <button onClick={() => setOpen(false)}
+                style={{background:'transparent', border:'none', color:'#94a3b8', fontSize:22, cursor:'pointer', lineHeight:1}}>×</button>
+            </div>
+
+            {premium ? (
+              <p style={{color:'#cbd5e1', fontSize:14, marginTop:6}}>
+                Merci ! Ton compte est en <b style={{color:'#34d399'}}>Premium</b>. Tu débloques l'autre dimension de Science Quest :
+              </p>
+            ) : (
+              <p style={{color:'#cbd5e1', fontSize:14, marginTop:6}}>
+                Tout le contenu reste <b style={{color:'#fbbf24'}}>gratuit</b>. Le Premium n'ajoute pas des leçons — il ajoute un <b>accompagnement</b> pour aller plus loin :
+              </p>
+            )}
+
+            <div style={{marginTop:14, display:'flex', flexDirection:'column', gap:10}}>
+              {pillars.map((p, i) => (
+                <div key={i}
+                  style={{display:'flex', gap:10, alignItems:'flex-start',
+                          background:'rgba(245,158,11,.06)', border:'1px solid rgba(245,158,11,.15)',
+                          borderRadius:12, padding:'10px 12px'}}>
+                  <span style={{fontSize:20, lineHeight:1.1}}>{p.icon}</span>
+                  <div>
+                    <div style={{color:'#f1f5f9', fontWeight:700, fontSize:14}}>
+                      {p.t}
+                      <span style={{marginLeft:8, fontSize:10, color:'#f59e0b',
+                                    border:'1px solid rgba(245,158,11,.4)', borderRadius:6, padding:'1px 6px'}}>bientôt</span>
+                    </div>
+                    <div style={{color:'#94a3b8', fontSize:13, marginTop:2}}>{p.d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {!premium && (
+              <div style={{marginTop:16}}>
+                {user ? (
+                  <div style={{background:'rgba(59,130,246,.1)', border:'1px solid rgba(59,130,246,.3)',
+                               borderRadius:12, padding:'12px', color:'#bfdbfe', fontSize:13}}>
+                    💳 Le paiement (mobile money &amp; carte) arrive très bientôt. En attendant, l'accès Premium est activé manuellement pour les premiers testeurs.
+                  </div>
+                ) : (
+                  <div style={{background:'rgba(245,158,11,.1)', border:'1px solid rgba(245,158,11,.3)',
+                               borderRadius:12, padding:'12px', color:'#fde68a', fontSize:13}}>
+                    👤 Connecte-toi d'abord (icône compte dans l'en-tête) pour activer le Premium.
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div style={{marginTop:16, textAlign:'center', color:'#64748b', fontSize:11, fontStyle:'italic'}}>
+              Comprendre avant de mémoriser — construire sur du roc. · Soli Deo Gloria
+            </div>
+          </div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
 function SQHeaderAuth() {
   const [user, setUser] = React.useState((typeof window !== 'undefined' && window.SQ_USER) || null);
   const [busy, setBusy] = React.useState(false);
@@ -16999,6 +17104,7 @@ function App() {
                   <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400" style={{animation: 'musicPulse 1.6s ease-in-out infinite'}}></span>
                 )}
               </button>
+              <SQPremium />
               <SQHeaderAuth />
               <button onClick={() => setScreen('help')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Aide & tutoriel">
                 <span style={{fontSize: '15px', lineHeight: 1}}>❓</span>
