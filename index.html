@@ -13872,7 +13872,7 @@ function SQPremium() {
         style={{padding:0, background:'transparent', border:'none', cursor:'pointer', lineHeight:1}}>
         <span style={{fontSize:'15px', lineHeight:1}}>{premium ? '👑' : '✨'}</span>
       </button>
-      {open && (
+      {open && ReactDOM.createPortal(
         <div onClick={() => setOpen(false)}
           style={{position:'fixed', inset:0, background:'rgba(2,6,23,.75)', backdropFilter:'blur(4px)',
                   zIndex:100000, display:'flex', alignItems:'center', justifyContent:'center', padding:16}}>
@@ -13938,7 +13938,7 @@ function SQPremium() {
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
     </React.Fragment>
   );
 }
