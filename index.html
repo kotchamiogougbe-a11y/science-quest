@@ -13853,6 +13853,164 @@ function sqMergeState(cloud, local) {
 // ============================================================
 // BOUTON DE COMPTE (connexion Google) — intégré dans l'en-tête
 // ============================================================
+// ============================================================
+// MENTOR IA (v1, sur l'appareil) — analyse réelle des données du joueur.
+// Aucune invention : tout est calculé depuis l'état réel (exactitude,
+// régularité, progression XP, avancement). Réservé au Premium.
+// ============================================================
+function sqMentorAnalyze(state) {
+  state = state || {};
+  const totalQ = state.totalQuestionsAnswered || 0;
+  const correctQ = state.totalCorrectAnswers || 0;
+  const acc = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : null;
+  const completed = (state.completedMissions || []).length;
+  const badges = (state.badges || []).length;
+  const xp = state.xp || 0;
+  const streak = state.streakDays || 0;
+  const hist = Array.isArray(state.xpHistory) ? state.xpHistory : [];
+
+  const now = new Date();
+  const dayMs = 86400000;
+  function daysAgo(dateStr) {
+    const d = new Date(String(dateStr) + 'T00:00:00');
+    if (isNaN(d.getTime())) return Infinity;
+    return Math.floor((now - d) / dayMs);
+  }
+  let xpWeek = 0, activeWeek = 0, xpPrevWeek = 0;
+  hist.forEach(function (e) {
+    if (!e || typeof e.xp !== 'number') return;
+    const ago = daysAgo(e.date);
+    if (ago >= 0 && ago < 7) { xpWeek += e.xp; activeWeek++; }
+    else if (ago >= 7 && ago < 14) { xpPrevWeek += e.xp; }
+  });
+  let trend = 'stable';
+  if (xpWeek > xpPrevWeek * 1.15) trend = 'up';
+  else if (xpWeek < xpPrevWeek * 0.85) trend = 'down';
+
+  const sections = [];
+
+  if (acc === null) {
+    sections.push({ icon: '🎯', title: 'Ta maîtrise', tone: 'neutral',
+      body: "Tu n'as pas encore répondu à assez de questions pour que je mesure ta maîtrise. Lance une première mission et reviens me voir !" });
+  } else {
+    let body, tone;
+    if (acc >= 85) { tone = 'good'; body = "Maîtrise solide : " + acc + "% de bonnes réponses. Tu comprends en profondeur — ose le mode Défi pour te dépasser."; }
+    else if (acc >= 70) { tone = 'good'; body = "Bonne maîtrise : " + acc + "%. Encore quelques points à consolider : relis l'explication de chaque question ratée, c'est là que tout se joue."; }
+    else if (acc >= 55) { tone = 'neutral'; body = "Maîtrise en construction : " + acc + "%. Prends le temps de LIRE chaque explication avant de répondre. Comprendre d'abord, mémoriser ensuite."; }
+    else { tone = 'warn'; body = "Tu débutes : " + acc + "%. Ralentis, relis les corrigés sans te juger. Chaque erreur comprise est une brique de plus. On construit sur du roc."; }
+    sections.push({ icon: '🎯', title: 'Ta maîtrise', tone: tone, body: body });
+  }
+
+  let regBody, regTone;
+  if (streak >= 7) { regTone = 'good'; regBody = "Régularité remarquable : " + streak + " jours d'affilée ! C'est exactement comme ça que la science s'ancre durablement."; }
+  else if (streak >= 1) { regTone = 'neutral'; regBody = "Tu tiens une série de " + streak + " jour" + (streak > 1 ? 's' : '') + ". Continue : même 5 minutes par jour valent mieux qu'une longue session une fois par semaine."; }
+  else { regTone = 'warn'; regBody = "Reprends une petite habitude quotidienne : une seule mission par jour suffit pour progresser sans t'épuiser."; }
+  sections.push({ icon: '🔥', title: 'Ta régularité', tone: regTone, body: regBody });
+
+  let progBody, progTone;
+  if (activeWeek > 0) {
+    progBody = "Cette semaine : +" + xpWeek + " XP sur " + activeWeek + " jour" + (activeWeek > 1 ? 's' : '') + " actif" + (activeWeek > 1 ? 's' : '') + ". ";
+    if (trend === 'up') { progTone = 'good'; progBody += "Ta progression accélère — bravo !"; }
+    else if (trend === 'down') { progTone = 'neutral'; progBody += "Tu as un peu ralenti par rapport à la semaine dernière. Pas grave : l'essentiel est de reprendre le rythme."; }
+    else { progTone = 'good'; progBody += "Tu avances à un rythme régulier. Solide."; }
+  } else {
+    progTone = 'warn';
+    progBody = "Tu n'as pas joué cette semaine. Une mission aujourd'hui relancera ta dynamique — je t'attends !";
+  }
+  sections.push({ icon: '📈', title: 'Ta progression', tone: progTone, body: progBody });
+
+  sections.push({ icon: '🏅', title: 'Ton avancement', tone: 'neutral',
+    body: completed + " mission" + (completed > 1 ? 's' : '') + " complétée" + (completed > 1 ? 's' : '') + ", " + badges + " badge" + (badges > 1 ? 's' : '') + ", " + xp + " XP au total. " + (completed === 0 ? "Ta première mission t'attend." : "Continue à explorer de nouveaux thèmes pour élargir ta maîtrise.") });
+
+  let headline;
+  if (acc === null && completed === 0) headline = "Bienvenue ! Lance ta première mission et je t'accompagne dès le départ.";
+  else if (acc !== null && acc >= 80 && streak >= 3) headline = "Tu es sur une excellente trajectoire. Garde le cap !";
+  else if (activeWeek === 0) headline = "Reprenons doucement le rythme, ensemble.";
+  else headline = "Voici où tu en es — et comment aller plus loin.";
+
+  return { headline: headline, sections: sections };
+}
+
+function SQMentor(props) {
+  const state = (props && props.state) || {};
+  const [user, setUser] = React.useState((typeof window !== 'undefined' && window.SQ_USER) || null);
+  const [premium, setPremium] = React.useState((typeof window !== 'undefined' && !!window.SQ_PREMIUM) || false);
+  const [open, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    if (!window.SQ_AUTH) return;
+    return window.SQ_AUTH.onAuthStateChanged(u => setUser(u || null));
+  }, []);
+  React.useEffect(() => {
+    if (!user || !window.SQ_DB) { setPremium(false); return; }
+    const ref = window.SQ_DB.collection('entitlements').doc(user.uid);
+    const unsub = ref.onSnapshot(
+      snap => { const d = snap.exists ? snap.data() : null; setPremium(!!(d && d.premium === true)); },
+      err => {}
+    );
+    return () => { try { unsub(); } catch (e) {} };
+  }, [user]);
+
+  const analysis = (open && premium) ? sqMentorAnalyze(state) : null;
+  const toneColor = (t) => t === 'good' ? '#34d399' : (t === 'warn' ? '#fbbf24' : '#93c5fd');
+
+  return (
+    <React.Fragment>
+      <button onClick={() => setOpen(true)}
+        className="transition-transform hover:scale-110"
+        title="Mentor IA"
+        style={{padding:0, background:'transparent', border:'none', cursor:'pointer', lineHeight:1}}>
+        <span style={{fontSize:'15px', lineHeight:1}}>🧠</span>
+      </button>
+      {open && ReactDOM.createPortal(
+        <div onClick={() => setOpen(false)}
+          style={{position:'fixed', inset:0, background:'rgba(2,6,23,.75)', backdropFilter:'blur(4px)',
+                  zIndex:100000, display:'flex', alignItems:'center', justifyContent:'center', padding:16}}>
+          <div onClick={e => e.stopPropagation()}
+            style={{background:'#0f172a', border:'1px solid rgba(59,130,246,.3)', borderRadius:18,
+                    maxWidth:440, width:'100%', maxHeight:'85vh', overflowY:'auto', padding:22,
+                    boxShadow:'0 20px 60px rgba(0,0,0,.5)'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+              <div style={{fontSize:20, fontWeight:800, color:'#93c5fd'}}>🧠 Mentor IA</div>
+              <button onClick={() => setOpen(false)}
+                style={{background:'transparent', border:'none', color:'#94a3b8', fontSize:22, cursor:'pointer', lineHeight:1}}>×</button>
+            </div>
+
+            {premium && analysis ? (
+              <div style={{marginTop:8}}>
+                <p style={{color:'#cbd5e1', fontSize:14, marginBottom:12}}>{analysis.headline}</p>
+                <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                  {analysis.sections.map((s, i) => (
+                    <div key={i}
+                      style={{background:'rgba(148,163,184,.06)', border:'1px solid rgba(148,163,184,.15)',
+                              borderLeft:'3px solid ' + toneColor(s.tone), borderRadius:10, padding:'10px 12px'}}>
+                      <div style={{color:'#e2e8f0', fontWeight:700, fontSize:13, marginBottom:3}}>{s.icon} {s.title}</div>
+                      <div style={{color:'#94a3b8', fontSize:13, lineHeight:1.5}}>{s.body}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div style={{marginTop:8}}>
+                <p style={{color:'#cbd5e1', fontSize:14}}>
+                  Le <b style={{color:'#93c5fd'}}>Mentor IA</b> analyse tes réponses, évalue ta progression dans le temps et te donne des conseils personnalisés pour aller plus loin — sans jamais te juger.
+                </p>
+                <div style={{marginTop:12, background:'rgba(245,158,11,.1)', border:'1px solid rgba(245,158,11,.3)',
+                             borderRadius:12, padding:'12px', color:'#fde68a', fontSize:13}}>
+                  ✨ Le Mentor IA fait partie de <b>Science Quest Premium</b>. Touche l'icône ✨ dans l'en-tête pour le découvrir.
+                </div>
+              </div>
+            )}
+
+            <div style={{marginTop:16, textAlign:'center', color:'#64748b', fontSize:11, fontStyle:'italic'}}>
+              Comprendre avant de mémoriser — construire sur du roc. · Soli Deo Gloria
+            </div>
+          </div>
+        </div>
+      , document.body)}
+    </React.Fragment>
+  );
+}
+
 function SQPremium() {
   const [user, setUser] = React.useState((typeof window !== 'undefined' && window.SQ_USER) || null);
   const [premium, setPremium] = React.useState(false);
@@ -17181,6 +17339,7 @@ function App() {
                   <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400" style={{animation: 'musicPulse 1.6s ease-in-out infinite'}}></span>
                 )}
               </button>
+              <SQMentor state={state} />
               <SQPremium />
               <SQHeaderAuth />
               <button onClick={() => setScreen('help')} className="text-slate-400 hover:text-amber-400 transition-colors" title="Aide & tutoriel">
