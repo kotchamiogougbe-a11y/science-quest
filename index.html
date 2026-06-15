@@ -13819,45 +13819,20 @@ const STORAGE_KEY = 'sq_player_state_v1';
 // Combine l'état cloud et l'état local sans jamais perdre d'acquis.
 // ============================================================
 function sqMergeState(cloud, local) {
-  if (!cloud) return local;
-  if (!local) return cloud;
-  const out = { ...local };
-  const maxNum = (a, b) => Math.max(Number(a) || 0, Number(b) || 0);
-  ['xp','currentRank','streakDays','bestStreak','totalQuestionsAnswered','totalCorrectAnswers','dailyQuestsBadges','maxLives','lives']
-    .forEach(k => { out[k] = maxNum(cloud[k], local[k]); });
-  const unionArr = (a, b) => Array.from(new Set([...(a || []), ...(b || [])]));
-  ['completedMissions','grimoireEntries','badges','ibrahimFragments']
-    .forEach(k => { out[k] = unionArr(cloud[k], local[k]); });
-  ['xpHistory','outboxMessages'].forEach(k => {
-    const a = cloud[k] || [], b = local[k] || [];
-    out[k] = (a.length >= b.length) ? a : b;
-  });
-  const unionMap = (a, b) => ({ ...(a || {}), ...(b || {}) });
-  ['testimonies','notes','dailyQuizHistory','dailyQuestsProgress','dailyQuestsClaimed']
-    .forEach(k => { out[k] = unionMap(cloud[k], local[k]); });
-  out.missionRecords = (function () {
-    const a = cloud.missionRecords || {}, b = local.missionRecords || {};
-    const res = {};
-    new Set([...Object.keys(a), ...Object.keys(b)]).forEach(k => {
-      const ra = a[k], rb = b[k];
-      if (!ra) { res[k] = rb; return; }
-      if (!rb) { res[k] = ra; return; }
-      const sa = Number((ra && (ra.bestScore != null ? ra.bestScore : (ra.score != null ? ra.score : ra.stars))) || 0);
-      const sb = Number((rb && (rb.bestScore != null ? rb.bestScore : (rb.score != null ? rb.score : rb.stars))) || 0);
-      res[k] = (sb >= sa) ? rb : ra;
-    });
-    return res;
-  })();
-  ['playerName','country','avatarEmoji','avatarColor'].forEach(k => {
-    out[k] = (local[k] !== undefined && local[k] !== '' && local[k] !== null) ? local[k] : cloud[k];
-  });
-  ['lastPlayDate','lastLifeRegen'].forEach(k => {
-    const a = cloud[k], b = local[k];
-    if (!a) { out[k] = b; return; }
-    if (!b) { out[k] = a; return; }
-    out[k] = (new Date(a) > new Date(b)) ? a : b;
-  });
-  return out;
+  // BLINDÉ : on ne fabrique jamais d'état hybride (source de plantages).
+  // On garde EN BLOC la sauvegarde la plus avancée (cloud ou local). Jamais d'exception.
+  try {
+    if (!cloud || typeof cloud !== 'object') return local;
+    if (!local || typeof local !== 'object') return cloud;
+    const score = (s) => {
+      let n = Number(s && s.xp) || 0;
+      if (s && Array.isArray(s.completedMissions)) n += s.completedMissions.length * 1000000;
+      return n;
+    };
+    return score(cloud) > score(local) ? cloud : local;
+  } catch (e) {
+    return local;
+  }
 }
 
 // ============================================================
@@ -13987,12 +13962,15 @@ function useGameState() {
         const snap = await ref.get();
         const cloud = (snap.exists && snap.data()) ? snap.data().state : null;
         setState(prev => {
-          const merged = cloud ? sqMergeState(cloud, prev) : prev;
-          ref.set({
-            state: merged,
-            profile: { name: user.displayName || '', email: user.email || '', photoURL: user.photoURL || '' },
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          }, { merge: true }).catch(() => {});
+          let merged = prev;
+          try { merged = cloud ? sqMergeState(cloud, prev) : prev; } catch (e) { merged = prev; }
+          try {
+            ref.set({
+              state: merged,
+              profile: { name: user.displayName || '', email: user.email || '', photoURL: user.photoURL || '' },
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true }).catch(() => {});
+          } catch (e) {}
           return merged;
         });
       } catch (e) { /* hors-ligne : on reste en local */ }
