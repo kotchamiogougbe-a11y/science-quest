@@ -862,9 +862,36 @@ const CURRICULUM = {
                 { id: 'reproduction-conforme', name: "La reproduction conforme", mission: "Empêcher une erreur de copie", power: "Duplication parfaite", locked: true },
                 { id: 'cycle-cellulaire', name: "Cycle cellulaire et évolution de l'ADN", mission: "Maîtriser le cycle de la vie", power: "Vision cellulaire", locked: true }
               ]},
-              { id: 'theme3-expression', name: "Thème 3 — Expression de l'information génétique", chapters: [
-                { id: 'proteines', name: "Protéines", mission: "Comprendre les bâtisseurs du vivant", power: "Architecte protéique", locked: true },
-                { id: 'synthese-prot', name: "Mécanismes d'expression : synthèse des protéines", mission: "Produire une protéine vitale", power: "Fabrication cellulaire", locked: true }
+              { id: 'theme3-expression', name: "Thème 3 · CAMPAGNE PROTÉOMICS — L'odyssée de l'expression génétique (15 missions + BOSS)", chapters: [
+                // ─── MISSION TUTORIELLE
+                { id: 'proteomics-tuto', name: "🧬 Tuto — Bienvenue à PROTÉOMICS", mission: "Découvrir l'Institut de Biologie Moléculaire de Niamey et les 3 dossiers", power: "Initiation à l'expression génétique", locked: false },
+
+                // ─── ARC 1 · LES BRIQUES DE LA VIE — Les protéines
+                { id: 'pr-1-1', name: "🧱 Arc 1.1 — Les 20 lettres de la vie", mission: "Acides aminés, liaison peptidique, 4 niveaux de structure", power: "Architecte protéique", locked: false },
+                { id: 'pr-1-2', name: "⚙️ Arc 1.2 — La protéine à l'œuvre", mission: "Les 6 fonctions des protéines et le lien avec le phénotype", power: "Lecteur du phénotype", locked: false },
+                { id: 'pr-1-3', name: "🔍 Arc 1.3 — La bibliothèque cellulaire", mission: "Le dogme central : ADN → ARNm → Protéine", power: "Lecteur du dogme central", locked: false },
+
+                // ─── ARC 2 · LE CODE SECRET — Le code génétique
+                { id: 'pr-2-1', name: "🔑 Arc 2.1 — La table de Rosette", mission: "Lire le code génétique : propriétés UNDNA, codons stop, AUG", power: "Lecteur du code génétique", locked: false },
+                { id: 'pr-2-2', name: "🔄 Arc 2.2 — Complémentarités", mission: "De l'ADN à l'ARNm : complémentarité des bases", power: "Scribe de l'ARNm", locked: false },
+                { id: 'pr-2-3', name: "📐 Arc 2.3 — Calculer les longueurs", mission: "Nucléotides, codons, acides aminés", power: "Calculateur de séquences", locked: false },
+
+                // ─── ARC 3 · LA FABRIQUE CELLULAIRE — Transcription et traduction
+                { id: 'pr-3-1', name: "🏭 Arc 3.1 — La copie du plan", mission: "La transcription : les 3 étapes", power: "Maître de la transcription", locked: false },
+                { id: 'pr-3-2', name: "🔧 Arc 3.2 — L'assemblage final", mission: "La traduction : ribosome, ARNt, sites A/P/E", power: "Maître de la traduction", locked: false },
+                { id: 'pr-3-3', name: "🏛️ Arc 3.3 — Les deux mondes", mission: "Eucaryotes vs procaryotes — produire l'insuline humaine", power: "Ingénieur du vivant", locked: false },
+
+                // ─── ARC 4 · QUAND LE CODE MUTE — Les mutations géniques
+                { id: 'pr-4-1', name: "⚡ Arc 4.1 — Les 4 types de mutations", mission: "Substitution, addition, délétion, inversion", power: "Détecteur de mutations", locked: false },
+                { id: 'pr-4-2', name: "🎯 Arc 4.2 — Les 4 conséquences", mission: "Silencieuse, faux-sens, non-sens, décalage du cadre", power: "Analyste des conséquences", locked: false },
+                { id: 'pr-4-3', name: "🧬 Arc 4.3 — Les allèles", mission: "La diversité née des mutations", power: "Lecteur de la diversité", locked: false },
+
+                // ─── ARC 5 · LA PROTÉINE AU SERVICE DE LA VIE — Devenir et applications
+                { id: 'pr-5-1', name: "📦 Arc 5.1 — Du ribosome au destin final", mission: "RE, Golgi, lysosome, exocytose", power: "Guide des protéines", locked: false },
+                { id: 'pr-5-2', name: "💡 Arc 5.2 — La médecine du code", mission: "Régime, insuline de synthèse, thérapie génique", power: "Directeur Scientifique", locked: false },
+
+                // ─── BOSS GLOBAL
+                { id: 'pr-boss', name: "🏆 BOSS — Le langage de la vie", mission: "12 tâches intégratives — Aminata, Ibrahim, Zeinab", power: "Directeur Scientifique PROTÉOMICS — Rang 5", locked: false }
               ]}
             ]
           },
@@ -1230,6 +1257,1273 @@ const CURRICULUM = {
 // Architecture data-driven : chaque mission est jouable par MissionPlayer
 // ============================================================
 const MISSIONS_DATA = {
+  'pr-boss': {
+    id: 'pr-boss', arc: 6, arcTitle: 'BOSS GLOBAL', number: 'BOSS',
+    title: "Le langage de la vie",
+    subtitle: "12 tâches intégratives — Aminata, Ibrahim, Zeinab",
+    icon: '🏆',
+    rank: { from: 5, to: 5, name: 'Directeur Scientifique PROTÉOMICS — Rang 5' },
+    power: 'Direction Scientifique PROTÉOMICS',
+    signature: "Trois dossiers. Une seule chaîne : Séquence → Protéine → Phénotype → Décision. Mobilise tout ce que tu as appris.",
+    prologue: [
+      "Dr Kotchami réunit tout l'institut. « Voici l'épreuve finale. Trois familles, trois dossiers complets. Pour devenir Directeur Scientifique, tu dois mener chacun de la séquence d'ADN jusqu'à la décision médicale. »",
+      "« Douze tâches t'attendent. Elles couvrent tout : la protéine, le code, la fabrique cellulaire, les mutations, le devenir des protéines, et le conseil aux familles. Montre-nous que tu maîtrises le langage de la vie. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Mobiliser les 5 arcs sur 3 dossiers réels (Aminata, Ibrahim, Zeinab)",
+        "Relier sans faute Séquence → Protéine → Phénotype → Décision",
+        "Décoder mutations, traductions et conséquences avec rigueur",
+        "Délivrer un conseil exact, utile et bienveillant — atteindre le Rang 5"
+      ],
+      recompenses: { xp: 2000, badge: 'Directeur Scientifique PROTÉOMICS', power: "Maîtrise totale de l'expression génétique — Rang 5" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Tâche 1/12 — Aminata · La brique (Arc 1)",
+        question: "La chaîne bêta de l'hémoglobine compte 146 acides aminés. Combien de liaisons peptidiques et de molécules d'eau pour assembler UNE chaîne bêta ?",
+        options: [
+          "146 liaisons et 146 molécules d'eau",
+          "145 LIAISONS peptidiques et 145 MOLÉCULES D'EAU libérées : pour n acides aminés, il faut (n − 1) liaisons, chacune formée par condensation avec perte d'une molécule d'eau. Ici 146 − 1 = 145.",
+          "292 liaisons et 0 molécule d'eau",
+          "Aucune liaison : les acides aminés ne se lient pas"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Règle n − 1 : 146 acides aminés → 145 liaisons → 145 H2O.",
+        explain: "RÈGLE n − 1 : relier n acides aminés exige (n − 1) liaisons peptidiques, chacune libérant 1 molécule d'eau par condensation. Chaîne bêta de 146 AA → 145 liaisons → 145 H2O. C'est le réflexe de calcul de base du biologiste moléculaire."
+      },
+      { type: 'question',
+        title: "Tâche 2/12 — Aminata · Lire le code (Arc 2)",
+        question: "Le 6ᵉ codon de l'ARNm de la bêta-globine est normalement GAG. Chez Aminata, il devient GUG. Quels acides aminés, et quelle est la nature du changement ?",
+        options: [
+          "GAG = valine, GUG = acide glutamique ; aucun changement",
+          "GAG = ACIDE GLUTAMIQUE (Glu), GUG = VALINE (Val). En position 6 de la chaîne bêta, l'acide glutamique est remplacé par la valine : c'est la substitution Glu6Val, signature moléculaire de la drépanocytose.",
+          "GAG et GUG codent tous deux un codon stop",
+          "Les deux codons codent la méthionine"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "GAG = Glu, GUG = Val. Glu → Val en position 6.",
+        explain: "DÉCODAGE : GAG code l'acide glutamique, GUG la valine. La substitution Glu6Val sur la chaîne bêta produit l'hémoglobine S. On lit ici, au niveau de l'ARNm, la cause de la maladie d'Aminata."
+      },
+      { type: 'question',
+        title: "Tâche 3/12 — Aminata · La complémentarité (Arc 2)",
+        question: "Sur le brin matrice de l'ADN, le 6ᵉ codon normal est CTC. Écris le codon ARNm correspondant (rappel : A→U, T→A, G→C, C→G).",
+        options: [
+          "ARNm = CTC (identique au brin matrice)",
+          "ARNm = GAG. Par complémentarité antiparallèle : C→G, T→A, C→G donne GAG, qui code l'acide glutamique. (La version mutée du brin matrice, CAC, donnerait GUG → valine.)",
+          "ARNm = GTG (avec une thymine)",
+          "ARNm = AUA"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Brin matrice CTC → complémentaire ARNm : C→G, T→A, C→G = GAG.",
+        explain: "TRANSCRIPTION — complémentarité : le brin matrice CTC donne l'ARNm GAG (C→G, T→A, C→G), soit l'acide glutamique. L'allèle muté (matrice CAC) donnerait GUG → valine. Tout part de la séquence d'ADN."
+      },
+      { type: 'question',
+        title: "Tâche 4/12 — Aminata · Mutation et conséquence (Arc 4 + Arc 1)",
+        question: "Quel est le TYPE de la mutation d'Aminata, sa CONSÉQUENCE, et pourquoi déforme-t-elle le globule rouge ?",
+        options: [
+          "Une délétion silencieuse, sans aucun effet sur la cellule",
+          "TYPE : substitution (un nucléotide remplacé, longueur inchangée). CONSÉQUENCE : faux-sens (acide aminé changé, Glu → Val). MÉCANISME : la valine est hydrophobe ; à faible oxygène, les molécules d'hémoglobine S s'agrègent par ces zones hydrophobes et polymérisent en fibres rigides → le globule rouge se déforme en faucille (rigidité, blocage des vaisseaux, anémie).",
+          "Un décalage du cadre de lecture qui n'affecte qu'un acide aminé",
+          "Une inversion qui change la couleur du sang"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Substitution → faux-sens (Glu→Val). Valine hydrophobe → polymérisation de l'HbS → faucille.",
+        explain: "SUBSTITUTION FAUX-SENS : un seul nucléotide change (substitution), donnant un acide aminé différent (faux-sens : Glu → Val). La valine hydrophobe crée une zone collante ; en hypoxie, l'HbS polymérise en fibres rigides et déforme le globule en faucille. Un seul acide aminé mal placé suffit à rendre malade."
+      },
+      { type: 'question',
+        title: "Tâche 5/12 — Ibrahim · Gène → enzyme → phénotype (Arc 1 + Arc 2)",
+        question: "Ibrahim est atteint de phénylcétonurie. Relie le gène muté au phénotype.",
+        options: [
+          "Le gène agit directement sur le cerveau, sans enzyme",
+          "GÈNE PAH muté → enzyme PHÉNYLALANINE HYDROXYLASE (PAH) absente ou non fonctionnelle → la phénylalanine n'est plus transformée en tyrosine → elle S'ACCUMULE dans le sang à des taux toxiques → atteinte du cerveau en développement → risque de retard mental sans prise en charge. Chaîne : gène → enzyme absente → réaction bloquée → accumulation → phénotype.",
+          "L'absence de phénylalanine provoque la maladie",
+          "La PAH est un sucre, pas une enzyme"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Gène PAH muté → enzyme absente → phénylalanine non transformée → accumulation toxique → atteinte cérébrale.",
+        explain: "CHAÎNE CAUSALE — PCU : le gène PAH muté ne produit plus d'enzyme fonctionnelle. La phénylalanine, normalement transformée en tyrosine, s'accumule et devient toxique pour le cerveau du jeune enfant. Une enzyme manquante = une réaction bloquée = accumulation du substrat en amont."
+      },
+      { type: 'question',
+        title: "Tâche 6/12 — Ibrahim · Non-sens vs décalage (Arc 4)",
+        question: "Une mutation du gène PAH crée un codon STOP prématuré au milieu du gène. Comment se nomme cette conséquence, et quel en est l'effet sur l'enzyme ?",
+        options: [
+          "Mutation silencieuse : l'enzyme reste intacte",
+          "Mutation NON-SENS : la substitution crée un codon stop prématuré → la traduction s'arrête trop tôt → l'enzyme PAH est TRONQUÉE (toute la partie située après le stop manque) → elle est non fonctionnelle. Résultat : enzyme absente, donc phénylcétonurie. (Une addition/délétion aurait donné un décalage du cadre de lecture, autre conséquence sévère.)",
+          "Mutation faux-sens : un seul acide aminé change, l'enzyme reste active",
+          "Aucune conséquence : un codon stop n'arrête pas la traduction"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Codon stop prématuré = mutation non-sens → protéine tronquée → enzyme non fonctionnelle.",
+        explain: "MUTATION NON-SENS : un codon stop prématuré interrompt la traduction → l'enzyme PAH est tronquée et non fonctionnelle → la phénylalanine s'accumule. À distinguer du décalage du cadre (addition/délétion), qui rend faux tous les codons en aval. Les deux sont sévères."
+      },
+      { type: 'question',
+        title: "Tâche 7/12 — Ibrahim · La décision thérapeutique (Arc 5)",
+        question: "Quelle est la prise en charge d'Ibrahim, et pourquoi parle-t-on de gérer plutôt que de guérir ?",
+        options: [
+          "Un médicament qui répare le gène PAH en une prise",
+          "RÉGIME pauvre en PHÉNYLALANINE : puisque l'enzyme manque, on réduit l'apport alimentaire du substrat pour éviter son accumulation toxique. C'est une GESTION à vie : le régime ne corrige ni le gène ni l'enzyme, il contourne le problème. D'où l'importance du DÉPISTAGE NÉONATAL et d'un régime PRÉCOCE — un enfant dépisté et traité tôt se développe normalement.",
+          "Donner beaucoup de phénylalanine pour compenser",
+          "Aucun traitement n'existe et rien n'est possible"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Régime pauvre en phénylalanine (réduire le substrat) ; gérer ≠ guérir ; dépistage néonatal et régime précoce.",
+        explain: "GÉRER LA PCU : le régime pauvre en phénylalanine réduit l'apport du substrat que l'enzyme absente ne peut traiter. Il contourne le problème sans corriger le gène ni l'enzyme → gestion à vie. Le dépistage néonatal et la mise au régime précoce protègent le cerveau et sauvent l'avenir d'Ibrahim."
+      },
+      { type: 'question',
+        title: "Tâche 8/12 — Zeinab · La traduction (Arc 3)",
+        question: "L'ARNm de l'insuline (chaîne B, position 24) porte normalement le codon UUU. Chez Zeinab, il devient UUA. Donne les acides aminés, l'anticodon de chaque ARNt, et la nature du changement.",
+        options: [
+          "UUU et UUA codent tous deux un codon stop",
+          "UUU = PHÉNYLALANINE (anticodon ARNt 3'-AAA-5') ; UUA = LEUCINE (anticodon 3'-AAU-5'). En position 24 de la chaîne B, la phénylalanine est remplacée par la leucine : substitution faux-sens (Phe → Leu). L'insuline est correctement fabriquée et sécrétée, mais sa séquence — donc sa forme et sa fonction — est modifiée.",
+          "UUU = leucine, UUA = phénylalanine ; aucun changement de fonction",
+          "L'anticodon est identique au codon, et l'acide aminé reste la phénylalanine"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "UUU↔Phe (anticodon AAA) ; UUA↔Leu (anticodon AAU). Phe → Leu, faux-sens.",
+        explain: "TRADUCTION — Zeinab : codon UUU → anticodon complémentaire 3'-AAA-5' → phénylalanine ; codon UUA → anticodon 3'-AAU-5' → leucine. En position 24 de la chaîne B, Phe → Leu (faux-sens). La machinerie traduit fidèlement, même l'erreur : le problème est dans la séquence de la protéine."
+      },
+      { type: 'question',
+        title: "Tâche 9/12 — Zeinab · Localiser le problème (Arc 3 + Arc 5)",
+        question: "Chez Zeinab, l'insuline est bien produite par les ribosomes ET bien sécrétée. Où se situe donc le problème : dans l'expression du gène, ou dans la protéine mature ?",
+        options: [
+          "Dans l'expression : l'insuline n'est jamais fabriquée",
+          "Dans la PROTÉINE MATURE. Un problème d'EXPRESSION concernerait la transcription ou la traduction (insuline non, ou mal, fabriquée). Or l'insuline EST fabriquée et sécrétée normalement : le problème vient de sa SÉQUENCE (acide aminé substitué en position 24), qui altère sa forme et donc sa capacité à réguler la glycémie. Mécanisme de sécrétion : l'exocytose (ribosomes/RE → Golgi → vésicules → membrane → sang).",
+          "Dans le lysosome qui digère l'insuline avant sa sortie",
+          "Il n'y a aucun problème : l'insuline de Zeinab est normale"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Fabrication et sécrétion OK → le problème est dans la protéine mature (séquence), pas dans l'expression.",
+        explain: "EXPRESSION vs PROTÉINE MATURE : l'insuline de Zeinab est correctement transcrite, traduite et sécrétée (par exocytose, après le trajet RE → Golgi → vésicules). Le défaut est dans sa SÉQUENCE (Phe→Leu en position 24), qui modifie sa forme et sa fonction. Distinguer le niveau d'atteinte oriente la bonne décision thérapeutique."
+      },
+      { type: 'question',
+        title: "Tâche 10/12 — Zeinab · L'insuline de synthèse (Arc 3 + Arc 5)",
+        question: "PROTÉOMICS produit l'insuline humaine de Zeinab dans la bactérie E. coli. Pourquoi est-ce possible, et pourquoi une maturation post-traductionnelle est-elle nécessaire ?",
+        options: [
+          "Impossible : une bactérie ne lit jamais un gène humain",
+          "POSSIBLE grâce à l'UNIVERSALITÉ DU CODE : un codon code le même acide aminé chez l'humain et la bactérie. En insérant le gène humain de l'insuline dans E. coli, la bactérie le transcrit et le traduit avec sa propre machinerie et produit la séquence humaine. MATURATION : la traduction donne d'abord une PRO-INSULINE inactive ; il faut la replier, former les ponts disulfure et exciser le peptide C pour obtenir l'insuline ACTIVE. Une protéine fonctionnelle = bonne séquence + bon repliement + maturations.",
+          "Possible seulement si la bactérie est elle-même humaine",
+          "La bactérie produit directement l'insuline active, sans aucune maturation"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Code universel → gène humain lu par E. coli → insuline humaine. Pro-insuline inactive → maturation → insuline active.",
+        explain: "GÉNIE GÉNÉTIQUE — Zeinab : le code étant universel, E. coli lit le gène humain de l'insuline et produit la séquence humaine, en grande quantité et bien tolérée. Mais la traduction donne une pro-insuline inactive : sa maturation (repliement, ponts disulfure, excision du peptide C) donne l'insuline active. Séquence + repliement + maturation = protéine fonctionnelle."
+      },
+      { type: 'question',
+        title: "Tâche 11/12 — Synthèse · Allèles et diversité (Arc 4)",
+        question: "Aminata est homozygote SS ; ses parents sont AS (porteurs sains). Pourquoi l'allèle drépanocytaire (S) reste-t-il fréquent en Afrique subsaharienne malgré sa gravité ?",
+        options: [
+          "Parce que l'allèle S n'a aucun effet et se transmet au hasard",
+          "AVANTAGE DES HÉTÉROZYGOTES : les porteurs sains AS sont mieux protégés contre les formes graves du PALUDISME que les individus AA. Dans les régions de forte transmission du paludisme, cet avantage de survie des AS maintient l'allèle S dans la population, génération après génération, malgré la gravité chez les homozygotes SS. Un même allèle peut être un fléau (SS) et une protection (AS).",
+          "Parce que l'allèle S guérit le paludisme chez tout le monde",
+          "Parce que les homozygotes SS sont avantagés par rapport aux autres"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Les hétérozygotes AS résistent mieux au paludisme → avantage de survie → l'allèle S se maintient.",
+        explain: "PERSISTANCE DE L'ALLÈLE S : les hétérozygotes AS, protégés du paludisme grave, ont un avantage de survie qui maintient l'allèle S à fréquence élevée là où le paludisme est présent — un exemple d'avantage de l'hétérozygote. La mutation, source de l'allèle, n'est ni bonne ni mauvaise en soi : tout dépend du contexte."
+      },
+      { type: 'question',
+        title: "Tâche 12/12 — Épreuve finale · Le rapport aux 3 familles",
+        question: "Dr Kotchami : « Synthétise les 3 dossiers pour les familles, selon la règle d'or de l'institut. » Quelle réponse est à la fois exacte, complète et bienveillante ?",
+        options: [
+          "« Ces maladies sont des malédictions, il n'y a rien à comprendre ni à faire. »",
+          "Pour chaque famille, suivre SÉQUENCE → PROTÉINE → PHÉNOTYPE → DÉCISION : (1) AMINATA — séquence : substitution Glu6Val ; protéine : hémoglobine S qui polymérise ; phénotype : drépanocytose ; décision : hydroxyurée, hydratation, prévention des crises, suivi (greffe/thérapie génique en perspective). (2) IBRAHIM — séquence : gène PAH muté ; protéine : enzyme PAH absente ; phénotype : accumulation de phénylalanine, risque neurologique ; décision : dépistage néonatal et régime précoce à vie. (3) ZEINAB — séquence : substitution Phe→Leu (chaîne B) ; protéine : insuline mal repliée ; phénotype : glycémie mal régulée ; décision : insuline humaine de synthèse. Le tout expliqué avec rigueur, sans culpabiliser, en proposant un accompagnement durable.",
+          "« Donnez du fer à tout le monde et n'y pensez plus. »",
+          "« Inutile d'expliquer aux familles : elles ne comprendront pas. »"
+        ],
+        correctIdx: 1, xp: 200,
+        hint: "Pour chacun : séquence (la mutation) → protéine (modifiée/absente) → phénotype (la maladie) → décision (le traitement adapté), avec exactitude et bienveillance.",
+        explain: "LA MARQUE DU DIRECTEUR SCIENTIFIQUE : (1) AMINATA — Glu6Val → hémoglobine S → drépanocytose → hydroxyurée, prévention, suivi, perspectives (greffe, thérapie génique). (2) IBRAHIM — gène PAH muté → enzyme absente → accumulation toxique → dépistage néonatal + régime précoce à vie. (3) ZEINAB — Phe→Leu → insuline défectueuse → glycémie mal régulée → insuline de synthèse (génie génétique). Chaque dossier suit la règle d'or Séquence → Protéine → Phénotype → Décision, énoncée avec exactitude ET humanité : pas de culpabilisation, un accompagnement réel. Une famille qui comprend et se sent soutenue prend de meilleures décisions. C'est cela, transmettre la science.",
+        successOutcome: "Les trois familles repartent informées, apaisées et accompagnées. Dr Kotchami se lève : « Tu as relié la molécule à l'humain, sur trois dossiers. Tu es désormais Directeur Scientifique de PROTÉOMICS. »",
+        consequence: "🏆 BOSS GLOBAL VALIDÉ — Campagne PROTÉOMICS terminée. Rang 5 atteint." }
+    ],
+    epilogue: {
+      titre: "🏆 BOSS VALIDÉ — Directeur Scientifique PROTÉOMICS (Rang 5)",
+      message: "Tu as bouclé toute la campagne PROTÉOMICS. Sur trois dossiers réels — Aminata, Ibrahim, Zeinab — tu as relié sans faute la séquence d'ADN, la protéine, le phénotype et la décision médicale. Tu maîtrises les protéines, le code génétique, la transcription et la traduction, les mutations et leurs conséquences, le devenir des protéines et les thérapies. Et surtout : tu sais transmettre tout cela avec rigueur et bienveillance. Tu es Directeur Scientifique. Soli Deo Gloria.",
+      conseilLabel: "Mot final de Dr Kotchami",
+      conseilTexte: "Le langage de la vie n'est pas réservé à une élite : il s'apprend, il se comprend, il se transmet. Tu en es maintenant un passeur. Va, et fais comprendre — c'est ainsi qu'on construit sur du roc.",
+      grimoire: "PROTÉOMICS — SYNTHÈSE : Séquence → Protéine → Phénotype → Décision. Aminata (substitution Glu6Val → HbS → drépanocytose → hydroxyurée/suivi). Ibrahim (gène PAH muté → enzyme absente → accumulation → régime + dépistage). Zeinab (Phe→Leu chaîne B → insuline défectueuse → insuline de synthèse via E. coli). Code universel, maturation post-traductionnelle, allèle S maintenu par avantage face au paludisme. Rang 5 — Directeur Scientifique.",
+      philo: "La science ne change pas le monde. Elle change le regard qu'on pose sur lui. Et ce nouveau regard, personne ne pourra jamais te l'enlever."
+    }
+  },
+  'pr-5-1': {
+    id: 'pr-5-1', arc: 5, arcTitle: 'LA PROTÉINE AU SERVICE DE LA VIE', number: '5.1',
+    title: "Du ribosome au destin final",
+    subtitle: "RE, Golgi, lysosome, exocytose",
+    icon: '📦',
+    rank: { from: 4, to: 4, name: 'Expert — Guide des protéines' },
+    power: 'Maîtrise du devenir des protéines',
+    signature: "Une protéine synthétisée n'arrive pas directement à sa destination. Elle voyage, de poste en poste. Si l'un d'eux dysfonctionne, elle n'arrive jamais.",
+    prologue: [
+      "Dr Blandine affiche le schéma d'une cellule du pancréas en train de sécréter de l'insuline.",
+      "« Le ribosome n'est que le début. Après l'assemblage, la protéine doit être pliée, modifiée, triée, emballée, puis expédiée. Suis le trajet. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Décrire le rôle du réticulum endoplasmique (RE) : repliement, modifications",
+        "Décrire le rôle de l'appareil de Golgi : tri, modification, emballage en vésicules",
+        "Décrire le rôle du lysosome (digestion intracellulaire)",
+        "Décrire l'exocytose et le trajet complet d'une protéine sécrétée"
+      ],
+      recompenses: { xp: 600, badge: 'Guide des protéines', power: "Maîtrise du trajet des protéines" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les organites du devenir des protéines",
+        question: "Dr Blandine te demande le rôle du RE, de l'appareil de Golgi et du lysosome.",
+        options: [
+          "Ces organites n'ont aucun rôle dans le trajet des protéines",
+          "RÉTICULUM ENDOPLASMIQUE RUGUEux (RE) : il reçoit les protéines destinées à la sécrétion (synthétisées par les ribosomes fixés à sa surface) et commence leur maturation — repliement et premières modifications (ex. glycosylation). APPAREIL DE GOLGI : il TRIE, MODIFIE et EMBALLE les protéines dans des vésicules selon leur destination. LYSOSOME : il contient des enzymes hydrolytiques qui DIGÈRENT les molécules, débris et organites usagés (digestion intracellulaire). Chaque organite est un poste de travail : sans eux, la protéine n'atteint pas son rôle final.",
+          "Le RE détruit les protéines et le lysosome les fabrique",
+          "Le Golgi fabrique l'ADN"
+        ],
+        correctIdx: 1, xp: 200,
+        hint: "RE = repliement/modifications. Golgi = tri/emballage en vésicules. Lysosome = digestion intracellulaire.",
+        explain: "LE DEVENIR DES PROTÉINES — les postes de travail : (1) RÉTICULUM ENDOPLASMIQUE RUGUEUX — couvert de ribosomes, il accueille les protéines à sécréter dès leur synthèse, amorce leur repliement correct et certaines modifications (glycosylation = ajout de sucres). (2) APPAREIL DE GOLGI — véritable centre de tri postal : il modifie, étiquette et emballe les protéines dans des vésicules adressées vers leur destination (membrane, sécrétion, lysosome…). (3) LYSOSOME — la « poubelle digestive » de la cellule : ses enzymes hydrolytiques dégradent molécules et organites usés ; il intervient aussi dans la phagocytose. (4) Idée clé : une protéine fonctionnelle, c'est une bonne séquence + un bon repliement + un bon adressage. Une panne dans un de ces postes (ex. défaut de tri au Golgi) peut causer une maladie, même si le gène est correct."
+      },
+      { type: 'question',
+        title: "Phase 2 — Le trajet de l'insuline et l'exocytose",
+        question: "Décris le trajet de l'insuline produite par une cellule du pancréas, et définis l'exocytose.",
+        options: [
+          "L'insuline est fabriquée puis détruite sur place, sans sortir",
+          "TRAJET DE L'INSULINE : (1) SYNTHÈSE par les ribosomes du RE → (2) maturation et repliement dans le RÉTICULUM ENDOPLASMIQUE → (3) tri et emballage dans l'APPAREIL DE GOLGI → (4) stockage dans des VÉSICULES DE SÉCRÉTION → (5) EXOCYTOSE : les vésicules fusionnent avec la membrane de la cellule et libèrent l'insuline → (6) passage dans le SANG. EXOCYTOSE : mécanisme par lequel une vésicule fusionne avec la membrane plasmique pour libérer son contenu hors de la cellule.",
+          "L'insuline sort directement du ribosome vers le sang, sans organite",
+          "L'exocytose fait entrer des molécules dans la cellule"
+        ],
+        correctIdx: 1, xp: 200,
+        hint: "Ribosome/RE → Golgi → vésicules de sécrétion → exocytose → sang. Exocytose = fusion vésicule/membrane → libération.",
+        explain: "LE VOYAGE DE L'INSULINE : (1) Les cellules bêta du pancréas synthétisent l'insuline sur les ribosomes du RE. (2) RE — repliement et début de maturation (formation des ponts disulfure, etc.). (3) GOLGI — maturation finale, tri, emballage dans des vésicules. (4) Les vésicules de sécrétion stockent l'insuline en attendant le signal (glycémie élevée). (5) EXOCYTOSE — sur signal, les vésicules fusionnent avec la membrane plasmique et libèrent l'insuline dans le sang. (6) L'insuline circule alors et agit sur ses cellules cibles. (7) Ce trajet « RE → Golgi → exocytose » est la voie classique de toutes les protéines SÉCRÉTÉES — à connaître par cœur, car il sera au cœur du dossier de Zeinab."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : où est le problème chez Zeinab ?",
+        question: "Chez Zeinab, l'insuline est bien produite par les ribosomes ET bien sécrétée : le problème est dans la protéine elle-même (acide aminé muté en position 24). Distingue un problème d'EXPRESSION d'un problème de la PROTÉINE MATURE. Nomme le mécanisme de sécrétion et cite les organites dans l'ordre.",
+        options: [
+          "Le problème est que Zeinab ne fabrique aucune insuline du tout",
+          "DISTINCTION : un problème d'EXPRESSION concernerait la TRANSCRIPTION ou la TRADUCTION (l'insuline ne serait pas, ou mal, fabriquée). Or chez Zeinab, l'insuline EST fabriquée et sécrétée normalement : le problème est ailleurs — dans la PROTÉINE MATURE elle-même, dont un acide aminé est substitué (Phe → Leu en position 24), ce qui altère sa forme et donc sa fonction. MÉCANISME de sécrétion : l'EXOCYTOSE. ORGANITES dans l'ordre : ribosomes / RÉTICULUM ENDOPLASMIQUE → APPAREIL DE GOLGI → VÉSICULES DE SÉCRÉTION → membrane (exocytose) → sang.",
+          "Le problème est dans le lysosome qui digère l'insuline",
+          "L'insuline de Zeinab n'est jamais sécrétée"
+        ],
+        correctIdx: 1, xp: 200,
+        hint: "Expression = transcription/traduction (fabrication). Ici la fabrication marche : c'est la protéine mature qui est défectueuse. Sécrétion = exocytose.",
+        explain: "EXPRESSION vs PROTÉINE MATURE — le bon diagnostic : (1) Un problème d'EXPRESSION = la protéine n'est pas (ou mal) fabriquée : gène non transcrit, ARNm anormal, traduction interrompue (ex. mutation non-sens). (2) Un problème de la PROTÉINE MATURE = la protéine est bien fabriquée et adressée, mais sa SÉQUENCE/forme est défectueuse → fonction altérée. (3) Chez ZEINAB : la machinerie marche (insuline produite et sécrétée par exocytose, trajet RE → Golgi → vésicules → sang intact), mais la substitution Phe → Leu en position 24 modifie la forme de l'hormone → elle régule mal la glycémie. C'est donc un problème de la protéine mature, PAS d'expression. (4) Ce diagnostic oriente la thérapie : inutile d'agir sur la fabrication ; il faut FOURNIR une insuline correcte (de synthèse) — c'est l'objet de la mission suivante.",
+        successOutcome: "Dr Blandine : « Exact. La machine fonctionne, c'est la pièce produite qui est mauvaise. Le diagnostic est posé. »",
+        consequence: "« Alors soignons. Régime, insuline de synthèse, thérapie génique : la médecine du code t'attend. »" }
+    ],
+    epilogue: {
+      titre: "Guide des protéines — validé",
+      message: "Tu maîtrises le devenir des protéines : le RE (repliement), le Golgi (tri et emballage), le lysosome (digestion), et l'exocytose. Tu sais retracer le trajet complet de l'insuline et poser le bon diagnostic pour Zeinab (problème de la protéine mature, pas d'expression). Dernière mission de l'arc : la médecine du code — soigner Aminata, Ibrahim et Zeinab.",
+      conseilLabel: "Conseil de Dr Blandine",
+      conseilTexte: "Avant de proposer un traitement, demande-toi toujours OÙ est le problème : dans la fabrication (expression) ou dans la protéine elle-même ? Le bon traitement dépend du bon diagnostic.",
+      grimoire: "Devenir des protéines : RE (repliement, glycosylation) → Golgi (tri, emballage en vésicules) → vésicules de sécrétion → exocytose → sang. Lysosome = digestion intracellulaire. Exocytose = fusion vésicule/membrane → libération. Zeinab : problème de la protéine mature (Phe→Leu pos. 24), pas d'expression.",
+      philo: "Comprendre avant de mémoriser — construire sur du roc, pas sur du sable."
+    }
+  },
+
+  'pr-5-2': {
+    id: 'pr-5-2', arc: 5, arcTitle: 'LA PROTÉINE AU SERVICE DE LA VIE', number: '5.2',
+    title: "La médecine du code",
+    subtitle: "Thérapies et biotechnologies",
+    icon: '💡',
+    rank: { from: 4, to: 5, name: 'Directeur Scientifique PROTÉOMICS' },
+    power: 'Médecine moléculaire appliquée',
+    signature: "Comprendre le mécanisme moléculaire d'une maladie, c'est ouvrir la porte à sa thérapie.",
+    prologue: [
+      "Dr Jafet présente les stratégies thérapeutiques pour les 3 dossiers. « Maintenant que tu comprends les mécanismes, tu peux soigner — ou du moins accompagner. »",
+      "« Chaque maladie a sa réponse : un régime, une protéine de remplacement, ou demain une thérapie génique. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Comprendre la thérapie par régime de la phénylcétonurie (Ibrahim)",
+        "Comprendre la supplémentation par insuline de synthèse (Zeinab)",
+        "Comprendre le principe de la thérapie génique",
+        "Relier mécanisme moléculaire et stratégie thérapeutique pour les 3 patients"
+      ],
+      recompenses: { xp: 700, badge: 'Directeur Scientifique', power: "Médecine du code maîtrisée" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Trois stratégies thérapeutiques",
+        question: "Dr Jafet te demande la logique thérapeutique pour Ibrahim (PCU), Zeinab (insuline) et le principe de la thérapie génique.",
+        options: [
+          "Les trois maladies se soignent avec le même médicament unique",
+          "(1) IBRAHIM (phénylcétonurie) — RÉGIME pauvre en phénylalanine : puisque l'enzyme PAH manque, on RÉDUIT l'apport du substrat (la phénylalanine) pour éviter son accumulation toxique. (2) ZEINAB (insuline anormale) — SUPPLÉMENTATION : on fournit une insuline de SYNTHÈSE correcte, produite par des bactéries génétiquement modifiées, pour remplacer l'insuline défectueuse. (3) THÉRAPIE GÉNIQUE (principe) — introduire un GÈNE NORMAL dans les cellules du patient pour rétablir la protéine fonctionnelle : c'est traiter la cause à la racine (encore en développement pour des maladies comme la drépanocytose).",
+          "On guérit toujours en changeant le régime alimentaire",
+          "La thérapie génique consiste à retirer un organe"
+        ],
+        correctIdx: 1, xp: 230,
+        hint: "PCU = régime (réduire le substrat). Zeinab = insuline de synthèse (remplacer la protéine). Thérapie génique = apporter un gène normal.",
+        explain: "TROIS LOGIQUES THÉRAPEUTIQUES : (1) AGIR SUR LE SUBSTRAT (Ibrahim) — l'enzyme PAH manque, donc la phénylalanine n'est plus transformée et s'accumule. On réduit l'apport alimentaire en phénylalanine → moins d'accumulation → on protège le cerveau. (2) REMPLACER LA PROTÉINE (Zeinab) — on apporte de l'extérieur une insuline humaine correcte, produite par génie génétique dans E. coli. C'est une supplémentation (comme pour le diabète insulinodépendant en général). (3) CORRIGER LE GÈNE (thérapie génique) — apporter une copie fonctionnelle du gène dans les cellules du patient pour qu'elles fabriquent elles-mêmes la bonne protéine. C'est l'approche la plus ambitieuse, en plein essor (des thérapies géniques pour la drépanocytose ont récemment été approuvées dans certains pays). (4) Le bon traitement découle toujours du mécanisme moléculaire : enzyme absente → agir sur le substrat ; protéine défectueuse → la remplacer ; gène défaillant → le corriger."
+      },
+      { type: 'question',
+        title: "Phase 2 — Gérer n'est pas guérir : le cas d'Ibrahim",
+        question: "Le régime sans phénylalanine permet de GÉRER la phénylcétonurie d'Ibrahim, mais pas de la GUÉRIR. Pourquoi ? Et pourquoi la PCU non traitée mène-t-elle au retard mental ?",
+        options: [
+          "Parce que le régime modifie le gène PAH d'Ibrahim",
+          "POURQUOI ON NE GUÉRIT PAS : le régime ne touche NI au gène PAH muté, NI à l'enzyme absente. Le gène reste muté, l'enzyme reste absente : on se contente d'éviter l'accumulation de phénylalanine en limitant l'apport. Si Ibrahim arrêtait le régime, la phénylalanine s'accumulerait de nouveau. C'est une GESTION à vie, pas une guérison. RETARD MENTAL : sans régime, la phénylalanine (apportée par l'alimentation) n'est pas dégradée → elle s'ACCUMULE à des taux toxiques dans le sang → elle atteint le cerveau en développement du jeune enfant → lésions neurologiques et retard mental. D'où l'importance du dépistage néonatal et du régime précoce.",
+          "Parce que le régime guérit définitivement la maladie en une semaine",
+          "Parce que la phénylalanine est bonne pour le cerveau"
+        ],
+        correctIdx: 1, xp: 230,
+        hint: "Le régime contourne le problème (réduit le substrat) mais ne corrige ni le gène ni l'enzyme. Accumulation de phénylalanine → toxicité cérébrale.",
+        explain: "GÉRER vs GUÉRIR — la PCU d'Ibrahim : (1) Le régime pauvre en phénylalanine est une stratégie de CONTOURNEMENT : il réduit l'apport du substrat que l'enzyme manquante ne peut plus traiter. (2) Mais il ne RÉPARE rien à la source : le gène PAH reste muté, l'enzyme PAH reste absente. C'est pourquoi le régime doit être suivi durablement — l'arrêter ferait revenir l'accumulation. (3) Seule une thérapie génique (apporter un gène PAH fonctionnel) pourrait, en théorie, guérir. (4) MÉCANISME DU RETARD MENTAL : la phénylalanine alimentaire non dégradée s'accumule dans le sang ; à concentration élevée, elle est neurotoxique pour le cerveau en développement → atteinte intellectuelle irréversible si rien n'est fait dans la petite enfance. (5) D'où l'enjeu vital du DÉPISTAGE NÉONATAL et de la mise au régime PRÉCOCE : un enfant dépisté et traité tôt se développe normalement. C'est ce qui sauve Ibrahim."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi final : le rapport aux parents d'Aminata",
+        question: "Dr Jafet te confie la rédaction d'un rapport clair et bienveillant aux parents d'Aminata. Quelle version est scientifiquement exacte ET humainement juste ?",
+        options: [
+          "« C'est une malédiction familiale, il n'y a rien à faire et c'est votre faute. »",
+          "« Chers Boubacar et Ramatou, (1) CAUSE MOLÉCULAIRE : Aminata est atteinte de drépanocytose. Dans le gène de son hémoglobine, une seule “lettre” est modifiée → un seul acide aminé change (acide glutamique → valine, position 6). Cette hémoglobine S déforme ses globules rouges en faucille quand l'oxygène baisse. (2) POURQUOI VOUS ÊTES PORTEURS SAINS : chacun de vous possède un allèle normal (A) et un allèle drépanocytaire (S) — vous êtes AS, en bonne santé, car l'allèle normal suffit. Aminata a reçu un S de chacun (elle est SS), d'où la maladie. Ce n'est ni une faute ni une malédiction : c'est de la génétique. (3) PERSPECTIVES : aujourd'hui, l'HYDROXYURÉE réduit la fréquence des crises ; dans certains cas, une GREFFE DE MOELLE OSSEUSE peut guérir ; et la THÉRAPIE GÉNIQUE, en plein développement, ouvre un réel espoir pour l'avenir. Aminata peut vivre, accompagnée. Nous serons à vos côtés à chaque étape. »",
+          "« Donnez-lui beaucoup de fer et tout ira bien sans suivi. »",
+          "« La maladie disparaîtra toute seule en grandissant. »"
+        ],
+        correctIdx: 1, xp: 240,
+        hint: "Cause moléculaire (Glu→Val, faucille) + parents AS porteurs sains, Aminata SS + perspectives (hydroxyurée, greffe de moelle, thérapie génique), le tout sans culpabiliser.",
+        explain: "RÉDIGER UN RAPPORT JUSTE ET BIENVEILLANT — la marque du Directeur Scientifique : (1) EXACTITUDE — cause moléculaire (substitution Glu6Val → hémoglobine S → falciformation en hypoxie), génétique familiale (parents AS porteurs sains, Aminata SS), perspectives réelles. (2) PERSPECTIVES THÉRAPEUTIQUES — (a) HYDROXYURÉE : médicament qui augmente l'hémoglobine fœtale et réduit la fréquence et la gravité des crises ; accessible et utile au Niger. (b) GREFFE DE MOELLE OSSEUSE : seule option curative établie, mais lourde et nécessitant un donneur compatible. (c) THÉRAPIE GÉNIQUE : approche émergente (récemment approuvée dans certains pays), porteuse d'espoir mais encore peu accessible. (3) BIENVEILLANCE — pas de culpabilisation : la drépanocytose n'est pas une faute morale, c'est la rencontre de deux allèles. (4) ACCOMPAGNEMENT — annoncer un suivi, ne pas laisser la famille seule. (5) Une famille qui comprend et se sent soutenue prend de meilleures décisions pour Aminata : hydratation, prévention des infections, suivi régulier, dépistage de la fratrie.",
+        successOutcome: "Boubacar et Ramatou repartent apaisés et informés. « Nous comprenons. Nous ne sommes pas coupables. Et il y a de l'espoir. »",
+        consequence: "Dr Kotchami : « Tu y es. Rang 5 en vue. Il ne reste que l'épreuve finale : le Boss Global. »" }
+    ],
+    epilogue: {
+      titre: "Arc 5 terminé — Directeur Scientifique (Rang 5) en vue",
+      message: "Tu maîtrises la médecine du code : le régime de la PCU (Ibrahim), la supplémentation par insuline de synthèse (Zeinab), et le principe de la thérapie génique (espoir pour Aminata). Tu sais que gérer n'est pas guérir, et tu sais rédiger un rapport familial exact et bienveillant. Il ne te reste qu'une épreuve : le BOSS GLOBAL, où tu mobiliseras tout — séquences, mutations, traductions, conseils — sur les 3 dossiers, pour valider ton Rang 5.",
+      conseilLabel: "Conseil de Dr Jafet",
+      conseilTexte: "La science la plus rigoureuse ne vaut que si elle se transmet avec humanité. Sois exact dans tes faits, et bienveillant dans tes mots. C'est cela, un vrai Passeur de sciences.",
+      grimoire: "Thérapies : PCU (Ibrahim) = régime pauvre en phénylalanine (gérer, pas guérir). Zeinab = insuline de synthèse (remplacer la protéine). Thérapie génique = apporter un gène normal (espoir drépanocytose). Drépanocytose : hydroxyurée (crises), greffe de moelle (curative), thérapie génique (avenir). Le traitement découle du mécanisme moléculaire.",
+      philo: "La science ne change pas le monde. Elle change le regard qu'on pose sur lui."
+    }
+  },
+  'pr-4-1': {
+    id: 'pr-4-1', arc: 4, arcTitle: 'QUAND LE CODE MUTE', number: '4.1',
+    title: "Les 4 types de mutations",
+    subtitle: "Identifier et nommer",
+    icon: '⚡',
+    rank: { from: 3, to: 4, name: 'Expert — Détecteur de mutations' },
+    power: 'Détection des mutations',
+    signature: "Un nucléotide remplacé. Un nucléotide ajouté. Un nucléotide supprimé. Des événements minuscules, mais des conséquences parfois majeures.",
+    prologue: [
+      "Dr Saratou déroule les résultats du séquençage des 3 patients : séquence normale vs séquence mutée, côte à côte.",
+      "« Regarde ce qui a changé. Apprends d'abord à NOMMER chaque type de mutation. On analysera les conséquences ensuite. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Définir et identifier la substitution (remplacement d'un nucléotide)",
+        "Définir et identifier l'addition / insertion (ajout) et la délétion (perte)",
+        "Comprendre que addition et délétion décalent le cadre de lecture",
+        "Définir l'inversion (renversement d'un segment)"
+      ],
+      recompenses: { xp: 550, badge: 'Détecteur de mutations', power: "Maîtrise des types de mutations" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les 4 types de mutations ponctuelles",
+        question: "Dr Saratou te demande de définir les 4 types de mutations et d'indiquer leur effet général.",
+        options: [
+          "Il n'existe qu'un seul type de mutation, sans effet sur la protéine",
+          "QUATRE TYPES : (1) SUBSTITUTION — un nucléotide est REMPLACÉ par un autre : un seul codon est modifié. (2) ADDITION (insertion) — un (ou plusieurs) nucléotide est AJOUTÉ : cela DÉCALE le cadre de lecture de tous les codons en aval. (3) DÉLÉTION (suppression) — un (ou plusieurs) nucléotide est PERDU : cela DÉCALE aussi le cadre de lecture en aval. (4) INVERSION — un segment de séquence est RENVERSÉ : plusieurs codons sont modifiés. En résumé : la substitution touche un seul codon ; addition et délétion provoquent un décalage du cadre (frameshift) ; l'inversion modifie un bloc.",
+          "La substitution ajoute un nucléotide et la délétion en remplace un",
+          "Toutes les mutations décalent le cadre de lecture"
+        ],
+        correctIdx: 1, xp: 180,
+        hint: "Substitution (remplace, 1 codon), Addition (ajoute), Délétion (supprime), Inversion (renverse). Add./dél. = décalage du cadre.",
+        explain: "LES 4 TYPES DE MUTATIONS : (1) SUBSTITUTION — remplacement d'un nucléotide par un autre. Un seul codon change → au pire un seul acide aminé change (parfois aucun, grâce à la dégénérescence). (2) ADDITION — insertion d'un ou plusieurs nucléotides. Si le nombre ajouté n'est pas multiple de 3, le cadre de lecture est décalé à partir du point d'insertion → tous les codons en aval sont relus différemment. (3) DÉLÉTION — perte d'un ou plusieurs nucléotides : même conséquence de décalage si le nombre n'est pas multiple de 3. (4) INVERSION — un fragment est retourné, modifiant plusieurs codons d'un coup. Règle d'or : une substitution est localisée (1 codon), tandis qu'addition et délétion ont un effet « domino » sur toute la suite (frameshift)."
+      },
+      { type: 'question',
+        title: "Phase 2 — Reconnaître le type sur des exemples",
+        question: "Identifie le type de mutation : (a) ATG-CTG-GAG → ATG-CTG-CAG ; (b) ATG-CTG-GAG → ATG-CTG-TGA-G (un T inséré dans le 3ᵉ codon).",
+        options: [
+          "(a) addition ; (b) substitution",
+          "(a) SUBSTITUTION : un seul nucléotide a été remplacé (le 1ᵉʳ du 3ᵉ codon : G → C, donc GAG → CAG). La longueur ne change pas, un seul codon est touché. (b) ADDITION (insertion) : un nucléotide (T) a été AJOUTÉ. La séquence s'allonge et le cadre de lecture est DÉCALÉ à partir de l'insertion → tous les codons suivants sont relus différemment. C'est une mutation par décalage du cadre (frameshift).",
+          "(a) délétion ; (b) inversion",
+          "Les deux sont des inversions"
+        ],
+        correctIdx: 1, xp: 180,
+        hint: "(a) longueur inchangée, 1 base remplacée = substitution. (b) une base en plus = addition → décalage du cadre.",
+        explain: "RECONNAÎTRE UNE MUTATION : (1) Réflexe n°1 — comparer la LONGUEUR. Même longueur → c'est une substitution (ou une inversion). Plus long → addition. Plus court → délétion. (2) Cas (a) : ATG-CTG-GAG → ATG-CTG-CAG. Même longueur, un seul nucléotide remplacé (G→C dans le 3ᵉ codon) → SUBSTITUTION. (3) Cas (b) : ATG-CTG-GAG → ATG-CTG-TGA-G. Un T en plus → ADDITION. Comme 1 n'est pas multiple de 3, le cadre de lecture se décale : tout ce qui suit est relu de travers. (4) Ce diagnostic du TYPE est l'étape préalable indispensable avant d'évaluer les CONSÉQUENCES (mission suivante)."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : la mutation d'Aminata, au niveau de l'ADN",
+        question: "Le 6ᵉ codon de la bêta-globine d'Aminata, sur le brin matrice, est normalement CTC, et muté il devient CAC. Identifie le type de mutation, puis écris le codon ARNm et l'acide aminé dans les deux cas.",
+        options: [
+          "Addition ; ARNm GAG puis GAGG ; aucun acide aminé",
+          "TYPE : SUBSTITUTION (un seul nucléotide remplacé : le T central du codon matrice devient A, donc CTC → CAC ; même longueur, un seul codon touché). ARNm et acide aminé : brin matrice CTC → ARNm GAG = ACIDE GLUTAMIQUE (normal) ; brin matrice CAC → ARNm GUG = VALINE (muté). C'est exactement la substitution Glu → Val de la drépanocytose, lue cette fois au niveau de l'ADN.",
+          "Délétion ; ARNm CAC ; histidine dans les deux cas",
+          "Inversion de tout le gène ; protéine inchangée"
+        ],
+        correctIdx: 1, xp: 180,
+        hint: "Même longueur, 1 base changée = substitution. CTC(matrice)→GAG(Glu) ; CAC(matrice)→GUG(Val).",
+        explain: "LA MUTATION D'AMINATA, DE L'ADN À L'ACIDE AMINÉ : (1) Type — CTC → CAC : un seul nucléotide change (le central, T→A), longueur identique → SUBSTITUTION ponctuelle. (2) Brin matrice CTC → ARNm complémentaire GAG → acide glutamique (Glu). (3) Brin matrice muté CAC → ARNm GUG → valine (Val). (4) On retrouve la signature drépanocytaire Glu6Val, désormais lue à tous les niveaux : ADN (CTC→CAC), ARNm (GAG→GUG), protéine (Glu→Val). (5) C'est une substitution — mais on verra à la mission 4.2 qu'une substitution peut être silencieuse OU pathologique selon le codon obtenu. Ici, elle est pathologique : c'est une mutation faux-sens.",
+        successOutcome: "Dr Saratou : « Substitution, Glu → Val. Tu as nommé la mutation. Reste à comprendre POURQUOI elle rend malade. »",
+        consequence: "« Cap sur les conséquences : silencieuse, faux-sens, non-sens, ou décalage. »" }
+    ],
+    epilogue: {
+      titre: "Détecteur de mutations — Rang 4 (Expert) atteint",
+      message: "Tu sais nommer les 4 types de mutations (substitution, addition, délétion, inversion) et les reconnaître sur une séquence (réflexe de la longueur). Tu as identifié la mutation d'Aminata comme une substitution (CTC→CAC, Glu→Val). Mission suivante : les 4 CONSÉQUENCES possibles d'une mutation.",
+      conseilLabel: "Conseil de Dr Saratou",
+      conseilTexte: "Avant de paniquer devant une mutation, compare d'abord les longueurs. Même longueur = substitution ou inversion. Plus longue = addition. Plus courte = délétion. Ce réflexe te sauvera en examen.",
+      grimoire: "4 types de mutations : SUBSTITUTION (remplace, 1 codon), ADDITION (ajoute → décalage du cadre), DÉLÉTION (supprime → décalage du cadre), INVERSION (renverse un segment). Réflexe : comparer les longueurs. Aminata : substitution CTC→CAC (matrice) → GAG→GUG → Glu→Val.",
+      philo: "La science n'est pas une collection de formules. C'est une façon de penser qui appartient à tout le monde."
+    }
+  },
+
+  'pr-4-2': {
+    id: 'pr-4-2', arc: 4, arcTitle: 'QUAND LE CODE MUTE', number: '4.2',
+    title: "Les 4 conséquences",
+    subtitle: "Silencieuse, faux-sens, non-sens, décalage",
+    icon: '🎯',
+    rank: { from: 4, to: 4, name: 'Expert — Analyste des conséquences' },
+    power: 'Analyse des conséquences',
+    signature: "Même type de mutation ne veut pas dire même conséquence. Une substitution peut être invisible… ou catastrophique.",
+    prologue: [
+      "Dr Saratou affiche le tableau des conséquences. « Une mutation ne dit rien tant qu'on ne connaît pas son EFFET sur la protéine. »",
+      "« Comprendre les conséquences, c'est comprendre pourquoi un patient est très malade et un autre à peine touché. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Expliquer la mutation silencieuse (codon synonyme, dégénérescence)",
+        "Expliquer la mutation faux-sens (acide aminé différent — ex. drépanocytose)",
+        "Expliquer la mutation non-sens (codon stop prématuré → protéine tronquée)",
+        "Expliquer le décalage du cadre de lecture (addition/délétion)"
+      ],
+      recompenses: { xp: 550, badge: 'Analyste des conséquences', power: "Maîtrise des conséquences des mutations" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les 4 conséquences d'une mutation",
+        question: "Dr Saratou te demande les 4 conséquences possibles d'une mutation sur la protéine.",
+        options: [
+          "Toutes les mutations ont exactement le même effet : aucune protéine",
+          "QUATRE CONSÉQUENCES : (1) SILENCIEUSE — la substitution donne un codon synonyme → MÊME acide aminé → protéine identique (grâce à la dégénérescence). (2) FAUX-SENS — la substitution donne un codon différent → acide aminé DIFFÉRENT → protéine modifiée (ex. drépanocytose : Glu→Val). (3) NON-SENS — la substitution crée un codon STOP prématuré → protéine TRONQUÉE, le plus souvent non fonctionnelle. (4) DÉCALAGE DU CADRE (frameshift) — une addition ou une délétion décale la lecture → TOUS les codons en aval changent → protéine totalement différente. Donc le type seul ne suffit pas : il faut analyser le codon obtenu.",
+          "Une mutation ne change jamais la protéine",
+          "Seules les délétions ont une conséquence"
+        ],
+        correctIdx: 1, xp: 180,
+        hint: "Silencieuse (même AA), Faux-sens (AA différent), Non-sens (stop prématuré → tronquée), Frameshift (tout en aval changé).",
+        explain: "LES 4 CONSÉQUENCES : (1) SILENCIEUSE — substitution → codon synonyme (ex. CUG→UUG, tous deux Leu) → protéine inchangée. C'est la dégénérescence du code qui « amortit » la mutation. (2) FAUX-SENS — substitution → acide aminé différent → protéine modifiée, plus ou moins selon la position et la nature du changement (drépanocytose : Glu polaire → Val hydrophobe, conséquence majeure). (3) NON-SENS — substitution → codon stop prématuré → la traduction s'arrête trop tôt → protéine raccourcie, généralement non fonctionnelle. (4) FRAMESHIFT — addition/délétion (non multiple de 3) → décalage de tous les codons en aval → protéine totalement différente, souvent suivie d'un stop précoce. À RETENIR : une SUBSTITUTION peut donner les 3 premières conséquences ; un FRAMESHIFT vient toujours d'une addition/délétion."
+      },
+      { type: 'question',
+        title: "Phase 2 — La drépanocytose et le décalage : pourquoi cette différence de gravité ?",
+        question: "Pour Aminata, la substitution donne Glu → Val (faux-sens). Pourquoi une addition/délétion est-elle généralement PLUS grave qu'une substitution ?",
+        options: [
+          "Parce qu'une substitution change toute la protéine et une addition rien",
+          "FAUX-SENS (Aminata) : la substitution Glu → Val ne change QU'UN acide aminé en position 6. Le reste de la protéine est correct — mais ce seul changement (acide aminé hydrophobe en surface) suffit à faire polymériser l'hémoglobine en faucille. ADDITION/DÉLÉTION : elle DÉCALE le cadre de lecture → TOUS les acides aminés situés EN AVAL sont changés, et un codon stop prématuré apparaît souvent → protéine totalement différente et tronquée. Une substitution ne touche qu'un point ; un décalage détruit toute la fin de la protéine : voilà pourquoi il est en général plus grave.",
+          "Parce que l'addition ne touche aucun codon",
+          "Parce qu'une substitution crée toujours un codon stop"
+        ],
+        correctIdx: 1, xp: 180,
+        hint: "Substitution = 1 codon touché. Addition/délétion = TOUS les codons en aval décalés + stop souvent prématuré.",
+        explain: "POURQUOI LE DÉCALAGE EST PLUS GRAVE : (1) Une SUBSTITUTION est ponctuelle : un seul codon, donc au plus un seul acide aminé modifié. La drépanocytose est l'exception qui montre qu'un seul acide aminé MAL PLACÉ peut suffire — mais structurellement, le reste de la protéine est intact. (2) Une ADDITION ou une DÉLÉTION (non multiple de 3) décale le cadre de lecture : à partir du point de mutation, chaque triplet est recomposé avec les « mauvais » nucléotides → tous les acides aminés en aval sont faux, et un codon stop prématuré tombe souvent rapidement → protéine courte et non fonctionnelle. (3) Image : la substitution, c'est une faute de frappe dans un mot ; le décalage, c'est supprimer une lettre et décaler tout le texte → plus rien n'a de sens ensuite. (4) Exception : une addition/délétion de 3 nucléotides (ou multiple de 3) n'enlève/ajoute qu'un acide aminé sans décaler le cadre — moins grave."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : classer 3 patients du moins au plus grave",
+        question: "Trois patients d'une même maladie : Patient X — substitution AGG → AGC (Arg → Ser). Patient Y — addition d'un T (décalage total). Patient Z — substitution créant un codon UGA prématuré. Classe-les du MOINS au PLUS gravement atteint, avec justification.",
+        options: [
+          "Y (moins grave) < X < Z (plus grave)",
+          "CLASSEMENT du moins au plus grave : (1) PATIENT X — faux-sens (Arg→Ser) : un SEUL acide aminé changé, le reste de la protéine est intact → souvent atteinte partielle, le MOINS grave. (2) PATIENT Z — non-sens (codon UGA prématuré) : la protéine est TRONQUÉE à partir de ce point → toute la fin manque, généralement non fonctionnelle. (3) PATIENT Y — décalage du cadre (addition d'un T) : TOUS les acides aminés en aval sont faux ET un stop prématuré survient souvent → protéine la plus profondément désorganisée, le PLUS grave. Donc : X < Z < Y.",
+          "Tous identiques, aucune différence de gravité",
+          "Z (moins grave) < Y < X (plus grave)"
+        ],
+        correctIdx: 1, xp: 190,
+        hint: "Faux-sens = 1 AA (moins grave). Non-sens = tronquée. Frameshift = tout l'aval faux (le plus grave). X < Z < Y.",
+        explain: "CLASSER PAR GRAVITÉ : (1) PATIENT X (faux-sens, Arg→Ser) — un seul acide aminé est modifié ; selon sa position, la protéine peut rester partiellement fonctionnelle. C'est, en règle générale, la moins grave des trois. (2) PATIENT Z (non-sens, UGA prématuré) — la traduction s'arrête trop tôt : toute la portion située après le codon stop est ABSENTE → protéine tronquée, souvent non fonctionnelle. (3) PATIENT Y (frameshift, addition d'un T) — à partir du point d'insertion, chaque codon est recomposé : tous les acides aminés en aval sont faux, et un stop prématuré apparaît fréquemment → la protéine la plus profondément altérée. (4) Classement : X < Z < Y. (5) Nuance honnête : non-sens et frameshift sont tous deux SÉVÈRES ; selon la position exacte de la mutation, leur gravité relative peut varier. L'essentiel : un changement ponctuel (faux-sens) est, en moyenne, moins destructeur qu'une atteinte qui détruit toute la fin de la protéine.",
+        successOutcome: "Dr Saratou : « X, puis Z, puis Y. Tu raisonnes maintenant comme une experte des conséquences. »",
+        consequence: "« Dernière étape de l'arc : les mutations ne font pas que rendre malade. Elles créent aussi la diversité. »" }
+    ],
+    epilogue: {
+      titre: "Analyste des conséquences — validé",
+      message: "Tu maîtrises les 4 conséquences d'une mutation : silencieuse (dégénérescence), faux-sens (1 acide aminé changé — drépanocytose), non-sens (stop prématuré → tronquée), décalage du cadre (tout l'aval changé). Tu sais classer des mutations par gravité. Mission suivante : les allèles — comment les mutations créent la diversité du vivant.",
+      conseilLabel: "Conseil de Dr Saratou",
+      conseilTexte: "Ne confonds jamais TYPE et CONSÉQUENCE. Une substitution (type) peut être silencieuse, faux-sens ou non-sens (conséquences). C'est le codon OBTENU qui décide, pas le type seul.",
+      grimoire: "4 conséquences : SILENCIEUSE (codon synonyme, même AA), FAUX-SENS (AA différent, ex. Glu→Val), NON-SENS (stop prématuré, protéine tronquée), DÉCALAGE/FRAMESHIFT (addition/délétion → tout l'aval changé). Gravité type : faux-sens < non-sens ≤ frameshift. Type ≠ conséquence.",
+      philo: "Comprendre avant de mémoriser — construire sur du roc, pas sur du sable."
+    }
+  },
+
+  'pr-4-3': {
+    id: 'pr-4-3', arc: 4, arcTitle: 'QUAND LE CODE MUTE', number: '4.3',
+    title: "Les allèles",
+    subtitle: "La diversité née des mutations",
+    icon: '🧬',
+    rank: { from: 4, to: 4, name: 'Expert — Lecteur de la diversité' },
+    power: 'Compréhension de la diversité allélique',
+    signature: "Les mutations ne sont pas toujours des catastrophes. Parfois, elles créent simplement une version différente — un allèle. C'est l'origine de toute la diversité du vivant.",
+    prologue: [
+      "Dr Fatima entre. « Sans mutations, tout le monde serait génétiquement identique. C'est la mutation qui crée les allèles, et donc la diversité. »",
+      "« Aminata est malade à cause d'un allèle. Mais ce même allèle protège des millions de personnes du paludisme. Suis-moi. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Définir un allèle (version d'un gène née d'une mutation)",
+        "Comprendre que deux allèles occupent le même locus sur les chromosomes homologues",
+        "Relier mutations et diversité génétique",
+        "Distinguer mutations pathologiques et mutations neutres ou avantageuses"
+      ],
+      recompenses: { xp: 550, badge: 'Lecteur de la diversité', power: "Maîtrise de la notion d'allèle" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Qu'est-ce qu'un allèle ?",
+        question: "Dr Fatima te demande de définir un allèle et son lien avec les mutations.",
+        options: [
+          "Un allèle est un chromosome entier, sans rapport avec les mutations",
+          "ALLÈLE : une VERSION différente d'un même gène, née d'une MUTATION dans sa séquence de nucléotides. Deux allèles d'un même gène occupent le MÊME LOCUS (la même position) sur les deux chromosomes homologues. Les mutations sont la SOURCE de toute variation allélique : sans mutation, un gène n'aurait qu'une seule version, et tous les individus seraient identiques. Certains allèles sont pathologiques (gène non fonctionnel), d'autres sont neutres ou même avantageux.",
+          "Un allèle est une protéine, pas une version de gène",
+          "Les allèles n'ont aucun lien avec les mutations"
+        ],
+        correctIdx: 1, xp: 180,
+        hint: "Allèle = version d'un gène issue d'une mutation, au même locus sur les chromosomes homologues.",
+        explain: "L'ALLÈLE, NÉ DE LA MUTATION : (1) Un gène occupe une position fixe (locus) sur un chromosome. Une mutation de sa séquence crée une nouvelle version : un nouvel allèle. (2) Un individu diploïde porte 2 allèles par gène (un sur chaque chromosome homologue, au même locus) — l'un venant du père, l'autre de la mère. (3) Les mutations sont le MOTEUR de la diversité : elles génèrent les variants sur lesquels agit ensuite l'hérédité (et l'évolution). (4) Toutes les mutations ne sont pas nuisibles : (a) PATHOLOGIQUES (gène non fonctionnel — drépanocytose, PCU), (b) NEUTRES (mutations silencieuses, sans effet), (c) AVANTAGEUSES (qui confèrent un atout dans un environnement donné). (5) Cette nuance est capitale : la mutation n'est pas « le mal », c'est le matériau brut de la diversité du vivant."
+      },
+      { type: 'question',
+        title: "Phase 2 — L'allèle drépanocytaire et le paludisme",
+        question: "Pourquoi l'allèle de la drépanocytose (S) est-il particulièrement fréquent en Afrique subsaharienne, malgré sa gravité chez les homozygotes ?",
+        options: [
+          "Parce qu'il n'a aucun effet et se transmet au hasard",
+          "AVANTAGE DES HÉTÉROZYGOTES (AS) : les porteurs sains AS (un allèle A normal + un allèle S) sont MIEUX PROTÉGÉS contre les formes graves du PALUDISME que les individus AA. Dans les régions où le paludisme est très présent (Afrique subsaharienne), cet avantage de survie des AS maintient l'allèle S dans la population, génération après génération. C'est un équilibre : les homozygotes SS (comme Aminata) sont gravement malades, mais les nombreux hétérozygotes AS survivent mieux au paludisme → l'allèle S persiste.",
+          "Parce que l'allèle S guérit le paludisme chez tout le monde",
+          "Parce que les homozygotes SS sont avantagés"
+        ],
+        correctIdx: 1, xp: 180,
+        hint: "Les hétérozygotes AS résistent mieux au paludisme → avantage de survie → l'allèle S se maintient.",
+        explain: "POURQUOI L'ALLÈLE S PERSISTE — un équilibre génétique : (1) Trois génotypes : AA (sain, mais plus sensible au paludisme grave), AS (porteur sain, protégé contre le paludisme grave), SS (drépanocytaire, gravement malade). (2) Dans les zones de forte transmission du paludisme, les AS ont un AVANTAGE DE SURVIE : leurs globules rouges sont un terrain moins favorable au parasite. (3) Cet avantage des hétérozygotes compense l'élimination des SS → l'allèle S se maintient à fréquence élevée (c'est un exemple classique d'avantage de l'hétérozygote / sélection équilibrante). (4) C'est pourquoi la drépanocytose est très fréquente là où le paludisme l'est aussi — y compris au Niger. (5) Leçon profonde : un même allèle peut être à la fois un fléau (chez SS) et une protection (chez AS). La génétique n'est pas « bien » ou « mal » — elle est contexte."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : à quel niveau naît la différence A / S ?",
+        question: "Aminata est homozygote SS ; ses parents Boubacar et Ramatou sont hétérozygotes AS (porteurs sains). À quel niveau moléculaire la différence entre l'allèle A et l'allèle S apparaît-elle EN PREMIER (ADN, ARNm ou protéine) ? Quel est le changement à chaque niveau ?",
+        options: [
+          "La différence apparaît d'abord dans la protéine, jamais dans l'ADN",
+          "La différence apparaît D'ABORD au niveau de l'ADN (le gène), car c'est la séquence du gène qui définit l'allèle. CHANGEMENT À CHAQUE NIVEAU : (1) ADN — le 6ᵉ codon du brin matrice passe de CTC (allèle A) à CAC (allèle S) — une substitution. (2) ARNm — le codon passe de GAG à GUG. (3) PROTÉINE — l'acide aminé en position 6 passe d'acide glutamique (Glu) à valine (Val). L'allèle est défini au niveau de l'ADN ; la conséquence se lit ensuite sur l'ARNm puis sur la protéine. L'allèle S persiste car les hétérozygotes AS sont protégés du paludisme.",
+          "La différence est seulement dans l'ARNm, l'ADN est identique",
+          "Il n'y a aucune différence moléculaire entre A et S"
+        ],
+        correctIdx: 1, xp: 190,
+        hint: "L'allèle est défini au niveau de l'ADN. Puis : ADN (CTC→CAC) → ARNm (GAG→GUG) → protéine (Glu→Val).",
+        explain: "OÙ NAÎT LA DIFFÉRENCE A/S : (1) L'allèle est, par définition, une variante de la SÉQUENCE D'ADN du gène. La différence A/S naît donc AU NIVEAU DE L'ADN. (2) Cascade des niveaux : ADN — codon 6 du brin matrice CTC (A) → CAC (S) ; ARNm — codon GAG (A) → GUG (S) ; protéine — acide aminé Glu (A) → Val (S). (3) Génotypes de la famille : Aminata SS (deux allèles S, donc malade), Boubacar et Ramatou AS (un A + un S : l'allèle A normal « masque » le S → porteurs sains). (4) Persistance de S : les hétérozygotes AS, protégés du paludisme grave, transmettent l'allèle de génération en génération. (5) Synthèse de l'arc : une même substitution explique à la fois la maladie d'Aminata, le statut de porteurs sains de ses parents, et la fréquence de l'allèle en Afrique. Tout part de l'ADN.",
+        successOutcome: "Dr Fatima : « Tout commence dans l'ADN. Tu as relié la molécule, la famille et la population. C'est la vision complète. »",
+        consequence: "Fin de l'Arc 4. Direction l'Arc 5 : le devenir des protéines et les thérapies." }
+    ],
+    epilogue: {
+      titre: "Arc 4 terminé — Lecteur de la diversité",
+      message: "Tu maîtrises les mutations dans toute leur richesse : les 4 types, les 4 conséquences, et la notion d'allèle. Tu comprends que la mutation est aussi la source de la diversité du vivant, et pourquoi l'allèle drépanocytaire persiste (avantage des hétérozygotes face au paludisme). Tu sais situer la différence A/S à chaque niveau (ADN → ARNm → protéine). Arc 5 : le devenir des protéines et les thérapies pour les 3 patients.",
+      conseilLabel: "Conseil de Dr Fatima",
+      conseilTexte: "Retiens cette idée libératrice : une mutation n'est ni bonne ni mauvaise en soi. Tout dépend du contexte. C'est cette nuance qui distingue le scientifique du superstitieux.",
+      grimoire: "Allèle = version d'un gène née d'une mutation, au même locus. Mutations = source de la diversité (pathologiques, neutres ou avantageuses). Allèle S persiste car les hétérozygotes AS résistent mieux au paludisme. Différence A/S née dans l'ADN : CTC→CAC → GAG→GUG → Glu→Val. Aminata SS (malade), parents AS (porteurs sains).",
+      philo: "La science n'est pas réservée à une élite. Elle est pour toi."
+    }
+  },
+  'pr-3-1': {
+    id: 'pr-3-1', arc: 3, arcTitle: 'LA FABRIQUE CELLULAIRE', number: '3.1',
+    title: "La copie du plan",
+    subtitle: "La transcription",
+    icon: '🏭',
+    rank: { from: 2, to: 3, name: 'Spécialiste — Maître de la transcription' },
+    power: 'Maîtrise de la transcription',
+    signature: "La transcription produit l'ARNm depuis l'ADN. C'est une copie partielle — seulement le gène concerné, jamais tout l'ADN.",
+    prologue: [
+      "Dr Salamatou t'emmène dans la salle de microscopie électronique. « Voici ce que tu verrais dans une cellule en train de fabriquer de la bêta-globine. Le noyau transcrit, les ribosomes traduisent. »",
+      "« Commençons par la première étape : copier le gène en ARNm. C'est la transcription. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Décrire les 3 étapes de la transcription : initiation, élongation, terminaison",
+        "Identifier les acteurs : ARN polymérase, promoteur, brin matrice, ARNm",
+        "Localiser la transcription : noyau (eucaryotes) vs cytoplasme (procaryotes)",
+        "Expliquer pourquoi l'ARNm est complémentaire du brin matrice"
+      ],
+      recompenses: { xp: 500, badge: 'Maître de la transcription', power: "Maîtrise du mécanisme de transcription" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les 3 étapes de la transcription",
+        question: "Dr Salamatou te demande de décrire les 3 étapes de la transcription et leurs acteurs.",
+        options: [
+          "Une seule étape : l'ADN se transforme directement en protéine",
+          "TROIS ÉTAPES : (1) INITIATION — l'ARN polymérase se fixe sur le PROMOTEUR du gène ; les deux brins d'ADN s'écartent localement. (2) ÉLONGATION — l'ARN polymérase parcourt le brin MATRICE (sens 3'→5') et synthétise l'ARNm (sens 5'→3') par complémentarité (A→U, T→A, G→C, C→G). (3) TERMINAISON — arrivée à un signal de terminaison, l'ARN polymérase se détache, l'ARNm est libéré, et l'ADN se referme en double hélice. Acteurs : ARN polymérase (l'enzyme), promoteur (le « départ »), brin matrice (le modèle), ARNm (le produit).",
+          "L'ARN polymérase lit l'ARNm pour fabriquer de l'ADN",
+          "La transcription recopie l'intégralité de l'ADN à chaque fois"
+        ],
+        correctIdx: 1, xp: 170,
+        hint: "Initiation (ARN pol sur promoteur) → Élongation (lecture du brin matrice, synthèse de l'ARNm) → Terminaison (libération).",
+        explain: "LA TRANSCRIPTION — détails : (1) INITIATION — l'ARN polymérase reconnaît le PROMOTEUR, séquence d'ADN qui marque le début d'un gène. Les deux brins se séparent localement pour exposer le brin matrice. (2) ÉLONGATION — l'ARN polymérase lit le brin matrice dans le sens 3'→5' et fabrique l'ARNm dans le sens 5'→3', nucléotide par nucléotide, par complémentarité (A de l'ADN → U de l'ARN, T→A, G→C, C→G). (3) TERMINAISON — à un signal de fin, l'enzyme se détache, l'ARNm est libéré, l'ADN se réapparie. (4) Important : on ne copie qu'UN gène à la fois, pas tout l'ADN — comme on photocopie une seule page, pas la bibliothèque entière. (5) Pour la cellule d'Aminata produisant la bêta-globine S, c'est le gène muté qui est transcrit : l'ARNm porte déjà la mutation."
+      },
+      { type: 'question',
+        title: "Phase 2 — Où, et dans quel sens ?",
+        question: "Dr Salamatou : « Où se déroule la transcription, et dans quel sens l'ARN polymérase travaille-t-elle ? »",
+        options: [
+          "Dans les mitochondries uniquement, et dans n'importe quel sens",
+          "LOCALISATION : dans le NOYAU chez les EUCARYOTES (humain, plante, champignon) ; dans le CYTOPLASME chez les PROCARYOTES (bactéries comme E. coli, qui n'ont pas de noyau). SENS : l'ARN polymérase LIT le brin matrice de 3' vers 5' et SYNTHÉTISE l'ARNm de 5' vers 3'. L'ARNm obtenu est complémentaire du brin matrice, donc identique au brin codant (non transcrit), avec les T remplacés par des U.",
+          "Toujours dans le cytoplasme, même chez l'humain",
+          "L'ARN polymérase synthétise l'ARNm de 3' vers 5'"
+        ],
+        correctIdx: 1, xp: 170,
+        hint: "Eucaryotes = noyau ; procaryotes = cytoplasme. Lecture 3'→5', synthèse 5'→3'.",
+        explain: "LIEU ET SENS DE LA TRANSCRIPTION : (1) Chez les EUCARYOTES, l'ADN est enfermé dans le noyau : la transcription s'y déroule, puis l'ARNm sort vers le cytoplasme pour être traduit. (2) Chez les PROCARYOTES (bactéries), il n'y a pas de noyau : tout se passe dans le cytoplasme — d'où un couplage possible entre transcription et traduction (vu en mission 3.3). (3) Sens — l'ARN polymérase lit la matrice 3'→5' et écrit l'ARNm 5'→3'. (4) Conséquence de séquence : l'ARNm est complémentaire du brin matrice et ressemble donc au brin codant (avec U au lieu de T). (5) Cette localisation distincte chez les eucaryotes (noyau) explique pourquoi l'ARNm doit voyager — un détail qui aura son importance pour le génie génétique."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : expliquer à Ramatou",
+        question: "Dr Salamatou te demande d'expliquer à Ramatou (mère d'Aminata) pourquoi « la transcription, c'est comme photocopier une page d'une bibliothèque ». Quelle explication est juste et accessible ?",
+        options: [
+          "« On déchire la page de l'ADN pour fabriquer la protéine, et on jette l'original. »",
+          "« Madame Ramatou, imaginez que l'ADN de chaque cellule est une grande BIBLIOTHÈQUE, gardée précieusement dans une salle fermée (le noyau). On ne sort JAMAIS les livres originaux. Quand la cellule a besoin de fabriquer une protéine, elle ouvre le bon livre à la bonne page (le gène), et elle en fait une PHOTOCOPIE de travail : c'est l'ARNm. C'est l'ARN polymérase qui fait la photocopie, en partant d'un point précis (le promoteur). Cette copie sort de la salle pour servir d'instruction. L'original reste intact, protégé. Ainsi, le précieux ADN ne s'abîme jamais, et la cellule peut faire autant de copies qu'elle veut. »",
+          "« L'ADN se transforme directement en protéine sans copie. »",
+          "« La cellule recopie toute la bibliothèque à chaque fois qu'elle a faim. »"
+        ],
+        correctIdx: 1, xp: 160,
+        hint: "ADN = bibliothèque protégée (noyau) ; ARN polymérase = photocopieuse ; ARNm = copie de travail ; l'original ne sort jamais.",
+        explain: "VULGARISER LA TRANSCRIPTION — l'art du Passeur de sciences : (1) Une bonne vulgarisation repose sur une image juste, pas simplifiée à l'excès. L'analogie de la bibliothèque fonctionne car elle respecte le vrai mécanisme : protection de l'original (ADN dans le noyau), copie sélective (un seul gène), copie de travail jetable (ARNm). (2) Termes traduits : ARN polymérase = la photocopieuse ; promoteur = le repère « commencer ici » ; brin matrice = la page modèle ; ARNm = la photocopie. (3) Pourquoi c'est important pour Ramatou : comprendre que la maladie d'Aminata vient d'une « faute de frappe » dans le livre original (le gène), recopiée fidèlement sur chaque photocopie (chaque ARNm) — ce n'est ni une faute, ni une malédiction, c'est de la biologie. (4) Une famille qui comprend est une famille apaisée et capable de bonnes décisions.",
+        successOutcome: "Ramatou sourit : « Une photocopie… je comprends. L'original reste protégé. C'est clair, maintenant. »",
+        consequence: "Dr Salamatou : « Tu sais expliquer ET tu sais le mécanisme. Passons à la traduction. »" }
+    ],
+    epilogue: {
+      titre: "Maître de la transcription — Rang 3 (Spécialiste) atteint",
+      message: "Tu maîtrises la transcription : ses 3 étapes (initiation sur le promoteur, élongation 3'→5'/5'→3', terminaison), ses acteurs (ARN polymérase, brin matrice, ARNm), et sa localisation (noyau chez les eucaryotes, cytoplasme chez les procaryotes). Tu sais l'expliquer simplement à une famille. Mission suivante : la traduction — comment le ribosome assemble la protéine.",
+      conseilLabel: "Conseil de Dr Salamatou",
+      conseilTexte: "Retiens le sens : on lit la matrice 3'→5', on écrit l'ARNm 5'→3'. Et n'oublie jamais l'image de la photocopie : elle te dira toujours où est l'original et où est la copie.",
+      grimoire: "Transcription = ADN → ARNm. 3 étapes : initiation (ARN polymérase + promoteur), élongation (lecture matrice 3'→5', synthèse ARNm 5'→3'), terminaison (libération). Lieu : noyau (eucaryotes) / cytoplasme (procaryotes). Image : photocopier une page, l'original (ADN) reste au coffre.",
+      philo: "La science n'est pas réservée à une élite. Elle s'explique, elle se transmet."
+    }
+  },
+
+  'pr-3-2': {
+    id: 'pr-3-2', arc: 3, arcTitle: 'LA FABRIQUE CELLULAIRE', number: '3.2',
+    title: "L'assemblage final",
+    subtitle: "La traduction",
+    icon: '🔧',
+    rank: { from: 3, to: 3, name: 'Spécialiste — Maître de la traduction' },
+    power: 'Maîtrise de la traduction',
+    signature: "Le ribosome lit l'ARNm codon par codon. Pour chaque codon, un ARNt apporte son acide aminé. La chaîne grandit, jusqu'au codon stop.",
+    prologue: [
+      "Dr Salamatou montre l'animation 3D d'un ribosome en action. « Voici l'usine d'assemblage : le ribosome. »",
+      "« Il lit l'ARNm, et pour chaque codon, un ARNt vient déposer le bon acide aminé. Comprends ce ballet, et tu comprendras comment naît une protéine. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Décrire les 3 phases de la traduction : initiation, élongation, terminaison",
+        "Identifier les acteurs : ribosome (sites A, P, E), ARNt (anticodon), ARNm",
+        "Comprendre la relation codon ↔ anticodon (complémentarité)",
+        "Traduire un ARNm et analyser la mutation de l'insuline de Zeinab"
+      ],
+      recompenses: { xp: 500, badge: 'Maître de la traduction', power: "Maîtrise du mécanisme de traduction" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les 3 phases de la traduction et leurs acteurs",
+        question: "Dr Salamatou te demande les 3 phases de la traduction et le rôle des sites ribosomiques.",
+        options: [
+          "La traduction se fait sans ribosome ni ARNt",
+          "TROIS PHASES : (1) INITIATION — le ribosome se fixe sur l'ARNm au niveau du codon AUG ; l'ARNt portant la Méthionine se place au SITE P. (2) ÉLONGATION — un ARNt apporte l'acide aminé correspondant au codon suivant dans le SITE A ; une liaison peptidique se forme entre les acides aminés ; le ribosome avance d'un codon (l'ARNt vidé sort par le SITE E). (3) TERMINAISON — à un codon STOP (UAA, UAG, UGA), un facteur de libération libère la chaîne polypeptidique. ACTEURS : ribosome (sites A = accepteur, P = peptidyle, E = exit/sortie), ARNt (porte un anticodon + un acide aminé), ARNm (la matrice lue).",
+          "Le ribosome fabrique l'ARNm à partir de la protéine",
+          "Les codons stop ajoutent un acide aminé spécial"
+        ],
+        correctIdx: 1, xp: 170,
+        hint: "Initiation (AUG, ARNt-Met au site P) → Élongation (site A, liaison peptidique, ribosome avance, site E) → Terminaison (stop, libération).",
+        explain: "LA TRADUCTION — détails : (1) INITIATION — le ribosome (2 sous-unités) s'assemble sur l'ARNm au codon AUG ; le premier ARNt (anticodon UAC, portant la Méthionine) occupe le site P. (2) ÉLONGATION — cycle répété : un ARNt dont l'anticodon est complémentaire du codon présent entre au site A → une liaison peptidique relie son acide aminé à la chaîne en croissance → le ribosome se décale d'un codon → l'ARNt déchargé quitte le site E. (3) TERMINAISON — quand un codon stop arrive au site A, aucun ARNt ne correspond : un facteur de libération provoque le détachement de la chaîne polypeptidique terminée. (4) Les POLYSOMES (plusieurs ribosomes sur un même ARNm) permettent de produire plusieurs copies de la protéine en parallèle, donc plus vite."
+      },
+      { type: 'question',
+        title: "Phase 2 — Traduire, et le rôle de l'ARNt",
+        question: "Traduis 5'-AUG-CCU-GAG-GUG-UGA-3'. Et quelle est la relation entre l'anticodon de l'ARNt et le codon de l'ARNm ?",
+        options: [
+          "Met-Pro-Glu-Val-Stop, et l'anticodon est identique au codon",
+          "TRADUCTION : AUG = Méthionine (départ), CCU = Proline, GAG = acide Glutamique, GUG = Valine, UGA = STOP. Protéine = Met - Pro - Glu - Val. RELATION ARNt : l'ANTICODON de l'ARNt est COMPLÉMENTAIRE et antiparallèle du codon de l'ARNm. Exemple : pour le codon 5'-GAG-3', l'anticodon est 3'-CUC-5'. C'est cet appariement codon/anticodon qui garantit que le BON acide aminé est apporté en face de chaque codon.",
+          "On ne peut pas traduire sans connaître l'ADN",
+          "AUG-CCU-GAG-GUG-UGA code un seul acide aminé"
+        ],
+        correctIdx: 1, xp: 170,
+        hint: "AUG=Met, CCU=Pro, GAG=Glu, GUG=Val, UGA=stop. Anticodon = complémentaire du codon.",
+        explain: "DU CODON À L'ACIDE AMINÉ : (1) Traduction — AUG(Met)-CCU(Pro)-GAG(Glu)-GUG(Val)-UGA(stop) → protéine Met-Pro-Glu-Val. (Tiens : on retrouve le couple GAG/GUG = Glu/Val de la drépanocytose.) (2) L'ARNt est l'« adaptateur » du code : à une extrémité, son ANTICODON s'apparie au codon de l'ARNm (complémentarité antiparallèle) ; à l'autre, il porte l'acide aminé correspondant. (3) Exemple : codon 5'-GAG-3' ↔ anticodon 3'-CUC-5' → l'ARNt apporte l'acide glutamique. (4) C'est la fidélité de cet appariement qui assure que la séquence des acides aminés respecte exactement la séquence des codons — donc la séquence du gène."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : l'insuline de Zeinab",
+        question: "L'ARNm normal de l'insuline (chaîne B, position 24) porte le codon UUU (phénylalanine). Chez Zeinab, ce codon est muté en UUA. Donne l'anticodon de l'ARNt normal et celui du nouvel ARNt, et l'acide aminé incorporé à la place.",
+        options: [
+          "Anticodons identiques, et l'acide aminé reste la phénylalanine",
+          "ARNt NORMAL : codon 5'-UUU-3' → anticodon 3'-AAA-5' → apporte la PHÉNYLALANINE. ARNt MUTÉ : codon 5'-UUA-3' → anticodon 3'-AAU-5' → apporte la LEUCINE. À la position 24 de la chaîne B, la phénylalanine est donc remplacée par la leucine (substitution Phe → Leu). L'insuline de Zeinab est correctement fabriquée et sécrétée, mais sa séquence est modifiée — ce qui altère sa capacité à réguler la glycémie.",
+          "L'anticodon de UUA est UUA, et l'acide aminé est un codon stop",
+          "La mutation crée un codon stop : l'insuline est tronquée"
+        ],
+        correctIdx: 1, xp: 160,
+        hint: "Anticodon = complémentaire antiparallèle. UUU↔AAA (Phe) ; UUA↔AAU (Leu). Donc Phe → Leu.",
+        explain: "DÉCODER LA MUTATION DE ZEINAB : (1) Codon UUU → anticodon complémentaire 3'-AAA-5' → l'ARNt apporte la phénylalanine (Phe). (2) Codon UUA → anticodon 3'-AAU-5' → l'ARNt apporte la leucine (Leu). (3) Résultat : en position 24 de la chaîne B, Phe est remplacée par Leu — c'est une mutation faux-sens (substitution qui change l'acide aminé). (4) Conséquence : l'insuline est produite et sécrétée normalement (le mécanisme de traduction marche), mais sa STRUCTURE est modifiée. Or la forme d'une hormone conditionne sa fonction : une insuline mal repliée se fixe mal sur ses récepteurs → la glycémie est mal régulée → diabète. (5) C'est un problème de la PROTÉINE elle-même, pas de sa fabrication — distinction clé qu'on approfondira à l'Arc 5.",
+        successOutcome: "Dr Salamatou : « Exact. Phénylalanine remplacée par leucine. La machine traduit fidèlement… même une erreur. »",
+        consequence: "« Reste une question : comment une bactérie peut-elle fabriquer une insuline humaine ? Mission 3.3. »" }
+    ],
+    epilogue: {
+      titre: "Maître de la traduction — validé",
+      message: "Tu maîtrises la traduction : ses 3 phases (initiation au AUG, élongation avec les sites A/P/E et la liaison peptidique, terminaison au codon stop), le rôle de l'ARNt (anticodon complémentaire du codon) et des polysomes. Tu sais décoder la mutation Phe → Leu de l'insuline de Zeinab. Mission suivante : pourquoi une bactérie peut fabriquer une protéine humaine.",
+      conseilLabel: "Conseil de Dr Salamatou",
+      conseilTexte: "Garde en tête le trio : ARNm (le plan), ribosome (l'usine), ARNt (le livreur). Chacun joue son rôle. Si tu sais qui fait quoi, tu ne te tromperas jamais sur la traduction.",
+      grimoire: "Traduction = ARNm → protéine, sur le ribosome (sites A accepteur, P peptidyle, E exit). 3 phases : initiation (AUG, ARNt-Met site P), élongation (liaison peptidique, le ribosome avance), terminaison (stop). ARNt : anticodon complémentaire du codon. Zeinab : UUU(Phe) → UUA(Leu) en position 24, chaîne B.",
+      philo: "Comprendre avant de mémoriser — construire sur du roc, pas sur du sable."
+    }
+  },
+
+  'pr-3-3': {
+    id: 'pr-3-3', arc: 3, arcTitle: 'LA FABRIQUE CELLULAIRE', number: '3.3',
+    title: "Les deux mondes",
+    subtitle: "Eucaryotes vs Procaryotes",
+    icon: '🏛️',
+    rank: { from: 3, to: 3, name: 'Spécialiste — Ingénieur du vivant' },
+    power: 'Maîtrise du génie génétique',
+    signature: "Cette bactérie produit de l'insuline humaine. Comment ? Parce que le code génétique est universel.",
+    prologue: [
+      "Dr Jafet entre avec un flacon contenant une bactérie E. coli modifiée. « Cette bactérie fabrique de l'insuline humaine — celle que reçoit Zeinab. »",
+      "« Le secret : le code génétique est universel, et la transcription-traduction fonctionne presque pareil chez tous les êtres vivants — avec quelques différences clés. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Comparer transcription et traduction chez eucaryotes et procaryotes",
+        "Comprendre le couplage transcription-traduction chez les procaryotes",
+        "Relier l'universalité du code au génie génétique",
+        "Expliquer la production d'insuline humaine par E. coli (cas de Zeinab)"
+      ],
+      recompenses: { xp: 500, badge: 'Ingénieur du vivant', power: "Maîtrise des deux mondes cellulaires" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Eucaryotes vs procaryotes",
+        question: "Dr Jafet te demande de comparer l'expression génétique chez les eucaryotes et les procaryotes.",
+        options: [
+          "Il n'y a aucune différence entre les deux",
+          "EUCARYOTES (humain, plante, champignon) : ils possèdent un NOYAU. La transcription a lieu dans le NOYAU, puis l'ARNm sort vers le CYTOPLASME où il est traduit. Les deux étapes sont donc SÉPARÉES dans l'espace et le temps. PROCARYOTES (bactéries) : PAS de noyau ; transcription ET traduction se déroulent dans le CYTOPLASME. Mieux : la traduction peut commencer alors que l'ARNm est encore en cours de transcription — c'est le COUPLAGE transcription-traduction.",
+          "Les procaryotes ont un noyau, pas les eucaryotes",
+          "Les eucaryotes n'ont ni transcription ni traduction"
+        ],
+        correctIdx: 1, xp: 170,
+        hint: "Eucaryotes : noyau → transcription/traduction séparées. Procaryotes : pas de noyau → couplage des deux dans le cytoplasme.",
+        explain: "DEUX MONDES, UN MÊME CODE : (1) EUCARYOTES — l'ADN est dans le noyau ; la transcription s'y fait, l'ARNm est « mûri » puis exporté vers le cytoplasme pour la traduction. Séparation nette des deux étapes (membrane nucléaire). (2) PROCARYOTES — pas de noyau, tout est dans le cytoplasme ; les ribosomes peuvent se fixer sur l'ARNm AVANT même que sa transcription soit finie → couplage transcription-traduction, donc production très rapide. (3) Tableau de comparaison utile : noyau (oui/non), lieu de transcription (noyau/cytoplasme), lieu de traduction (cytoplasme/cytoplasme), couplage (non/oui). (4) Malgré ces différences d'organisation, le CODE est le même et les mécanismes de base (ARN polymérase, ribosomes, ARNt) sont universels — c'est ce qui ouvre la porte au génie génétique."
+      },
+      { type: 'question',
+        title: "Phase 2 — L'universalité au service de la médecine",
+        question: "Dr Jafet : « Si on introduit le gène humain de l'insuline dans une bactérie, produira-t-elle une insuline humaine correcte ? Pourquoi ? »",
+        options: [
+          "Non : une bactérie ne peut jamais lire un gène humain",
+          "OUI. Parce que le code génétique est UNIVERSEL : un codon code le même acide aminé chez l'humain et chez la bactérie. Donc si l'on insère le gène humain de l'insuline dans E. coli, la bactérie le transcrit et le traduit avec SA propre machinerie (ARN polymérase, ribosomes, ARNt), et produit la SÉQUENCE d'acides aminés humaine. C'est le principe du génie génétique : on transforme la bactérie en mini-usine à protéines humaines. PROTÉOMICS exploite exactement cela pour produire l'insuline de Zeinab.",
+          "Oui, mais seulement si la bactérie est aussi humaine",
+          "Non, car le code génétique change d'une espèce à l'autre"
+        ],
+        correctIdx: 1, xp: 170,
+        hint: "Universalité du code : même codon = même acide aminé partout. La bactérie lit le gène humain avec sa propre machinerie.",
+        explain: "LE GÉNIE GÉNÉTIQUE — fondé sur l'universalité : (1) Le code étant universel, un gène humain « parle la même langue » que la machinerie bactérienne. (2) Étapes (production d'insuline depuis 1982) : on isole le gène humain de l'insuline → on l'insère dans un plasmide (petit ADN circulaire) → on introduit le plasmide dans E. coli → la bactérie se multiplie et fabrique l'insuline à grande échelle → on purifie l'insuline. (3) Avantage majeur : on obtient une insuline IDENTIQUE à l'insuline humaine, en grande quantité et à coût maîtrisé — contrairement à l'ancienne insuline animale (porc, bœuf), source d'allergies. (4) Aujourd'hui, des millions de diabétiques dans le monde reçoivent cette insuline recombinante. (5) C'est l'espoir concret pour Zeinab : une insuline de remplacement fiable."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : l'insuline de PROTÉOMICS pour Zeinab",
+        question: "PROTÉOMICS produit l'insuline dans E. coli. Cite 2 avantages de ce système, et explique pourquoi une modification après la traduction (post-traductionnelle) est nécessaire.",
+        options: [
+          "Aucun avantage, et aucune modification n'est nécessaire",
+          "AVANTAGES (2 parmi) : (a) PRODUCTION DE MASSE — les bactéries se multiplient très vite et en grand nombre → grande quantité d'insuline à coût réduit. (b) INSULINE HUMAINE PURE — séquence identique à l'humaine, donc beaucoup moins d'allergies qu'avec l'insuline animale d'autrefois. (Autres : production continue, contrôlée, reproductible.) MODIFICATION POST-TRADUCTIONNELLE : la traduction produit d'abord une PRO-INSULINE, une chaîne unique INACTIVE. Il faut ensuite la « maturer » — découper et replier correctement (élimination du peptide C, formation des ponts entre chaînes A et B) — pour obtenir l'insuline ACTIVE. Une protéine n'est pleinement fonctionnelle qu'après ces étapes de maturation.",
+          "Le seul avantage est la couleur, et aucune maturation n'existe",
+          "La bactérie produit directement l'insuline active sans aucune étape"
+        ],
+        correctIdx: 1, xp: 160,
+        hint: "Avantages : quantité + pureté/identité humaine. La traduction donne une pro-insuline inactive → maturation nécessaire.",
+        explain: "DE LA BACTÉRIE À L'INSULINE ACTIVE : (1) AVANTAGES du système bactérien — multiplication rapide (donc grande quantité à faible coût), séquence strictement humaine (donc bien tolérée), production reproductible et contrôlée. (2) POURQUOI une maturation post-traductionnelle — beaucoup de protéines ne sont pas actives « à la sortie » du ribosome. L'insuline est d'abord synthétisée sous forme de PRO-INSULINE (une seule chaîne). Sa maturation comprend le repliement, la formation des ponts disulfure et l'excision du peptide C, pour donner l'insuline mature à 2 chaînes (A et B) reliées, seule forme active. (3) Idée clé : une protéine fonctionnelle = bonne séquence + bon repliement + maturations éventuelles. C'est la transition parfaite vers l'Arc 5 (le devenir des protéines : RE, Golgi, sécrétion).",
+        successOutcome: "Dr Jafet : « Parfait. Tu as compris : la séquence ne suffit pas, il faut aussi la maturation. Zeinab aura son insuline. »",
+        consequence: "Fin de l'Arc 3. Direction l'Arc 4 : analyser en détail les mutations des 3 patients." }
+    ],
+    epilogue: {
+      titre: "Arc 3 terminé — Ingénieur du vivant",
+      message: "Tu maîtrises la fabrique cellulaire : la transcription (3 étapes), la traduction (ribosome, ARNt, sites A/P/E), et les différences eucaryotes/procaryotes (couplage, localisation). Surtout, tu comprends comment l'universalité du code permet de produire l'insuline humaine de Zeinab dans une bactérie, et pourquoi la maturation post-traductionnelle est indispensable. Arc 4 : quand le code mute — analyser les mutations des 3 patients.",
+      conseilLabel: "Conseil de Dr Jafet",
+      conseilTexte: "Le code est universel : c'est une des plus belles idées de la biologie. Elle relie la bactérie, la plante et l'humain dans une même langue. Garde cet émerveillement — il nourrit la rigueur.",
+      grimoire: "Eucaryotes : transcription (noyau) puis traduction (cytoplasme), séparées. Procaryotes : tout dans le cytoplasme, couplage transcription-traduction. Universalité du code → génie génétique : gène humain de l'insuline dans E. coli → insuline humaine. Pro-insuline (inactive) → maturation post-traductionnelle → insuline active.",
+      philo: "Plusieurs espèces, une seule langue : le code génétique unit tout le vivant."
+    }
+  },
+  'pr-2-1': {
+    id: 'pr-2-1', arc: 2, arcTitle: 'LE CODE SECRET', number: '2.1',
+    title: "La table de Rosette",
+    subtitle: "Lire le code génétique",
+    icon: '🔑',
+    rank: { from: 1, to: 2, name: 'Analyste — Lecteur du code' },
+    power: 'Lecteur du code génétique',
+    signature: "Ce tableau contient 64 cases. Chaque case est un codon. Maîtrise-le, et tu liras la protéine cachée dans n'importe quelle séquence.",
+    prologue: [
+      "Dr Salamatou affiche la table du code génétique sur le grand écran. « Voici le dictionnaire universel du vivant. Il a fallu des décennies pour le décrypter. »",
+      "« Aujourd'hui, tu vas apprendre à l'utiliser en moins d'une heure. Un codon = 3 nucléotides = un acide aminé. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Maîtriser les 5 propriétés du code génétique (UNDNA)",
+        "Identifier les 3 codons stop (UAA, UAG, UGA) et le codon initiateur (AUG)",
+        "Justifier la nécessité du triplet (4³ = 64 ≥ 20)",
+        "Traduire un ARNm à l'aide de la table"
+      ],
+      recompenses: { xp: 450, badge: 'Lecteur du code', power: "Maîtrise de la table du code génétique" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les 5 propriétés (UNDNA) et les codons clés",
+        question: "Dr Salamatou te demande les 5 propriétés du code génétique et les codons particuliers à connaître.",
+        options: [
+          "Le code change selon les espèces et chaque codon code plusieurs acides aminés au hasard",
+          "5 PROPRIÉTÉS (UNDNA) : (U) UNIVERSEL — le même code chez presque tous les êtres vivants. (N) NON CHEVAUCHANT — un nucléotide n'appartient qu'à un seul codon. (D) DÉGÉNÉRÉ — plusieurs codons peuvent coder le même acide aminé. (N) NON AMBIGU — un codon donné code toujours un seul acide aminé. (A) il possède des codons STOP. CODONS CLÉS : 3 codons STOP (UAA, UAG, UGA) qui ne codent aucun acide aminé ; 1 codon INITIATEUR (AUG) qui code la Méthionine et démarre toute traduction.",
+          "Il n'existe que 4 codons, un par base azotée",
+          "Les codons stop codent la méthionine"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "UNDNA : Universel, Non chevauchant, Dégénéré, Non ambigu, A des codons stop. Stop = UAA/UAG/UGA. Start = AUG.",
+        explain: "LE CODE GÉNÉTIQUE — propriétés : (1) UNIVERSEL — un même codon code le même acide aminé chez la bactérie, la plante, l'humain. C'est ce qui permet de faire produire de l'insuline humaine par une bactérie (Arc 3). (2) NON CHEVAUCHANT — la lecture se fait triplet par triplet, sans recouvrement : chaque nucléotide n'est lu qu'une fois. (3) DÉGÉNÉRÉ (ou redondant) — il y a 64 codons pour 20 acides aminés, donc plusieurs codons « synonymes » codent le même acide aminé (ex. Leu a 6 codons). C'est cette propriété qui rend possibles les mutations silencieuses. (4) NON AMBIGU — un codon donné ne code qu'UN seul acide aminé (pas de confusion). (5) CODONS STOP (UAA, UAG, UGA) — ils arrêtent la traduction sans coder d'acide aminé. (6) CODON INITIATEUR — AUG code la Méthionine et marque le début de la lecture."
+      },
+      { type: 'question',
+        title: "Phase 2 — Pourquoi un triplet ? Et une première traduction",
+        question: "Dr Salamatou : « Pourquoi un codon fait-il 3 nucléotides, et pas 1 ou 2 ? » Puis : « Traduis 5'-AUG-CCG-UAC-GGU-UGA-3'. »",
+        options: [
+          "Parce que 2 nucléotides suffisent ; la traduction donne une protéine vide",
+          "POURQUOI LE TRIPLET : avec 4 bases, un code à 1 lettre donne 4¹ = 4 possibilités (trop peu), à 2 lettres 4² = 16 (encore insuffisant pour 20 acides aminés), à 3 lettres 4³ = 64 (suffisant). Le triplet est donc le plus petit format qui code les 20 acides aminés. TRADUCTION de 5'-AUG-CCG-UAC-GGU-UGA-3' : AUG = Méthionine (départ), CCG = Proline, UAC = Tyrosine, GGU = Glycine, UGA = STOP. Protéine = Met - Pro - Tyr - Gly.",
+          "Le triplet est un choix arbitraire sans raison mathématique",
+          "AUG-CCG-UAC-GGU-UGA se traduit en un seul acide aminé"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "4²=16 < 20 ≤ 64 = 4³ : il faut 3 nucléotides. AUG=Met(start), UGA=stop ; lis les codons entre les deux.",
+        explain: "LE TRIPLET ET LA LECTURE : (1) Justification mathématique — il faut au moins 20 « mots » pour 20 acides aminés. 4¹ = 4, 4² = 16 (< 20, insuffisant), 4³ = 64 (≥ 20, suffisant). La nature a « choisi » le triplet : économique et suffisant, avec de la redondance en prime. (2) Lecture — on démarre au codon AUG, puis on lit les codons l'un après l'autre, sans chevauchement, jusqu'à un codon stop. (3) Exemple : AUG(Met) - CCG(Pro) - UAC(Tyr) - GGU(Gly) - UGA(stop) → protéine Met-Pro-Tyr-Gly. Le codon stop ne donne pas d'acide aminé : il met fin à la chaîne. (4) Ce réflexe de lecture servira pour tous les dossiers : on lit l'ARNm, on en déduit la protéine."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : la position 6 de la bêta-globine d'Aminata",
+        question: "Dr Salamatou te donne l'ARNm normal de la bêta-globine autour de la position 6 : 5'-GUG-CAC-CUG-ACU-CCU-GAG-GAG-AAG-3'. Quel acide aminé occupe la position 6 (le 6ᵉ codon) ? Et dans l'hémoglobine S d'Aminata, ce codon devient GUG : quel acide aminé alors ?",
+        options: [
+          "Position 6 = GUG = valine ; muté il devient acide glutamique",
+          "On numérote les codons : 1=GUG, 2=CAC, 3=CUG, 4=ACU, 5=CCU, 6=GAG, 7=GAG, 8=AAG. Le 6ᵉ codon est GAG = ACIDE GLUTAMIQUE (normal). Dans l'hémoglobine S, ce codon est muté en GUG = VALINE. C'est exactement la substitution acide glutamique → valine de la drépanocytose : un seul codon change (GAG → GUG), un seul acide aminé change, et toute la maladie en découle.",
+          "Position 6 = CAC = histidine ; rien ne change",
+          "Il n'y a pas de 6ᵉ codon dans cette séquence"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Compte les codons à partir du 1er (GUG). Le 6ᵉ est GAG (Glu). GAG → GUG = Glu → Val.",
+        explain: "LIRE LA MUTATION D'AMINATA DANS LE CODE : (1) Le début de la chaîne bêta normale se lit GUG(Val1)-CAC(His2)-CUG(Leu3)-ACU(Thr4)-CCU(Pro5)-GAG(Glu6)-GAG(Glu7)-AAG(Lys8). (2) Le 6ᵉ codon GAG code l'acide glutamique. (3) La mutation drépanocytaire transforme ce codon GAG en GUG → l'acide glutamique (Glu) est remplacé par la valine (Val) en position 6 : c'est la fameuse substitution Glu6Val. (4) On voit ici la puissance du code : il suffit qu'un A devienne un U au milieu d'un codon pour changer l'acide aminé, et donc la protéine, et donc la santé d'Aminata. (5) Ce lien direct codon → acide aminé est le cœur du diagnostic moléculaire.",
+        successOutcome: "Dr Salamatou : « Parfait. Tu viens de lire, dans le code, l'origine exacte de la maladie d'Aminata. »",
+        consequence: "« Reste à savoir écrire l'ARNm depuis l'ADN. C'est l'objet de la mission suivante. »" }
+    ],
+    epilogue: {
+      titre: "Lecteur du code — Rang 2 (Analyste) atteint",
+      message: "Tu maîtrises la table du code génétique : ses 5 propriétés (UNDNA), les codons stop (UAA, UAG, UGA), le codon initiateur AUG, et la logique du triplet (4³ = 64). Tu sais traduire un ARNm et lire dans le code la mutation d'Aminata (GAG → GUG, Glu → Val). Mission suivante : écrire l'ARNm à partir de l'ADN grâce à la complémentarité des bases.",
+      conseilLabel: "Conseil de Dr Salamatou",
+      conseilTexte: "Apprends à repérer d'abord le AUG, puis lis sans t'arrêter jusqu'au stop. Et souviens-toi : un code dégénéré, c'est ce qui rend certaines mutations inoffensives. Tu comprendras pourquoi très bientôt.",
+      grimoire: "Code génétique : 64 codons pour 20 AA. Propriétés UNDNA (Universel, Non chevauchant, Dégénéré, Non ambigu, A des codons stop). Start = AUG (Méthionine). Stop = UAA/UAG/UGA. Triplet car 4³ = 64 ≥ 20. Aminata : codon 6 GAG (Glu) → GUG (Val).",
+      philo: "La science n'est pas une collection de formules. C'est une façon de lire le monde."
+    }
+  },
+
+  'pr-2-2': {
+    id: 'pr-2-2', arc: 2, arcTitle: 'LE CODE SECRET', number: '2.2',
+    title: "Complémentarités",
+    subtitle: "De l'ADN à l'ARNm",
+    icon: '🔄',
+    rank: { from: 2, to: 2, name: 'Analyste — Scribe de l\'ARNm' },
+    power: "Écriture de l'ARNm",
+    signature: "Avant d'utiliser le code, il faut écrire l'ARNm. Et pour cela, il faut maîtriser la complémentarité des bases. C'est la clé de tout.",
+    prologue: [
+      "Dr Mariama pose une séquence d'ADN sur la table. « Un gène a deux brins. Un seul sert de modèle : le brin matrice. »",
+      "« Pour écrire l'ARNm depuis ce brin matrice, il faut connaître la complémentarité ADN/ARN sur le bout des doigts. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Maîtriser la complémentarité ADN/ARN : A→U, T→A, G→C, C→G",
+        "Distinguer brin matrice (transcrit, 3'→5') et brin codant (non transcrit, 5'→3')",
+        "Écrire un ARNm à partir d'un brin matrice et le traduire",
+        "Comprendre que l'ARNm est identique au brin non transcrit (T remplacé par U)"
+      ],
+      recompenses: { xp: 450, badge: "Scribe de l'ARNm", power: "Maîtrise de la transcription des séquences" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Complémentarité et brins",
+        question: "Dr Mariama te demande les règles de complémentarité ADN→ARN et la différence entre brin matrice et brin codant.",
+        options: [
+          "A→T, T→A, G→C, C→G, et les deux brins sont transcrits en même temps",
+          "COMPLÉMENTARITÉ ADN → ARN : A (ADN) → U (ARN), T (ADN) → A (ARN), G (ADN) → C (ARN), C (ADN) → G (ARN). LES DEUX BRINS : le BRIN MATRICE (ou transcrit, orienté 3'→5') est celui que l'ARN polymérase lit pour fabriquer l'ARNm. Le BRIN CODANT (ou non transcrit, orienté 5'→3') n'est pas lu. Conséquence : l'ARNm a la même séquence que le brin CODANT, à ceci près que les T sont remplacés par des U.",
+          "Un seul brin existe dans l'ADN",
+          "L'ARNm est identique au brin matrice, lettre pour lettre"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "A→U, T→A, G→C, C→G. Le brin LU est le brin matrice (3'→5'). L'ARNm ressemble au brin codant (T→U).",
+        explain: "DE L'ADN À L'ARNm : (1) Complémentarité — comme dans l'ADN, sauf que l'adénine de l'ADN s'apparie à l'uracile (U) côté ARN (pas à la thymine). Donc : A→U, T→A, G→C, C→G. (2) Brin matrice vs brin codant — l'ADN est double brin. L'ARN polymérase ne lit qu'UN brin, le brin matrice (3'→5'), et synthétise l'ARNm dans le sens 5'→3'. (3) Pourquoi l'ARNm ressemble au brin codant — parce que l'ARNm est complémentaire du brin matrice, et que le brin codant est lui aussi complémentaire du brin matrice : les deux se ressemblent donc, au détail près que l'ADN écrit T là où l'ARN écrit U. (4) Ce mécanisme s'appelle la transcription ; on en verra les 3 étapes détaillées à l'Arc 3."
+      },
+      { type: 'question',
+        title: "Phase 2 — Écrire et traduire",
+        question: "Écris l'ARNm correspondant au brin matrice d'ADN 3'-TAC-GGA-ATG-CCC-ATT-5', puis traduis-le.",
+        options: [
+          "ARNm : 5'-ATG-CCT-TAC-GGG-TAA-3' ; protéine impossible",
+          "ARNm (5'→3') : on applique A→U, T→A, G→C, C→G sur le brin matrice lu 3'→5'. 3'-TAC GGA ATG CCC ATT-5' donne 5'-AUG CCU UAC GGG UAA-3'. TRADUCTION : AUG = Méthionine (départ), CCU = Proline, UAC = Tyrosine, GGG = Glycine, UAA = STOP. Protéine = Met - Pro - Tyr - Gly.",
+          "ARNm : 5'-UAC-GGA-AUG-CCC-AUU-3' (copie directe du brin matrice)",
+          "On ne peut pas traduire car il n'y a pas de codon AUG"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Applique A→U, T→A, G→C, C→G base par base. Tu dois obtenir un AUG au début et un stop (UAA) à la fin.",
+        explain: "ÉCRIRE PUIS LIRE : (1) Méthode — on prend le brin matrice (3'→5'), on remplace chaque base par sa complémentaire ARN (A→U, T→A, G→C, C→G), on obtient l'ARNm (5'→3'). (2) Calcul : T→A, A→U, C→G | G→C, G→C, A→U | A→U, T→A, G→C | C→G, C→G, C→G | A→U, T→A, T→A, soit AUG-CCU-UAC-GGG-UAA. (3) Traduction : AUG(Met, départ)-CCU(Pro)-UAC(Tyr)-GGG(Gly)-UAA(stop) → protéine Met-Pro-Tyr-Gly. (4) Vérification utile : un ARNm fonctionnel commence par AUG et se termine par un codon stop — c'est un bon réflexe de contrôle."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : le gène PAH d'Ibrahim et une mutation silencieuse",
+        question: "Souleymane t'envoie un fragment du brin matrice du gène PAH : 3'-TAC-GAC-CAC-CTC-TCC-ACG-GAC-5'. Écris l'ARNm et traduis. Puis si le 4ᵉ nucléotide du brin matrice (un G) devient un A, la protéine change-t-elle ? Quelle propriété du code est illustrée ?",
+        options: [
+          "La protéine devient totalement différente : c'est une mutation non-sens",
+          "ARNm : 5'-AUG-CUG-GUG-GAG-AGG-UGC-CUG-3' → Met-Leu-Val-Glu-Arg-Cys-Leu. Si le 4ᵉ nucléotide du brin matrice (G) devient A, le 2ᵉ codon matrice GAC devient AAC, donc le 2ᵉ codon de l'ARNm passe de CUG à UUG. Or CUG ET UUG codent tous deux la LEUCINE : la protéine NE CHANGE PAS. C'est une MUTATION SILENCIEUSE, rendue possible par la DÉGÉNÉRESCENCE du code génétique.",
+          "La protéine est tronquée car on crée un codon stop",
+          "On ne peut pas écrire l'ARNm à partir d'un brin matrice"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Traduis d'abord. Puis change le 4ᵉ nucléotide : le codon CUG devient UUG. Compare les acides aminés.",
+        explain: "MUTATION SILENCIEUSE ET DÉGÉNÉRESCENCE : (1) Écriture — le brin matrice 3'-TAC GAC CAC CTC TCC ACG GAC-5' donne l'ARNm 5'-AUG CUG GUG GAG AGG UGC CUG-3'. (2) Traduction — AUG(Met)-CUG(Leu)-GUG(Val)-GAG(Glu)-AGG(Arg)-UGC(Cys)-CUG(Leu). (3) Mutation — le 4ᵉ nucléotide du brin matrice (le G du 2ᵉ codon GAC) devient A → codon matrice AAC → codon ARNm UUG. (4) Or la leucine possède plusieurs codons synonymes, dont CUG ET UUG : le changement CUG → UUG laisse la leucine inchangée. La protéine est identique : c'est une mutation SILENCIEUSE. (5) C'est précisément la propriété DÉGÉNÉRÉE du code qui amortit ces mutations : toutes les substitutions ne sont pas pathologiques, certaines sont totalement neutres. On le reverra en détail à l'Arc 4.",
+        successOutcome: "Souleymane : « Brillant. Tu viens de montrer qu'une mutation peut être totalement invisible. La dégénérescence du code, c'est un amortisseur. »",
+        consequence: "« Garde ça en tête : toutes les mutations ne rendent pas malade. »" }
+    ],
+    epilogue: {
+      titre: "Scribe de l'ARNm — validé",
+      message: "Tu sais écrire un ARNm depuis un brin matrice (A→U, T→A, G→C, C→G), distinguer brin matrice et brin codant, et tu as découvert la mutation silencieuse grâce à la dégénérescence du code (CUG/UUG = Leucine). Mission suivante : compter — nucléotides, codons, acides aminés.",
+      conseilLabel: "Conseil de Dr Mariama",
+      conseilTexte: "Quand tu écris un ARNm, vérifie toujours : commence-t-il par AUG ? finit-il par un stop ? Ces deux réflexes t'éviteront 90 % des erreurs.",
+      grimoire: "Complémentarité ADN→ARN : A→U, T→A, G→C, C→G. Brin matrice (lu, 3'→5') vs brin codant (non lu, 5'→3'). ARNm ≈ brin codant (T→U). Mutation silencieuse = substitution sans changement d'AA (dégénérescence). PAH d'Ibrahim : CUG→UUG = Leu inchangée.",
+      philo: "Comprendre avant de mémoriser — construire sur du roc, pas sur du sable."
+    }
+  },
+
+  'pr-2-3': {
+    id: 'pr-2-3', arc: 2, arcTitle: 'LE CODE SECRET', number: '2.3',
+    title: "Calculer les longueurs",
+    subtitle: "Nucléotides, codons, acides aminés",
+    icon: '📐',
+    rank: { from: 2, to: 2, name: 'Analyste — Calculateur de séquences' },
+    power: 'Calcul des séquences',
+    signature: "En biologie moléculaire, tout se compte. Nombre de nucléotides, de codons, d'acides aminés — chaque calcul a une signification.",
+    prologue: [
+      "Dieusai, technicien senior, te confie une mission de calcul pour les 3 dossiers. « Un codon = 3 nucléotides = 1 acide aminé. À partir de là, tout se déduit. »",
+      "« Sache passer d'un nombre à l'autre, dans les deux sens. C'est la base de l'analyse de séquences. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Calculer le nombre de codons : nucléotides ÷ 3",
+        "Relier nombre de codons et nombre d'acides aminés",
+        "Calculer les nucléotides d'un ARNm à partir du nombre d'acides aminés (+ codon stop)",
+        "Appliquer ces relations aux dossiers (insuline, bêta-globine, PAH)"
+      ],
+      recompenses: { xp: 450, badge: 'Calculateur de séquences', power: "Maîtrise des relations numériques" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les relations numériques",
+        question: "Dieusai te demande les relations entre nucléotides, codons et acides aminés.",
+        options: [
+          "1 nucléotide = 1 codon = 1 acide aminé",
+          "RELATIONS : (1) Nombre de CODONS = nombre de nucléotides ÷ 3 (lecture par triplets, sans chevauchement). (2) Nombre d'ACIDES AMINÉS = nombre de codons CODANTS (on lit de AUG jusqu'au codon stop ; le codon stop ne code aucun acide aminé). (3) Nombre de NUCLÉOTIDES d'un ARNm = (nombre d'acides aminés × 3) + 3 pour le codon stop (au minimum). La lecture est triplet par triplet, sans chevauchement, du AUG au stop.",
+          "Le nombre de codons = nombre de nucléotides × 3",
+          "Les acides aminés se comptent en divisant les nucléotides par 2"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "Codons = nucléotides ÷ 3. AA = codons codants. Nucléotides = (AA × 3) + 3 (stop).",
+        explain: "LES RELATIONS NUMÉRIQUES : (1) Codons = nucléotides ÷ 3, car la lecture se fait par triplets sans chevauchement. (2) Acides aminés = codons codants : on compte les codons entre l'AUG et le codon stop. Le codon stop est compté dans les nucléotides mais ne donne pas d'acide aminé. (3) Pour reconstruire un ARNm minimal à partir d'une protéine de n acides aminés : n codons + 1 codon stop = (n + 1) codons = (n + 1) × 3 nucléotides. (Le AUG est en général compté parmi les n, car le 1er acide aminé est une Méthionine.) (4) Ces conversions sont le pain quotidien d'un analyste de séquences : passer du nombre d'acides aminés à la longueur du gène, et inversement."
+      },
+      { type: 'question',
+        title: "Phase 2 — Trois calculs concrets",
+        question: "Calcule : (a) la chaîne B de l'insuline a 30 acides aminés → combien de codons et de nucléotides minimum dans l'ARNm ? (b) un ARNm de 21 nucléotides codants (sans AUG ni stop) → combien d'acides aminés ? (c) la bêta-globine a 146 acides aminés → combien de nucléotides minimum ?",
+        options: [
+          "(a) 10 codons ; (b) 63 acides aminés ; (c) 146 nucléotides",
+          "(a) INSULINE B : 30 acides aminés → 30 codons codants + 1 codon stop = 31 codons = 93 nucléotides minimum. (b) 21 nucléotides ÷ 3 = 7 codons → 7 acides aminés. (c) BÊTA-GLOBINE : 146 acides aminés → 146 codons + 1 codon stop = 147 codons = 441 nucléotides minimum.",
+          "(a) 90 nucléotides ; (b) 7 acides aminés ; (c) 438 nucléotides, sans compter le stop",
+          "On ne peut rien calculer sans connaître la séquence exacte"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "AA → codons (+1 stop) → ×3 nucléotides. nucléotides ÷ 3 → codons → AA.",
+        explain: "TROIS CALCULS : (a) Insuline B = 30 AA → 30 codons codants ; + 1 codon stop = 31 codons ; × 3 = 93 nucléotides minimum. (b) 21 nucléotides ÷ 3 = 7 codons ; comme on précise « sans AUG ni stop », ce sont 7 codons codants → 7 acides aminés. (c) Bêta-globine = 146 AA → 146 codons + 1 stop = 147 codons × 3 = 441 nucléotides minimum sur le brin transcrit. (Remarque : on parle de minimum car, chez les eucaryotes, le gène contient en plus des régions non codantes — introns — qu'on étudiera plus tard. Ici on raisonne sur l'ARNm mature / la partie codante.)"
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : l'ARNm de la PAH et un décalage chez Ibrahim",
+        question: "Dieusai analyse l'ARNm de la PAH d'Ibrahim : 1332 nucléotides codants (sans codon stop). Combien d'acides aminés contient la PAH fonctionnelle ? Si une addition d'un nucléotide survient à la position 10, à partir de quel endroit la protéine est-elle totalement modifiée, et pourquoi ?",
+        options: [
+          "444 acides aminés ; et l'addition ne change rien à la protéine",
+          "NOMBRE D'ACIDES AMINÉS : 1332 ÷ 3 = 444 acides aminés. ADDITION À LA POSITION 10 : l'ajout d'un seul nucléotide DÉCALE le cadre de lecture (frameshift) à partir de ce point. Tous les codons situés EN AVAL (après la position 10) sont relus différemment → la protéine devient TOTALEMENT différente à partir de là (souvent suivie d'un codon stop prématuré). Le début (avant la position 10) reste correct, mais tout le reste est faux. C'est une mutation par décalage du cadre de lecture, généralement très grave.",
+          "444 acides aminés ; mais seule la position 10 change, le reste est intact",
+          "1332 acides aminés ; l'addition crée une mutation silencieuse"
+        ],
+        correctIdx: 1, xp: 150,
+        hint: "AA = 1332 ÷ 3. Une addition d'un nucléotide décale TOUS les codons situés après → frameshift.",
+        explain: "CALCUL ET DÉCALAGE DU CADRE DE LECTURE : (1) Nombre d'acides aminés = 1332 ÷ 3 = 444 acides aminés (séquence codante sans le stop). (2) Le cadre de lecture — la machinerie lit l'ARNm par groupes de 3, sans repère « espace » : seul le point de départ (AUG) fixe le découpage. (3) Si on AJOUTE (ou supprime) un nucléotide, tout ce qui suit est décalé d'un cran : les triplets en aval ne sont plus les mêmes → tous les acides aminés en aval changent, et un codon stop prématuré apparaît souvent. (4) Conséquence pour Ibrahim : une addition à la position 10 laisse correct le tout début, mais rend FAUX tout le reste de la protéine PAH → enzyme non fonctionnelle. (5) C'est pourquoi additions et délétions (qui décalent le cadre) sont en général bien plus graves qu'une simple substitution (qui ne touche qu'un codon). On détaillera tout cela à l'Arc 4.",
+        successOutcome: "Dieusai hoche la tête : « 444 acides aminés, et un décalage qui détruit tout en aval. Tu as compris pourquoi une seule lettre en trop peut tout casser. »",
+        consequence: "Fin de l'Arc 2. Direction l'Arc 3 : comment la cellule fabrique concrètement ces protéines." }
+    ],
+    epilogue: {
+      titre: "Arc 2 terminé — Calculateur de séquences",
+      message: "Tu maîtrises le code génétique de bout en bout : ses propriétés (UNDNA), la lecture et l'écriture des séquences (complémentarité ADN/ARN), et les calculs (codons = nucléotides ÷ 3, acides aminés, longueur d'un ARNm). Tu as relié ces outils aux dossiers : Aminata (codon 6), Ibrahim (mutation silencieuse puis décalage du cadre). Arc 3 : la fabrique cellulaire — transcription et traduction en action.",
+      conseilLabel: "Conseil de Dieusai",
+      conseilTexte: "En contrôle, pose toujours tes calculs proprement : nucléotides ÷ 3 pour les codons, +1 codon stop quand on remonte d'une protéine vers l'ARNm. La rigueur du calcul, c'est la rigueur de la pensée.",
+      grimoire: "Codons = nucléotides ÷ 3. Acides aminés = codons codants. ARNm minimal = (n AA + 1 stop) × 3 nucléotides. Insuline B (30 AA) → 93 nt. Bêta-globine (146 AA) → 441 nt. PAH (1332 nt codants) → 444 AA. Addition/délétion → décalage du cadre (frameshift).",
+      philo: "Plusieurs matières, une seule réalité : la rigueur du calcul est celle de la pensée."
+    }
+  },
+  'proteomics-tuto': {
+    id: 'proteomics-tuto', arc: 0, arcTitle: 'BIENVENUE À PROTÉOMICS', number: 'Tuto',
+    title: "Bienvenue à PROTÉOMICS",
+    subtitle: "L'Institut de Biologie Moléculaire de Niamey",
+    icon: '🧬',
+    rank: { from: 0, to: 0, name: 'Stagiaire — Observateur' },
+    power: "Initiation à l'expression génétique",
+    signature: "La vie écrit ses instructions dans une langue à 4 lettres. Comprendre ce langage, c'est comprendre la maladie, la santé, et la diversité du vivant.",
+    prologue: [
+      "Tu pousses la porte de PROTÉOMICS, l'Institut de Biologie Moléculaire et d'Expression Génique de Niamey. Ici, on séquence les gènes, on analyse les protéines, on identifie les mutations et on accompagne les familles touchées par des maladies génétiques.",
+      "Dr Kotchami t'accueille : « Tu es notre nouveau Biologiste Moléculaire Junior. Aujourd'hui, Rang 0 — Observateur. Si tu réussis les 5 arcs, tu deviendras Directeur Scientifique. Mais d'abord, trois familles ont besoin de nous. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Découvrir la mission de PROTÉOMICS et l'équipe",
+        "Comprendre les 3 dossiers cliniques : Aminata, Ibrahim, Zeinab",
+        "Saisir la règle d'or : Séquence → Protéine → Phénotype → Décision"
+      ],
+      recompenses: { xp: 150, badge: 'Stagiaire PROTÉOMICS', power: "Entrée dans l'institut" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — La règle d'or de PROTÉOMICS",
+        question: "Dr Kotchami écrit au tableau la démarche de tout l'institut. Quelle est-elle ?",
+        options: [
+          "Phénotype → Décision → Séquence (on décide d'abord, on vérifie après)",
+          "SÉQUENCE → PROTÉINE → PHÉNOTYPE → DÉCISION : on lit la séquence du gène (ADN), on en déduit la protéine produite, on comprend le phénotype (sain ou malade) qui en résulte, puis on conseille la famille. C'est le fil rouge de chaque dossier.",
+          "On observe le malade et on devine la cause sans analyse",
+          "On traite d'abord, on comprend ensuite"
+        ],
+        correctIdx: 1, xp: 50,
+        hint: "On part toujours du gène (la séquence) et on remonte jusqu'à la décision médicale.",
+        explain: "LA DÉMARCHE DE LA BIOLOGIE MOLÉCULAIRE : (1) SÉQUENCE — l'information est inscrite dans l'ADN du gène, sous forme d'un enchaînement de nucléotides (A, T, G, C). (2) PROTÉINE — cette séquence est transcrite en ARNm puis traduite en une protéine précise. La séquence des acides aminés dépend directement de la séquence des nucléotides. (3) PHÉNOTYPE — selon que la protéine est fonctionnelle, modifiée ou absente, l'individu est sain ou malade. (4) DÉCISION — comprendre ce mécanisme permet de conseiller la famille et de choisir une prise en charge (régime, traitement, suivi). C'est exactement cette chaîne qu'on suivra pour Aminata, Ibrahim et Zeinab."
+      },
+      { type: 'question',
+        title: "Phase 2 — Les trois dossiers",
+        question: "Dr Fatima te présente les trois patients. Lequel de ces résumés est exact ?",
+        options: [
+          "Aminata fait de l'asthme, Ibrahim a une fracture, Zeinab une grippe",
+          "(A) AMINATA, 8 ans, drépanocytose — un acide aminé de l'hémoglobine est remplacé. (B) IBRAHIM, 4 ans, phénylcétonurie — une enzyme (la PAH) est absente, d'où un régime strict. (C) ZEINAB, 25 ans, diabète héréditaire — son insuline a un acide aminé substitué. Trois maladies, une même logique : une mutation du gène modifie ou supprime une protéine.",
+          "Les trois patients ont la même maladie exactement",
+          "Aucun des trois n'a de cause génétique"
+        ],
+        correctIdx: 1, xp: 50,
+        hint: "Une protéine modifiée (Aminata), une protéine absente (Ibrahim), une protéine substituée (Zeinab).",
+        explain: "LES 3 DOSSIERS — un fil commun : une mutation → une protéine modifiée ou absente → un phénotype pathologique. (A) DRÉPANOCYTOSE : l'hémoglobine S a la valine à la place de l'acide glutamique en position 6 de la chaîne bêta → globules rouges en faucille en cas de manque d'oxygène. (B) PHÉNYLCÉTONURIE (PCU) : l'enzyme phénylalanine hydroxylase (PAH) est absente → la phénylalanine s'accumule → risque de retard mental sans régime adapté. (C) INSULINE ANORMALE : un acide aminé substitué dans la chaîne B → insuline qui régule mal la glycémie. PROTÉOMICS produit d'ailleurs de l'insuline humaine de synthèse pour des patients comme Zeinab."
+      }
+    ],
+    epilogue: {
+      titre: "Stagiaire PROTÉOMICS — prêt pour l'Arc 1",
+      message: "Tu connais la mission de l'institut, l'équipe et les trois familles qui comptent sur toi. La règle d'or — Séquence → Protéine → Phénotype → Décision — guidera chacune de tes analyses. Mission suivante : les briques fondamentales du vivant, les protéines.",
+      conseilLabel: "Conseil de Dr Kotchami",
+      conseilTexte: "Ne cherche pas à tout retenir d'un coup. Comprends d'abord la logique : du gène à la décision. Le reste s'emboîtera tout seul. Comprendre avant de mémoriser.",
+      grimoire: "PROTÉOMICS — Règle d'or : Séquence → Protéine → Phénotype → Décision. 3 dossiers : Aminata (drépanocytose, protéine modifiée), Ibrahim (PCU, enzyme absente), Zeinab (insuline substituée).",
+      philo: "La vie écrit ses instructions dans une langue à 4 lettres."
+    }
+  },
+
+  'pr-1-1': {
+    id: 'pr-1-1', arc: 1, arcTitle: 'LES BRIQUES DE LA VIE', number: '1.1',
+    title: "Les 20 lettres de la vie",
+    subtitle: "Acides aminés et structure des protéines",
+    icon: '🧱',
+    rank: { from: 0, to: 1, name: 'Biologiste junior — Architecte protéique' },
+    power: 'Architecte protéique',
+    signature: "Vingt acides aminés. Vingt lettres seulement. Avec elles, la vie écrit des milliers de mots — les protéines — qui construisent tout le vivant.",
+    prologue: [
+      "Dr Blandine t'accueille dans son laboratoire de biochimie. Sur la paillasse, trois échantillons sanguins : celui d'Aminata, celui d'Ibrahim, celui de Zeinab.",
+      "« Avant de comprendre pourquoi ces patients sont malades, tu dois maîtriser ce qu'est une protéine. Car dans chaque cas, c'est une protéine défaillante qui est en cause. Commence par les briques : les acides aminés. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Décrire la structure d'un acide aminé : groupement amine (-NH2), carboxyle (-COOH), H et radical R variable",
+        "Expliquer la liaison peptidique (condensation, libération d'eau)",
+        "Décrire les 4 niveaux de structure : primaire, secondaire, tertiaire, quaternaire",
+        "Distinguer holoprotéines et hétéroprotéines"
+      ],
+      recompenses: { xp: 400, badge: 'Architecte protéique', power: "Maîtrise de la structure protéique" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — L'acide aminé et la liaison peptidique",
+        question: "Dr Blandine pose un modèle moléculaire. « Décris la structure générale d'un acide aminé, et explique comment deux acides aminés se lient. »",
+        options: [
+          "Un acide aminé n'a aucune structure fixe, et les acides aminés se lient au hasard",
+          "STRUCTURE : tout acide aminé possède un carbone central portant 4 groupements — un groupement AMINE (-NH2), un groupement CARBOXYLE (-COOH), un atome d'HYDROGÈNE (H), et un RADICAL R variable. Ce sont les 20 radicaux R différents qui distinguent les 20 acides aminés. LIAISON PEPTIDIQUE : elle se forme par une réaction de CONDENSATION entre le -COOH d'un acide aminé et le -NH2 du suivant, avec ÉLIMINATION d'une molécule d'EAU (H2O). Un enchaînement d'acides aminés ainsi liés forme un polypeptide.",
+          "Les acides aminés sont des sucres reliés par des liaisons hydrogène",
+          "Un acide aminé ne contient que du carbone et de l'hydrogène"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Carbone central + NH2 + COOH + H + R. La liaison peptidique = condensation COOH/NH2 avec perte d'eau.",
+        explain: "LES ACIDES AMINÉS ET LA LIAISON PEPTIDIQUE : (1) Les 20 acides aminés partagent le même squelette (carbone central α porteur de -NH2, -COOH, -H) et ne diffèrent que par leur RADICAL R. C'est R qui donne à chaque acide aminé ses propriétés (polaire, apolaire, chargé, hydrophobe…). (2) La LIAISON PEPTIDIQUE relie le carboxyle d'un acide aminé à l'amine du suivant : c'est une réaction de condensation (ou déshydratation) qui libère UNE molécule d'eau par liaison formée. (3) Conséquence numérique utile : pour relier n acides aminés en une chaîne, il faut (n − 1) liaisons peptidiques, donc (n − 1) molécules d'eau libérées. (4) L'ordre des acides aminés (la séquence) est imposé par le gène — c'est là que tout se joue : changer un seul acide aminé peut suffire à rendre une protéine pathologique, comme dans la drépanocytose d'Aminata."
+      },
+      { type: 'question',
+        title: "Phase 2 — Les 4 niveaux de structure",
+        question: "Pour comprendre l'hémoglobine, Dr Blandine te demande les 4 niveaux d'organisation d'une protéine. Lesquels ?",
+        options: [
+          "Il n'existe qu'un seul niveau : la forme finale",
+          "(1) STRUCTURE PRIMAIRE : la séquence linéaire des acides aminés (l'ordre exact). (2) STRUCTURE SECONDAIRE : repliements locaux réguliers — hélice α ou feuillet β — stabilisés par des liaisons hydrogène. (3) STRUCTURE TERTIAIRE : le repliement 3D global de la chaîne (forme dans l'espace). (4) STRUCTURE QUATERNAIRE : l'association de plusieurs chaînes polypeptidiques en une protéine fonctionnelle (ex. l'hémoglobine = 4 chaînes). Moyen mnémotechnique : PS² HT Q — Primaire, Secondaire, Hélice/feuillet, Tertiaire, Quaternaire.",
+          "Primaire et secondaire seulement",
+          "Les protéines n'ont pas de structure 3D"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Primaire (séquence) → Secondaire (hélice α / feuillet β) → Tertiaire (3D) → Quaternaire (plusieurs chaînes).",
+        explain: "LES 4 NIVEAUX DE STRUCTURE : (1) PRIMAIRE — la séquence, dictée par le gène. C'est le niveau touché EN PREMIER par une mutation. (2) SECONDAIRE — hélices α et feuillets β, maintenus par des liaisons hydrogène entre les atomes du squelette. (3) TERTIAIRE — le repliement 3D complet d'une chaîne, stabilisé par les interactions entre radicaux R (liaisons hydrogène, ioniques, ponts disulfure, interactions hydrophobes). (4) QUATERNAIRE — l'assemblage de plusieurs chaînes : l'hémoglobine en compte 4 (2 α + 2 β). On distingue aussi les HOLOPROTÉINES (uniquement des acides aminés) des HÉTÉROPROTÉINES (acides aminés + un groupement non protéique : glucide, lipide, ou métal — l'hémoglobine contient du fer dans son hème, c'est une hétéroprotéine). Dans la drépanocytose, un changement en structure primaire (1 acide aminé) se répercute sur la forme de toute la protéine."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : l'hémoglobine d'Aminata",
+        question: "Chaque chaîne bêta de l'hémoglobine compte 146 acides aminés. Combien de molécules d'eau ont été libérées pour former UNE chaîne bêta ? Et pour les 4 chaînes de l'hémoglobine (2 α de 141 AA + 2 β de 146 AA) ?",
+        options: [
+          "146 molécules pour une chaîne bêta ; 584 au total",
+          "UNE CHAÎNE BÊTA : 146 acides aminés → 145 liaisons peptidiques → 145 molécules d'eau libérées (n − 1). HÉMOGLOBINE COMPLÈTE : 2 chaînes α (141 AA → 140 liaisons chacune) + 2 chaînes β (146 AA → 145 liaisons chacune) = (2 × 140) + (2 × 145) = 280 + 290 = 570 molécules d'eau libérées au total.",
+          "0 molécule, car la liaison peptidique n'élimine pas d'eau",
+          "146 × 4 = 584 molécules, en comptant tous les acides aminés"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Pour n acides aminés : (n − 1) liaisons = (n − 1) molécules d'eau. Additionne les 4 chaînes séparément.",
+        explain: "CALCUL — liaisons peptidiques et eau : la règle clé est (n − 1) : relier n acides aminés exige n − 1 liaisons peptidiques, chacune libérant 1 molécule d'eau. (1) Chaîne bêta de 146 AA → 145 liaisons → 145 H2O. (2) Chaîne alpha de 141 AA → 140 liaisons → 140 H2O. (3) Hémoglobine = 2α + 2β = 2(140) + 2(145) = 570 molécules d'eau. Ce type de calcul reviendra pour l'insuline de Zeinab et l'enzyme PAH d'Ibrahim : savoir compter acides aminés, liaisons et molécules d'eau est un réflexe de biologiste moléculaire.",
+        successOutcome: "Dr Blandine sourit : « Exact. 570. Tu comptes déjà comme une biologiste. »",
+        consequence: "« Retiens bien la règle n − 1. Elle te servira dans tous les dossiers. »"
+      }
+    ],
+    epilogue: {
+      titre: "Architecte protéique — Rang 1 atteint",
+      message: "Tu maîtrises la brique du vivant : l'acide aminé (NH2, COOH, H, R), la liaison peptidique (condensation, perte d'eau) et les 4 niveaux de structure (primaire, secondaire, tertiaire, quaternaire). Tu sais que l'hémoglobine est une hétéroprotéine quaternaire. Mission suivante : à quoi servent les protéines, et comment leur absence change le phénotype.",
+      conseilLabel: "Conseil de Dr Blandine",
+      conseilTexte: "Une protéine, c'est une séquence repliée. Si tu changes une seule lettre de la séquence, tu peux changer toute la forme — et donc toute la fonction. Garde cette idée : la structure primaire commande tout.",
+      grimoire: "Acide aminé = C central + NH2 + COOH + H + R variable. Liaison peptidique = condensation (− 1 H2O). 4 niveaux : primaire (séquence), secondaire (hélice α / feuillet β), tertiaire (3D), quaternaire (plusieurs chaînes). Holo- vs hétéroprotéines. Règle n − 1 pour les liaisons.",
+      philo: "Comprendre avant de mémoriser — construire sur du roc, pas sur du sable."
+    }
+  },
+
+  'pr-1-2': {
+    id: 'pr-1-2', arc: 1, arcTitle: 'LES BRIQUES DE LA VIE', number: '1.2',
+    title: "La protéine à l'œuvre",
+    subtitle: "Fonctions des protéines et lien avec le phénotype",
+    icon: '⚙️',
+    rank: { from: 1, to: 1, name: 'Biologiste junior — Lecteur du phénotype' },
+    power: 'Lecteur du phénotype',
+    signature: "Quand une protéine est absente ou défectueuse, le phénotype change. C'est exactement ce qui se passe chez chacun de nos trois patients.",
+    prologue: [
+      "Dr Blandine affiche un tableau : six catégories de fonctions protéiques.",
+      "« Les protéines ne servent pas toutes à la même chose. Et quand l'une d'elles manque, l'individu change. Comprends ce lien, et tu comprendras la maladie d'Ibrahim. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Identifier les 6 grandes fonctions des protéines",
+        "Appliquer la chaîne gène → protéine → fonction → phénotype",
+        "Expliquer l'albinisme (absence de tyrosinase)",
+        "Expliquer la phénylcétonurie d'Ibrahim (absence de PAH)"
+      ],
+      recompenses: { xp: 400, badge: 'Lecteur du phénotype', power: "Lien protéine-phénotype" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Les 6 fonctions des protéines",
+        question: "Dr Blandine te demande de citer les grandes fonctions des protéines, avec un exemple pour chacune.",
+        options: [
+          "Les protéines ont une seule fonction : donner de l'énergie",
+          "SIX FONCTIONS PRINCIPALES : (1) CATALYSE — les enzymes accélèrent les réactions (ex. la PAH d'Ibrahim). (2) TRANSPORT — l'hémoglobine transporte l'oxygène. (3) DÉFENSE — les anticorps neutralisent les agents étrangers. (4) STRUCTURE — le collagène soutient les tissus. (5) SIGNALISATION — l'insuline régule la glycémie (cas de Zeinab). (6) MOUVEMENT — l'actine et la myosine permettent la contraction musculaire. Règle : le phénotype dépend de la présence ou de l'absence d'une protéine fonctionnelle.",
+          "Catalyse et transport uniquement",
+          "Les protéines ne servent qu'à la structure du corps"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Catalyse (enzymes), Transport (hémoglobine), Défense (anticorps), Structure (collagène), Signalisation (insuline), Mouvement (myosine).",
+        explain: "LES FONCTIONS DES PROTÉINES : les protéines sont les ouvrières de la cellule. (1) ENZYMES (catalyse) : elles rendent possibles des réactions qui, sinon, seraient trop lentes — la PAH transforme la phénylalanine en tyrosine. (2) TRANSPORT : l'hémoglobine fixe et transporte l'O2. (3) DÉFENSE : les anticorps (immunoglobulines) reconnaissent les antigènes. (4) STRUCTURE : collagène, kératine. (5) SIGNALISATION : les hormones protéiques comme l'insuline portent un message. (6) MOUVEMENT : actine/myosine. RÈGLE FONDAMENTALE : un gène commande une protéine ; cette protéine assure une fonction ; le phénotype observé est le résultat de cette fonction. Si la protéine manque ou est défectueuse, la fonction est perdue et le phénotype change."
+      },
+      { type: 'question',
+        title: "Phase 2 — Albinisme et phénylcétonurie : la chaîne causale",
+        question: "Comment relier un gène muté au phénotype, dans l'albinisme puis chez Ibrahim (PCU) ?",
+        options: [
+          "Le gène agit directement sur la peau, sans passer par une protéine",
+          "ALBINISME : gène muté → enzyme TYROSINASE absente → pas de transformation en MÉLANINE → phénotype albinos (peau et cheveux non pigmentés). PHÉNYLCÉTONURIE (Ibrahim) : gène PAH muté → enzyme PHÉNYLALANINE HYDROXYLASE (PAH) absente → la phénylalanine n'est plus transformée en tyrosine → elle S'ACCUMULE dans le sang → toxicité pour le cerveau en développement → risque de retard mental sans régime adapté. Dans les deux cas : gène → enzyme absente → réaction bloquée → phénotype.",
+          "L'albinisme et la PCU n'ont aucune cause enzymatique",
+          "C'est la mélanine qui code le gène"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Gène muté → enzyme absente → substrat non transformé (ou produit manquant) → phénotype.",
+        explain: "CHAÎNE CAUSALE — de l'enzyme au phénotype : (1) ALBINISME — l'absence de tyrosinase empêche la fabrication de mélanine, le pigment de la peau, des cheveux et des yeux. Sans pigment : phénotype albinos, et photosensibilité importante (au Niger, protection solaire et suivi ophtalmologique sont essentiels). (2) PHÉNYLCÉTONURIE D'IBRAHIM — la PAH transforme normalement la phénylalanine (un acide aminé apporté par l'alimentation) en tyrosine. Sans PAH fonctionnelle, la phénylalanine s'accumule à des taux toxiques pour le cerveau du jeune enfant → retard mental SI rien n'est fait. (3) PRINCIPE : une enzyme manquante = une réaction bloquée = accumulation du substrat en amont et/ou manque du produit en aval. C'est pourquoi le régime pauvre en phénylalanine protège Ibrahim : il réduit l'apport du substrat que l'enzyme absente ne peut plus traiter."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : un seul acide aminé chez Aminata",
+        question: "Dans l'hémoglobine S d'Aminata, l'acide glutamique (polaire, chargé) en position 6 de la chaîne bêta est remplacé par la valine (hydrophobe). Comment ce changement d'UN SEUL acide aminé peut-il déformer le globule rouge, et quel niveau de structure est touché en premier ?",
+        options: [
+          "Cela ne change rien, un seul acide aminé est négligeable",
+          "Le changement touche EN PREMIER la STRUCTURE PRIMAIRE (la séquence). En remplaçant un acide aminé chargé (acide glutamique, soluble) par un acide aminé hydrophobe (valine) à la surface de la chaîne bêta, on crée une zone « collante ». En cas de faible oxygène, les molécules d'hémoglobine S s'accrochent les unes aux autres par ces zones hydrophobes et POLYMÉRISENT en longues fibres rigides → le globule rouge se déforme en FAUCILLE. Un changement minuscule de structure primaire se répercute jusqu'à la forme de la cellule.",
+          "C'est la structure quaternaire qui est touchée en premier, jamais la primaire",
+          "Le globule rouge change de couleur, pas de forme"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Mutation = changement de séquence = structure PRIMAIRE d'abord. Valine hydrophobe → agrégation en fibres → faucille.",
+        explain: "DE LA SÉQUENCE À LA FAUCILLE : (1) La mutation modifie la structure PRIMAIRE : position 6 de la chaîne β, acide glutamique → valine. (2) L'acide glutamique est polaire et chargé (il « aime » l'eau, reste en surface sans coller) ; la valine est hydrophobe (elle « fuit » l'eau et cherche à s'associer à d'autres zones hydrophobes). (3) Quand l'oxygène est bas (effort, déshydratation, altitude, infection), les molécules d'HbS désoxygénées s'agrègent par ces zones hydrophobes et forment de longues FIBRES rigides à l'intérieur du globule rouge. (4) Le globule, normalement souple et biconcave, prend une forme de FAUCILLE : il devient rigide, bloque les petits vaisseaux (crises douloureuses) et se détruit plus vite (anémie). (5) Leçon majeure : la structure primaire COMMANDE tout le reste. Un seul acide aminé mal placé peut changer la forme, la fonction, et la santé. C'est le cœur du dossier d'Aminata.",
+        successOutcome: "Dr Blandine hoche la tête : « Voilà. Une lettre change, et toute une vie en dépend. C'est ça, la biologie moléculaire. »",
+        consequence: "« Tu es prêt pour le code génétique : comment cette lettre est-elle écrite dans le gène ? »"
+      }
+    ],
+    epilogue: {
+      titre: "Lecteur du phénotype — validé",
+      message: "Tu sais relier un gène à un phénotype par l'intermédiaire d'une protéine : 6 fonctions protéiques, la chaîne gène → enzyme → réaction → phénotype (albinisme, PCU d'Ibrahim), et l'effet d'un seul acide aminé (HbS d'Aminata). Mission suivante : le dogme central — comment l'information passe de l'ADN à la protéine.",
+      conseilLabel: "Conseil de Dr Blandine",
+      conseilTexte: "Quand tu vois une maladie, demande-toi toujours : QUELLE protéine est touchée, et quelle fonction est perdue ? Pars de la protéine, le phénotype s'expliquera.",
+      grimoire: "6 fonctions des protéines : catalyse (enzyme), transport (hémoglobine), défense (anticorps), structure (collagène), signalisation (insuline), mouvement (myosine). Chaîne gène → protéine → fonction → phénotype. Albinisme = pas de tyrosinase. PCU = pas de PAH. HbS = 1 acide aminé (Glu→Val) → faucille.",
+      philo: "Plusieurs maladies, une seule logique : une protéine modifiée change le vivant."
+    }
+  },
+
+  'pr-1-3': {
+    id: 'pr-1-3', arc: 1, arcTitle: 'LES BRIQUES DE LA VIE', number: '1.3',
+    title: "La bibliothèque cellulaire",
+    subtitle: "Le dogme central : ADN → ARNm → Protéine",
+    icon: '🔍',
+    rank: { from: 1, to: 1, name: 'Biologiste junior — Lecteur du dogme central' },
+    power: 'Lecteur du dogme central',
+    signature: "L'ADN, c'est la bibliothèque. L'ARNm, c'est la photocopie d'une page. La protéine, c'est le meuble assemblé selon le plan.",
+    prologue: [
+      "Dr Mariama entre avec une métaphore. « L'ADN reste au coffre, dans le noyau. On n'en sort jamais l'original. On en fait une copie de travail : l'ARNm. Et c'est cette copie qui sert à fabriquer la protéine. »",
+      "Elle trace au tableau : ADN → ARNm → Protéine. « C'est le dogme central de la biologie moléculaire. Comprends-le, et tu as compris l'essentiel. »"
+    ],
+    briefing: {
+      objectifs: [
+        "Définir un gène (plus petite fraction d'ADN dirigeant la synthèse d'une protéine)",
+        "Énoncer le dogme central : ADN → ARNm → Protéine",
+        "Distinguer ADN et ARNm (sucre, brins, bases)",
+        "Comprendre que la séquence des acides aminés dépend de celle des nucléotides"
+      ],
+      recompenses: { xp: 400, badge: 'Lecteur du dogme central', power: "Maîtrise du dogme central" }
+    },
+    phases: [
+      { type: 'question',
+        title: "Phase 1 — Le dogme central et la notion de gène",
+        question: "Dr Mariama te demande d'énoncer le dogme central et de définir un gène.",
+        options: [
+          "Protéine → ARNm → ADN : la protéine fabrique l'ADN",
+          "DOGME CENTRAL : ADN → ARNm → PROTÉINE, en deux étapes. (1) La TRANSCRIPTION copie un gène de l'ADN en ARN messager (ARNm), dans le noyau. (2) La TRADUCTION lit l'ARNm pour assembler la protéine, dans le cytoplasme (sur les ribosomes). GÈNE : c'est la plus petite fraction d'ADN capable de diriger la synthèse d'une protéine — l'unité fonctionnelle de l'hérédité. La séquence des acides aminés de la protéine dépend directement de la séquence des nucléotides du gène.",
+          "ADN → Protéine directement, sans ARNm",
+          "Le gène est un chromosome entier"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Deux étapes : transcription (ADN → ARNm) puis traduction (ARNm → protéine).",
+        explain: "LE DOGME CENTRAL : (1) TRANSCRIPTION (noyau) — un gène de l'ADN est recopié en ARNm. (2) TRADUCTION (cytoplasme, ribosomes) — l'ARNm est lu codon par codon pour assembler les acides aminés dans le bon ordre. (3) GÈNE — la plus petite portion d'ADN qui dirige la fabrication d'une protéine. À distinguer du CHROMOSOME (longue molécule d'ADN qui porte des milliers de gènes) et de l'ALLÈLE (une version particulière d'un gène). (4) Idée centrale : l'ordre des nucléotides du gène impose l'ordre des acides aminés de la protéine. Une erreur dans la séquence d'ADN se répercute donc sur l'ARNm puis sur la protéine — c'est l'origine moléculaire de la maladie d'Aminata."
+      },
+      { type: 'question',
+        title: "Phase 2 — ADN vs ARNm",
+        question: "Dr Mariama te demande les différences chimiques entre l'ADN et l'ARNm sur trois critères.",
+        options: [
+          "L'ADN et l'ARNm sont strictement identiques",
+          "TROIS DIFFÉRENCES : (1) SUCRE — l'ADN contient du DÉSOXYRIBOSE, l'ARNm du RIBOSE. (2) NOMBRE DE BRINS — l'ADN est BICATÉNAIRE (double brin, en double hélice), l'ARNm est MONOCATÉNAIRE (simple brin). (3) BASES AZOTÉES — l'ADN utilise A, T, G, C ; l'ARNm utilise A, U, G, C : l'URACILE (U) y remplace la THYMINE (T). L'ARNm est ainsi une copie de travail, mobile et temporaire, du message porté par l'ADN.",
+          "La seule différence est la couleur",
+          "L'ARNm est double brin et l'ADN simple brin"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Sucre (désoxyribose/ribose), brins (double/simple), bases (T pour l'ADN, U pour l'ARN).",
+        explain: "ADN vs ARNm — comparaison : (1) SUCRE — désoxyribose (ADN) vs ribose (ARN) : le ribose porte un -OH supplémentaire, ce qui rend l'ARN moins stable, cohérent avec son rôle de copie temporaire. (2) BRINS — l'ADN est une double hélice stable (archivage de l'information) ; l'ARNm est un simple brin (copie de travail). (3) BASES — A, T, G, C pour l'ADN ; A, U, G, C pour l'ARN (U remplace T). (4) Complémentarité à retenir pour la suite : lors de la transcription, A de l'ADN donne U sur l'ARN, T donne A, G donne C, C donne G. (5) Cette distinction prépare l'Arc 2 (le code génétique) et l'Arc 3 (transcription et traduction), où l'on écrira concrètement l'ARNm à partir de l'ADN."
+      },
+      { type: 'question',
+        title: "Phase 3 — Défi : la question centrale des 3 dossiers",
+        question: "Dr Kotchami réunit l'équipe. « Formule, en une phrase par patient, la question centrale de chaque dossier — en utilisant les mots gène, mutation, protéine, phénotype. » Quelle proposition est correcte ?",
+        options: [
+          "Les trois patients ont simplement attrapé un microbe",
+          "AMINATA : quelle MUTATION du GÈNE de la bêta-globine produit une PROTÉINE (hémoglobine S) modifiée, responsable du PHÉNOTYPE drépanocytaire ? IBRAHIM : quelle MUTATION du GÈNE de la PAH supprime la PROTÉINE-enzyme, entraînant le PHÉNOTYPE phénylcétonurique ? ZEINAB : quelle MUTATION du GÈNE de l'insuline substitue un acide aminé de la PROTÉINE insuline, causant le PHÉNOTYPE diabétique ? Chaque dossier suit la chaîne gène → mutation → protéine → phénotype.",
+          "Aucun de ces dossiers n'implique un gène",
+          "On ne peut pas formuler de question scientifique sur ces cas"
+        ],
+        correctIdx: 1, xp: 100,
+        hint: "Pour chacun : un gène muté → une protéine modifiée ou absente → un phénotype pathologique.",
+        explain: "FORMULER LA QUESTION SCIENTIFIQUE : savoir poser le problème en termes de gène → mutation → protéine → phénotype, c'est déjà la moitié de la solution. (1) AMINATA — gène β-globine muté → hémoglobine S → drépanocytose. (2) IBRAHIM — gène PAH muté → enzyme PAH absente → phénylcétonurie. (3) ZEINAB — gène de l'insuline muté → insuline anormale → diabète. Cette grille unique s'applique à d'innombrables maladies génétiques : c'est la force de la biologie moléculaire. Dans les arcs suivants, on remplira chaque maillon : lire le code (Arc 2), fabriquer la protéine (Arc 3), analyser la mutation (Arc 4), soigner (Arc 5).",
+        successOutcome: "Dr Kotchami : « Parfait. Tu sais désormais POSER les bonnes questions. C'est la marque d'un vrai scientifique. »",
+        consequence: "Fin de l'Arc 1. Direction l'Arc 2 : Le code secret du vivant."
+      }
+    ],
+    epilogue: {
+      titre: "Arc 1 terminé — Lecteur du dogme central",
+      message: "Tu maîtrises la fondation : ce qu'est un gène, le dogme central (ADN → ARNm → Protéine, par transcription puis traduction) et les différences ADN/ARNm. Surtout, tu sais formuler la question centrale des trois dossiers en termes de gène, mutation, protéine et phénotype. Arc 2 : apprendre à LIRE le code génétique.",
+      conseilLabel: "Conseil de Dr Mariama",
+      conseilTexte: "Retiens l'image : l'ADN est la bibliothèque, l'ARNm la photocopie, la protéine le meuble. On ne sort jamais l'original du coffre. Cette image te guidera dans tout le thème.",
+      grimoire: "Gène = plus petite fraction d'ADN dirigeant la synthèse d'une protéine. Dogme central : ADN →(transcription)→ ARNm →(traduction)→ Protéine. ADN : désoxyribose, double brin, ATGC. ARNm : ribose, simple brin, AUGC (U remplace T). Les 3 dossiers = gène → mutation → protéine → phénotype.",
+      philo: "Comprendre le langage de la vie, c'est comprendre la maladie, la santé et la diversité du vivant."
+    }
+  },
 
   // ╔══════════════════════════════════════════════════════════════════╗
   // ║  CAMPAGNE PLANIF CLINIC — Choisir sa vie                          ║
@@ -18039,6 +19333,7 @@ function getMissionPrereqs(missionId) {
   if (missionId === 'planif-tuto') return [];
   if (missionId === 'sentinel-tuto') return [];
   if (missionId === 'chromosoma-tuto') return [];
+  if (missionId === 'proteomics-tuto') return [];
   // GENECODE : chaîne séquentielle après le tuto drépanocytose
   const gcChain = ['gc-1-1','gc-1-2','gc-2-1','gc-2-2','gc-2-3','gc-3-1','gc-3-2','gc-3-3','gc-4-1','gc-4-2','gc-4-3','gc-5-1','gc-5-2','gc-boss'];
   const gcIdx = gcChain.indexOf(missionId);
@@ -18069,6 +19364,11 @@ function getMissionPrereqs(missionId) {
   const chIdx = chChain.indexOf(missionId);
   if (chIdx === 0) return ['chromosoma-tuto'];
   if (chIdx > 0) return [chChain[chIdx - 1]];
+  // PROTÉOMICS : chaîne séquentielle après le tuto PROTÉOMICS (Thème 3)
+  const prChain = ['pr-1-1','pr-1-2','pr-1-3','pr-2-1','pr-2-2','pr-2-3','pr-3-1','pr-3-2','pr-3-3','pr-4-1','pr-4-2','pr-4-3','pr-5-1','pr-5-2','pr-boss'];
+  const prIdx = prChain.indexOf(missionId);
+  if (prIdx === 0) return ['proteomics-tuto'];
+  if (prIdx > 0) return [prChain[prIdx - 1]];
   return [];
 }
 
