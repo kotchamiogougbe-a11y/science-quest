@@ -6,6 +6,22 @@
 
 window.KI18N = {
   fr: {
+    menu_label:"Menu",
+    menu_nav:"Navigation",
+    menu_close:"Fermer le menu",
+    amb_open:"Musique de fond",
+    amb_title:"Ambiance sonore",
+    amb_hint:"Choisis ton ambiance",
+    amb_cosmos:"Cosmos",
+    amb_cosmos_d:"Nappes spatiales, vastes et contemplatives",
+    amb_focus:"Concentration",
+    amb_focus_d:"Arpèges doux, pour étudier",
+    amb_roots:"Racines",
+    amb_roots_d:"Sonorités chaleureuses, inspiration africaine",
+    amb_vol:"Volume",
+    amb_play:"Activer le son",
+    amb_pause:"Couper le son",
+    amb_close:"Fermer",
     skip:"Aller au contenu",
     chr_eyebrow:"🧬 Mission · SVT Terminale D",
     chr_mission_no:"— Mission 1",
@@ -321,6 +337,22 @@ window.KI18N = {
     foot_terms:"Conditions d'utilisation", foot_privacy:"Politique de confidentialité", foot_legals:"Mentions légales"
   },
   en: {
+    menu_label:"Menu",
+    menu_nav:"Navigation",
+    menu_close:"Close menu",
+    amb_open:"Background music",
+    amb_title:"Sound ambience",
+    amb_hint:"Choose your ambience",
+    amb_cosmos:"Cosmos",
+    amb_cosmos_d:"Spacious, contemplative pads",
+    amb_focus:"Focus",
+    amb_focus_d:"Gentle arpeggios, for studying",
+    amb_roots:"Roots",
+    amb_roots_d:"Warm tones, African inspiration",
+    amb_vol:"Volume",
+    amb_play:"Turn on sound",
+    amb_pause:"Turn off sound",
+    amb_close:"Close",
     skip:"Skip to content",
     chr_eyebrow:"🧬 Mission · Life & Earth Sci. · Terminale D",
     chr_mission_no:"— Mission 1",
@@ -636,6 +668,22 @@ window.KI18N = {
     foot_terms:"Terms of use", foot_privacy:"Privacy policy", foot_legals:"Legal notice"
   },
   ar: {
+    menu_label:"القائمة",
+    menu_nav:"التنقل",
+    menu_close:"إغلاق القائمة",
+    amb_open:"موسيقى الخلفية",
+    amb_title:"الأجواء الصوتية",
+    amb_hint:"اختر أجواءك",
+    amb_cosmos:"الكون",
+    amb_cosmos_d:"طبقات فضائية واسعة وتأملية",
+    amb_focus:"التركيز",
+    amb_focus_d:"أنغام لطيفة للدراسة",
+    amb_roots:"الجذور",
+    amb_roots_d:"نغمات دافئة بإلهام أفريقي",
+    amb_vol:"مستوى الصوت",
+    amb_play:"تشغيل الصوت",
+    amb_pause:"إيقاف الصوت",
+    amb_close:"إغلاق",
     skip:"تخطَّ إلى المحتوى",
     chr_eyebrow:"🧬 مهمة · علوم الحياة والأرض · Terminale D",
     chr_mission_no:"— المهمة 1",
@@ -959,6 +1007,22 @@ window.KI18N = {
     foot_legals:"إشعار قانوني"
   },
   es: {
+    menu_label:"Menú",
+    menu_nav:"Navegación",
+    menu_close:"Cerrar el menú",
+    amb_open:"Música de fondo",
+    amb_title:"Ambiente sonoro",
+    amb_hint:"Elige tu ambiente",
+    amb_cosmos:"Cosmos",
+    amb_cosmos_d:"Capas espaciales, amplias y contemplativas",
+    amb_focus:"Concentración",
+    amb_focus_d:"Arpegios suaves, para estudiar",
+    amb_roots:"Raíces",
+    amb_roots_d:"Sonidos cálidos, inspiración africana",
+    amb_vol:"Volumen",
+    amb_play:"Activar el sonido",
+    amb_pause:"Apagar el sonido",
+    amb_close:"Cerrar",
     skip:"Saltar al contenido",
     chr_eyebrow:"🧬 Misión · CV y T · Terminale D",
     chr_mission_no:"— Misión 1",
@@ -1282,6 +1346,22 @@ window.KI18N = {
     foot_legals:"Aviso legal"
   },
   pt: {
+    menu_label:"Menu",
+    menu_nav:"Navegação",
+    menu_close:"Fechar o menu",
+    amb_open:"Música de fundo",
+    amb_title:"Ambiente sonoro",
+    amb_hint:"Escolhe o teu ambiente",
+    amb_cosmos:"Cosmos",
+    amb_cosmos_d:"Camadas espaciais, amplas e contemplativas",
+    amb_focus:"Concentração",
+    amb_focus_d:"Arpejos suaves, para estudar",
+    amb_roots:"Raízes",
+    amb_roots_d:"Sons quentes, inspiração africana",
+    amb_vol:"Volume",
+    amb_play:"Ativar o som",
+    amb_pause:"Desligar o som",
+    amb_close:"Fechar",
     skip:"Saltar para o conteúdo",
     chr_eyebrow:"🧬 Missão · CVT · Terminale D",
     chr_mission_no:"— Missão 1",
@@ -1605,6 +1685,22 @@ window.KI18N = {
     foot_legals:"Aviso legal"
   },
   sw: {
+    menu_label:"Menyu",
+    menu_nav:"Urambazaji",
+    menu_close:"Funga menyu",
+    amb_open:"Muziki wa nyuma",
+    amb_title:"Mazingira ya sauti",
+    amb_hint:"Chagua mazingira yako",
+    amb_cosmos:"Anga",
+    amb_cosmos_d:"Sauti za anga, pana na za kutafakari",
+    amb_focus:"Umakini",
+    amb_focus_d:"Mipigo laini, kwa kusoma",
+    amb_roots:"Mizizi",
+    amb_roots_d:"Sauti za joto, msukumo wa Kiafrika",
+    amb_vol:"Sauti",
+    amb_play:"Washa sauti",
+    amb_pause:"Zima sauti",
+    amb_close:"Funga",
     skip:"Rukia hadi maudhui",
     chr_eyebrow:"🧬 Misheni · SVT · Terminale D",
     chr_mission_no:"— Misheni 1",
@@ -2052,4 +2148,10 @@ window.chooseLang = function(code){
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',buildUI);
   else buildUI();
+  /* filet de sécurité : aucun contenu ne doit rester invisible (anti écran vide) */
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('visible'); });
+    }, 3000);
+  });
 })();
