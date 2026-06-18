@@ -3,7 +3,87 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SAPIENTIA — Kotchami</title>
+<title>SAPIENTIA — Créer et appliquer la science pour bâtir le monde | Kotchami</title>
+  <!-- KSEO -->
+  <meta name="description" content="Le premier monde où jouer fait avancer le monde réel : un univers vivant où le savoir devient des projets concrets.">
+  <meta name="author" content="Kotchami Ogougbe">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#0A1745">
+  <link rel="canonical" href="https://kotchami.com/sapientia.html">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kotchami — L'Univers des Passeurs">
+  <meta property="og:title" content="SAPIENTIA — Créer et appliquer la science pour bâtir le monde | Kotchami">
+  <meta property="og:description" content="Le premier monde où jouer fait avancer le monde réel : un univers vivant où le savoir devient des projets concrets.">
+  <meta property="og:url" content="https://kotchami.com/sapientia.html">
+  <meta property="og:image" content="https://kotchami.com/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Kotchami — L'Univers des Passeurs">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale:alternate" content="ar_AR">
+  <meta property="og:locale:alternate" content="es_ES">
+  <meta property="og:locale:alternate" content="pt_PT">
+  <meta property="og:locale:alternate" content="sw_KE">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SAPIENTIA — Créer et appliquer la science pour bâtir le monde | Kotchami">
+  <meta name="twitter:description" content="Le premier monde où jouer fait avancer le monde réel : un univers vivant où le savoir devient des projets concrets.">
+  <meta name="twitter:image" content="https://kotchami.com/og-cover.png">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "Organization",
+        "EducationalOrganization"
+      ],
+      "@id": "https://kotchami.com/#org",
+      "name": "Kotchami — Le Passeur de sciences",
+      "url": "https://kotchami.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://kotchami.com/icon-512.png"
+      },
+      "slogan": "Comprendre avant de mémoriser — bâtir sur du roc.",
+      "description": "Écosystème éducatif fondé par Kotchami Ogougbe pour rendre la science accessible à tous : apprendre, explorer et créer.",
+      "founder": {
+        "@type": "Person",
+        "name": "Kotchami Ogougbe"
+      },
+      "knowsLanguage": [
+        "fr",
+        "en",
+        "ar",
+        "es",
+        "pt",
+        "sw"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://kotchami.com/sapientia.html#webpage",
+      "url": "https://kotchami.com/sapientia.html",
+      "name": "SAPIENTIA — Créer et appliquer la science pour bâtir le monde | Kotchami",
+      "description": "Le premier monde où jouer fait avancer le monde réel : un univers vivant où le savoir devient des projets concrets.",
+      "inLanguage": "fr",
+      "isPartOf": {
+        "@id": "https://kotchami.com/#website"
+      },
+      "about": {
+        "@id": "https://kotchami.com/#org"
+      }
+    }
+  ]
+}
+  </script>
+  <!-- /KSEO -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -173,9 +253,50 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
 @media(max-width:960px){.plans,.versus{grid-template-columns:1fr;}.versus .vs-mid{display:none;}.ftr-top{grid-template-columns:1fr 1fr;gap:32px;}#mnav{display:block;}body{padding-bottom:74px;}}
 @media(max-width:560px){.hdr-top{padding:0 12px;}.h-brand-name{font-size:1rem;}.btn-connect{padding:7px 12px;font-size:0.74rem;}.btn-start{padding:8px 14px;font-size:0.74rem;}.ftr-top{grid-template-columns:1fr;gap:28px;}}
 @media(max-width:430px){.h-brand-name{display:none;}.btn-connect{border:none;padding:7px 8px;}}
+/* ── ÉCRAN DE CHOIX DE LANGUE ── */
+    #langOverlay{position:fixed;inset:0;z-index:10000;background:radial-gradient(ellipse at 40% 30%,#16307A 0%,#0A1745 45%,#060D2E 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s;overflow-y:auto;}
+    #langOverlay.show{opacity:1;visibility:visible;}
+    .lang-box{width:100%;max-width:440px;}
+    .lang-logo{width:72px;height:72px;border-radius:16px;overflow:hidden;margin:0 auto 22px;box-shadow:0 0 50px rgba(61,126,255,0.35);}
+    .lang-logo img{width:100%;height:100%;object-fit:cover;display:block;}
+    .lang-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;text-align:center;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:12px;}
+    .lang-bar{width:60px;height:3px;background:linear-gradient(90deg,var(--cosmos),var(--cosmos2));border-radius:3px;margin:0 auto 32px;}
+    .lang-list{display:flex;flex-direction:column;gap:12px;}
+    .lang-item{display:flex;align-items:center;gap:18px;background:rgba(18,36,99,0.55);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 22px;cursor:pointer;transition:transform .2s,border-color .2s,background .2s;width:100%;text-align:left;color:var(--blanc);font-family:'Inter',sans-serif;}
+    .lang-item:hover{transform:translateY(-2px);border-color:rgba(61,126,255,0.4);background:rgba(25,48,128,0.6);}
+    .lang-flag{font-size:2rem;line-height:1;flex-shrink:0;}
+    .lang-info{flex:1;}
+    .lang-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.2rem;}
+    .lang-tag{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--gris);letter-spacing:0.06em;}
+    .lang-radio{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);flex-shrink:0;transition:border-color .2s,background .2s;}
+    .lang-item:hover .lang-radio{border-color:var(--cosmos2);}
+    /* sélecteur header */
+    .lang-switch{position:relative;}
+    .lang-current{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid rgba(197,158,80,0.25);border-radius:8px;padding:7px 12px;color:var(--blanc);font-family:'JetBrains Mono',monospace;font-size:0.72rem;cursor:pointer;transition:border-color .2s;}
+    .lang-current:hover{border-color:rgba(197,158,80,0.5);}
+    .lang-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--nuit2);border:1px solid rgba(197,158,80,0.2);border-radius:12px;padding:6px;min-width:170px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .2s,visibility .2s,transform .2s;z-index:300;}
+    .lang-menu.open{opacity:1;visibility:visible;transform:translateY(0);}
+    .lang-menu button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:var(--blanc);padding:9px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-size:0.85rem;text-align:left;transition:background .2s;}
+    .lang-menu button:hover{background:rgba(255,255,255,0.06);}
+    html[dir="rtl"] .lang-menu{right:auto;left:0;}
+    html[dir="rtl"] body{text-align:right;}
+.skip-link{position:absolute;left:-9999px;top:0;z-index:9999;background:#0A1745;color:#F5D98B;padding:12px 18px;border:1px solid rgba(197,158,80,.5);border-radius:0 0 10px 0;font-family:'Space Grotesk',sans-serif;font-size:.9rem;text-decoration:none;}
+.skip-link:focus{left:0;}
+:focus-visible{outline:2px solid #7EB4FF;outline-offset:3px;border-radius:4px;}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#contenu" data-i18n="skip">Aller au contenu</a>
+
+<div id="langOverlay">
+  <div class="lang-box">
+    <div class="lang-logo"><img src="data:image/png;base64,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" alt="K"/></div>
+    <div class="lang-title">🌍 <span data-i18n="lang_choose">Choisissez votre langue</span></div>
+    <div class="lang-bar"></div>
+    <div class="lang-list" id="langList"></div>
+  </div>
+</div>
+
 
 <canvas id="starfield"></canvas>
 <div id="nebula"></div>
@@ -183,36 +304,42 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
 <header id="hdr">
   <div class="hdr-top">
     <a href="index.html" class="h-brand"><div class="h-k"><img src="data:image/png;base64,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" alt="K"/></div><span class="h-brand-name">KOTCHAMI</span></a>
-    <div class="h-actions"><button class="btn-connect">Se connecter</button><button class="btn-start">Créer un compte</button></div>
+    <div class="h-actions">
+      <div class="lang-switch">
+        <button class="lang-current" id="langCurrent" onclick="document.getElementById('langMenu').classList.toggle('open')">🌐 FR</button>
+        <div class="lang-menu" id="langMenu"></div>
+      </div>
+      <button class="btn-connect" data-i18n="btn_connect">Se connecter</button><button class="btn-start" data-i18n="btn_create">Créer un compte</button></div>
   </div>
   <div class="hdr-nav-wrap">
     <nav class="hdr-nav">
-      <a href="index.html" class="nav-tab"><span class="nt-icon">🏠</span> Accueil</a>
-      <a href="science-quest.html" class="nav-tab"><span class="nt-icon">🧪</span> Science Quest</a>
-      <a href="infinitia.html" class="nav-tab"><span class="nt-icon">🔭</span> INFINITIA</a>
-      <a href="#" class="nav-tab active"><span class="nt-icon">🏛</span> SAPIENTIA</a>
-      <a href="#" class="nav-tab"><span class="nt-icon">📚</span> Livres</a>
-      <a href="#" class="nav-tab"><span class="nt-icon">🤝</span> Communauté</a>
-      <a href="#" class="nav-tab"><span class="nt-icon">✍️</span> Blog</a>
-      <a href="#" class="nav-tab"><span class="nt-icon">💡</span> À propos</a>
+      <a href="index.html" class="nav-tab"><span class="nt-icon">🏠</span> <span data-i18n="nav_home">Accueil</span></a>
+      <a href="science-quest.html" class="nav-tab"><span class="nt-icon">🧪</span> <span data-i18n="nav_sq">Science Quest</span></a>
+      <a href="infinitia.html" class="nav-tab"><span class="nt-icon">🔭</span> <span data-i18n="nav_inf">INFINITIA</span></a>
+      <a href="#" class="nav-tab active"><span class="nt-icon">🏛</span> <span data-i18n="nav_sap">SAPIENTIA</span></a>
+      <a href="#" class="nav-tab"><span class="nt-icon">📚</span> <span data-i18n="nav_books">Livres</span></a>
+      <a href="#" class="nav-tab"><span class="nt-icon">🤝</span> <span data-i18n="nav_community">Communauté</span></a>
+      <a href="#" class="nav-tab"><span class="nt-icon">✍️</span> <span data-i18n="nav_blog">Blog</span></a>
+      <a href="#" class="nav-tab"><span class="nt-icon">💡</span> <span data-i18n="foot_about">À propos</span></a>
     </nav>
   </div>
 </header>
+<a id="contenu" tabindex="-1"></a>
 
 <section class="sq-hero">
   <div class="sq-emoji">🏛</div>
-  <div class="sq-chip">Pilier 03 · Créer & Appliquer</div>
+  <div class="sq-chip" data-i18n="sap_pilier">Pilier 03 · Créer & Appliquer</div>
   <h1 class="sq-h1">SAPIENTIA</h1>
-  <p class="sq-lead">Quand le divertissement rencontre l'innovation. Un monde ouvert où le temps de jeu devient temps de création — et où tes idées peuvent inspirer des projets réels.</p>
+  <p class="sq-lead" data-i18n="sap_lead">Quand le divertissement rencontre l'innovation. Un monde ouvert où le temps de jeu devient temps de création — et où tes idées peuvent inspirer des projets réels.</p>
   <div class="sq-cta">
-    <button class="btn-hero">Rejoindre l'aventure <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    <a href="#concept" class="btn-hero2">Découvrir le concept</a>
+    <button class="btn-hero"data-i18n="sap_cta1">Rejoindre l'aventure <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <a href="#concept" class="btn-hero2" data-i18n="sap_cta_concept">Découvrir le concept</a>
   </div>
 </section>
 
 <section class="sq-sec" id="concept">
-  <p class="s-label reveal">Le concept</p>
-  <h2 class="s-title reveal">Et si jouer servait à bâtir le monde ?</h2>
+  <p class="s-label reveal" data-i18n="sap_concept_eye">Le concept</p>
+  <h2 class="s-title reveal" data-i18n="sap_concept_t">Et si jouer servait à bâtir le monde ?</h2>
   <p class="s-sub reveal">Des centaines de millions de jeunes passent des milliers d'heures dans les jeux vidéo. SAPIENTIA utilise cette puissance d'attraction pour révéler les inventeurs, chercheurs et bâtisseurs de demain. Ici, le cœur de l'expérience n'est pas de gagner des combats — c'est de comprendre, découvrir, expérimenter, construire et innover.</p>
   <div class="roles reveal">
     <div class="role-pill">🧭 Explorateur</div>
@@ -225,80 +352,80 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
 </section>
 
 <section class="sq-sec">
-  <p class="s-label reveal">Une ville vivante</p>
-  <h2 class="s-title reveal">Chaque bâtiment, un domaine de connaissance</h2>
+  <p class="s-label reveal" data-i18n="sap_city_eye">Une ville vivante</p>
+  <h2 class="s-title reveal" data-i18n="sap_city_t">Chaque bâtiment, un domaine de connaissance</h2>
   <p class="s-sub reveal">Villes, laboratoires, universités, usines, observatoires, hôpitaux, centres spatiaux — un univers interactif où l'on apprend en explorant.</p>
   <div class="city-grid">
-    <div class="building reveal"><div class="bld-emoji">🏫</div><div class="bld-name">Université</div><ul class="bld-list"><li>Mathématiques</li><li>Physique</li><li>Chimie</li><li>Biologie</li></ul></div>
-    <div class="building reveal"><div class="bld-emoji">🏭</div><div class="bld-name">Usine</div><ul class="bld-list"><li>Automatisation</li><li>Robotique</li><li>Production</li></ul></div>
-    <div class="building reveal"><div class="bld-emoji">🌱</div><div class="bld-name">Ferme</div><ul class="bld-list"><li>Agriculture</li><li>Irrigation</li><li>Environnement</li></ul></div>
-    <div class="building reveal"><div class="bld-emoji">🚀</div><div class="bld-name">Centre spatial</div><ul class="bld-list"><li>Astronomie</li><li>Physique spatiale</li><li>Exploration</li></ul></div>
-    <div class="building reveal"><div class="bld-emoji">🏥</div><div class="bld-name">Hôpital</div><ul class="bld-list"><li>Médecine</li><li>Anatomie</li><li>Santé publique</li></ul></div>
-    <div class="building reveal"><div class="bld-emoji">🔭</div><div class="bld-name">Observatoire</div><ul class="bld-list"><li>Cosmos</li><li>Données</li><li>Recherche</li></ul></div>
+    <div class="building reveal"><div class="bld-emoji">🏫</div><div class="bld-name" data-i18n="bld_university">Université</div><ul class="bld-list"><li>Mathématiques</li><li>Physique</li><li>Chimie</li><li>Biologie</li></ul></div>
+    <div class="building reveal"><div class="bld-emoji">🏭</div><div class="bld-name" data-i18n="bld_factory">Usine</div><ul class="bld-list"><li>Automatisation</li><li>Robotique</li><li>Production</li></ul></div>
+    <div class="building reveal"><div class="bld-emoji">🌱</div><div class="bld-name" data-i18n="bld_farm">Ferme</div><ul class="bld-list"><li>Agriculture</li><li>Irrigation</li><li>Environnement</li></ul></div>
+    <div class="building reveal"><div class="bld-emoji">🚀</div><div class="bld-name" data-i18n="bld_space">Centre spatial</div><ul class="bld-list"><li>Astronomie</li><li>Physique spatiale</li><li>Exploration</li></ul></div>
+    <div class="building reveal"><div class="bld-emoji">🏥</div><div class="bld-name" data-i18n="bld_hospital">Hôpital</div><ul class="bld-list"><li>Médecine</li><li>Anatomie</li><li>Santé publique</li></ul></div>
+    <div class="building reveal"><div class="bld-emoji">🔭</div><div class="bld-name" data-i18n="bld_observatory">Observatoire</div><ul class="bld-list"><li>Cosmos</li><li>Données</li><li>Recherche</li></ul></div>
   </div>
 </section>
 
 <section class="sq-sec">
-  <p class="s-label reveal">Une autre récompense</p>
-  <h2 class="s-title reveal">On ne gagne plus de l'or. On gagne du savoir.</h2>
+  <p class="s-label reveal" data-i18n="sap_reward_eye">Une autre récompense</p>
+  <h2 class="s-title reveal" data-i18n="sap_reward_t">On ne gagne plus de l'or. On gagne du savoir.</h2>
   <div class="versus reveal">
     <div class="vs-col old">
-      <div class="vs-title">Jeux traditionnels</div>
+      <div class="vs-title" data-i18n="vs_traditional">Jeux traditionnels</div>
       <ul class="vs-list">
-        <li>⚔️ Combats & destruction</li>
-        <li>🪙 Or & ressources virtuelles</li>
-        <li>🔫 Armes & équipements</li>
-        <li>⏱️ Vitesse & réflexes</li>
+        <li data-i18n="vs_t1">⚔️ Combats & destruction</li>
+        <li data-i18n="vs_t2">🪙 Or & ressources virtuelles</li>
+        <li data-i18n="vs_t3">🔫 Armes & équipements</li>
+        <li data-i18n="vs_t4">⏱️ Vitesse & réflexes</li>
       </ul>
     </div>
     <div class="vs-mid">→</div>
     <div class="vs-col new">
       <div class="vs-title">SAPIENTIA</div>
       <ul class="vs-list">
-        <li>🎓 Connaissances & compétences</li>
-        <li>📜 Certifications & brevets virtuels</li>
-        <li>💡 Découvertes & inventions</li>
-        <li>🌍 Créativité, coopération & impact</li>
+        <li data-i18n="vs_s1">🎓 Connaissances & compétences</li>
+        <li data-i18n="vs_s2">📜 Certifications & brevets virtuels</li>
+        <li data-i18n="vs_s3">💡 Découvertes & inventions</li>
+        <li data-i18n="vs_s4">🌍 Créativité, coopération & impact</li>
       </ul>
     </div>
   </div>
 </section>
 
 <section class="sq-sec">
-  <p class="s-label reveal">Les missions</p>
-  <h2 class="s-title reveal">Résoudre les défis réels du monde</h2>
+  <p class="s-label reveal" data-i18n="sap_missions_eye">Les missions</p>
+  <h2 class="s-title reveal" data-i18n="sap_missions_t">Résoudre les défis réels du monde</h2>
   <p class="s-sub reveal">Chaque mission repose sur des connaissances scientifiques et techniques. Le joueur affronte les vrais défis de l'humanité.</p>
   <div class="missions-grid">
-    <div class="mission reveal"><span class="mission-icon">🏜️</span><span class="mission-txt">Lutter contre la désertification</span></div>
-    <div class="mission reveal"><span class="mission-icon">🌾</span><span class="mission-txt">Améliorer l'agriculture</span></div>
-    <div class="mission reveal"><span class="mission-icon">⚡</span><span class="mission-txt">Produire une énergie propre</span></div>
-    <div class="mission reveal"><span class="mission-icon">💧</span><span class="mission-txt">Concevoir un système d'irrigation</span></div>
-    <div class="mission reveal"><span class="mission-icon">🚆</span><span class="mission-txt">Améliorer les transports</span></div>
-    <div class="mission reveal"><span class="mission-icon">♻️</span><span class="mission-txt">Réduire la pollution</span></div>
-    <div class="mission reveal"><span class="mission-icon">🏙️</span><span class="mission-txt">Construire une ville durable</span></div>
-    <div class="mission reveal"><span class="mission-icon">🩺</span><span class="mission-txt">Développer une technologie médicale</span></div>
+    <div class="mission reveal"><span class="mission-icon">🏜️</span><span class="mission-txt"data-i18n="mission_desert">Lutter contre la désertification</span></div>
+    <div class="mission reveal"><span class="mission-icon">🌾</span><span class="mission-txt"data-i18n="mission_agri">Améliorer l'agriculture</span></div>
+    <div class="mission reveal"><span class="mission-icon">⚡</span><span class="mission-txt"data-i18n="mission_energy">Produire une énergie propre</span></div>
+    <div class="mission reveal"><span class="mission-icon">💧</span><span class="mission-txt"data-i18n="mission_irrig">Concevoir un système d'irrigation</span></div>
+    <div class="mission reveal"><span class="mission-icon">🚆</span><span class="mission-txt"data-i18n="mission_transport">Améliorer les transports</span></div>
+    <div class="mission reveal"><span class="mission-icon">♻️</span><span class="mission-txt"data-i18n="mission_pollution">Réduire la pollution</span></div>
+    <div class="mission reveal"><span class="mission-icon">🏙️</span><span class="mission-txt"data-i18n="mission_city">Construire une ville durable</span></div>
+    <div class="mission reveal"><span class="mission-icon">🩺</span><span class="mission-txt"data-i18n="mission_medtech">Développer une technologie médicale</span></div>
   </div>
 </section>
 
 <section class="sq-sec">
-  <p class="s-label reveal">Du virtuel au réel</p>
-  <h2 class="s-title reveal">Le jeu devient un laboratoire d'innovation</h2>
+  <p class="s-label reveal" data-i18n="sap_v2r_eye">Du virtuel au réel</p>
+  <h2 class="s-title reveal" data-i18n="sap_v2r_t">Le jeu devient un laboratoire d'innovation</h2>
   <p class="s-sub reveal">L'objectif n'est pas seulement de réussir dans le jeu — c'est que certaines idées inspirent des projets réels.</p>
   <div class="flow">
-    <div class="flow-step reveal"><div class="fs-emoji">💭</div><div class="fs-t">Tu imagines</div><div class="fs-d">Un robot agricole, un système de filtration d'eau, un nouveau modèle énergétique…</div></div>
-    <div class="flow-step reveal"><div class="fs-emoji">🛠️</div><div class="fs-t">Le jeu t'accompagne</div><div class="fs-d">Ressources, mentors, formations, communautés et concours.</div></div>
-    <div class="flow-step reveal"><div class="fs-emoji">🌍</div><div class="fs-t">L'idée prend vie</div><div class="fs-d">Le virtuel devient un véritable tremplin vers des projets réels.</div></div>
+    <div class="flow-step reveal"><div class="fs-emoji">💭</div><div class="fs-t" data-i18n="sap_fs1_t">Tu imagines</div><div class="fs-d" data-i18n="sap_fs1_d">Un robot agricole, un système de filtration d'eau, un nouveau modèle énergétique…</div></div>
+    <div class="flow-step reveal"><div class="fs-emoji">🛠️</div><div class="fs-t" data-i18n="sap_fs2_t">Le jeu t'accompagne</div><div class="fs-d" data-i18n="sap_fs2_d">Ressources, mentors, formations, communautés et concours.</div></div>
+    <div class="flow-step reveal"><div class="fs-emoji">🌍</div><div class="fs-t" data-i18n="sap_fs3_t">L'idée prend vie</div><div class="fs-d" data-i18n="sap_fs3_d">Le virtuel devient un véritable tremplin vers des projets réels.</div></div>
   </div>
 </section>
 
 <section class="sq-sec">
-  <p class="s-label reveal">Deux expériences</p>
-  <h2 class="s-title reveal">Gratuit pour explorer. Premium pour créer.</h2>
+  <p class="s-label reveal" data-i18n="sq_two_eye">Deux expériences</p>
+  <h2 class="s-title reveal" data-i18n="sap_two_t">Gratuit pour explorer. Premium pour créer.</h2>
   <div class="plans">
     <div class="plan free reveal">
-      <span class="plan-tag">Gratuit</span>
-      <div class="plan-name">Explorer le monde</div>
-      <p class="plan-desc">Accessible au plus grand nombre. Pour découvrir, apprendre et relever ses premiers défis.</p>
+      <span class="plan-tag" data-i18n="sq_free_t">Gratuit</span>
+      <div class="plan-name" data-i18n="sap_free_name">Explorer le monde</div>
+      <p class="plan-desc" data-i18n="sap_free_desc">Accessible au plus grand nombre. Pour découvrir, apprendre et relever ses premiers défis.</p>
       <ul class="plan-list">
         <li><span class="chk">✓</span> Explorer le monde ouvert</li>
         <li><span class="chk">✓</span> Accomplir des missions</li>
@@ -306,12 +433,12 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
         <li><span class="chk">✓</span> Participer à des défis</li>
         <li><span class="chk">✓</span> Gagner de l'expérience</li>
       </ul>
-      <button class="plan-btn">Commencer gratuitement</button>
+      <button class="plan-btn" data-i18n="sq_cta_start">Commencer gratuitement</button>
     </div>
     <div class="plan premium reveal">
       <span class="plan-tag">Premium</span>
-      <div class="plan-name">Devenir créateur</div>
-      <p class="plan-desc">Une dimension beaucoup plus riche — le joueur ne devient plus seulement apprenant, il devient créateur.</p>
+      <div class="plan-name" data-i18n="sap_prem_name">Devenir créateur</div>
+      <p class="plan-desc" data-i18n="sap_prem_desc">Une dimension beaucoup plus riche — le joueur ne devient plus seulement apprenant, il devient créateur.</p>
       <ul class="plan-list">
         <li><span class="chk">★</span> Laboratoires avancés & projets de recherche</li>
         <li><span class="chk">★</span> Villes plus vastes & outils d'invention</li>
@@ -319,26 +446,26 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
         <li><span class="chk">★</span> Mentorat, compétitions & certifications</li>
         <li><span class="chk">★</span> Incubateurs de projets</li>
       </ul>
-      <button class="plan-btn">Découvrir Premium</button>
+      <button class="plan-btn" data-i18n="sq_premium_cta">Découvrir Premium</button>
     </div>
   </div>
 </section>
 
 <section class="sq-sec">
-  <p class="s-label reveal">L'aventure mondiale</p>
-  <h2 class="s-title reveal">Une intelligence collective sans frontière</h2>
+  <p class="s-label reveal" data-i18n="sap_world_eye">L'aventure mondiale</p>
+  <h2 class="s-title reveal" data-i18n="sap_world_t">Une intelligence collective sans frontière</h2>
   <p class="s-sub reveal">Un joueur du Niger peut collaborer avec un joueur américain, japonais, brésilien ou français. Ensemble, ils résolvent des défis complexes — le jeu devient un espace international d'intelligence collective.</p>
   <div class="bridge reveal">
     <div class="bridge-side">
       <div class="bridge-emoji">🧪</div>
       <div class="bridge-name">Science Quest</div>
-      <div class="bridge-d">enseigne les connaissances</div>
+      <div class="bridge-d" data-i18n="inf_q_sq">enseigne les connaissances</div>
     </div>
     <div class="bridge-arrow">→</div>
     <div class="bridge-side">
       <div class="bridge-emoji">🏛</div>
       <div class="bridge-name">SAPIENTIA</div>
-      <div class="bridge-d">permet de les appliquer dans un univers vivant</div>
+      <div class="bridge-d" data-i18n="sap_bridge_sap_d">permet de les appliquer dans un univers vivant</div>
     </div>
   </div>
 </section>
@@ -346,11 +473,11 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
 <section class="sq-final">
   <div class="sq-final-glow"></div>
   <div class="sq-final-inner">
-    <h2 class="sq-final-t reveal">Le premier monde où jouer fait avancer le monde réel.</h2>
+    <h2 class="sq-final-t reveal" data-i18n="sap_final_t">Le premier monde où jouer fait avancer le monde réel.</h2>
     <p class="sq-final-s reveal">Notre ambition : révéler la prochaine génération d'inventeurs, de chercheurs, d'entrepreneurs et de bâtisseurs.</p>
     <div class="reveal" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-      <button class="btn-hero">Rejoindre SAPIENTIA <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <a href="index.html" class="btn-hero2">Retour à l'accueil</a>
+      <button class="btn-hero"data-i18n="sap_cta_join">Rejoindre SAPIENTIA <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <a href="index.html" class="btn-hero2" data-i18n="back_home">Retour à l'accueil</a>
     </div>
   </div>
 </section>
@@ -361,12 +488,12 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
       <div class="ftr-brand">
         <div class="ftr-k"><img src="data:image/png;base64,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" alt="K"/></div>
         <div class="ftr-brand-name">KOTCHAMI</div>
-        <p class="ftr-brand-p">L'Univers des Passeurs. Un écosystème éducatif, scientifique et créatif destiné à former une génération de découvreurs, d'inventeurs et de bâtisseurs.</p>
+        <p class="ftr-brand-p" data-i18n="foot_brand">L'Univers des Passeurs. Un écosystème éducatif, scientifique et créatif destiné à former une génération de découvreurs, d'inventeurs et de bâtisseurs.</p>
         <div class="ftr-socials"><a href="#" class="fsoc">YouTube</a><a href="#" class="fsoc">Facebook</a><a href="#" class="fsoc">LinkedIn</a><a href="#" class="fsoc">TikTok</a><a href="#" class="fsoc">Instagram</a><a href="#" class="fsoc">Telegram</a><a href="#" class="fsoc">WhatsApp</a></div>
       </div>
-      <div><div class="fcol-title">L'écosystème</div><ul class="flinks"><li><a href="science-quest.html">Science Quest</a></li><li><a href="infinitia.html">INFINITIA</a></li><li><a href="#">SAPIENTIA</a></li><li><a href="#">Livres</a></li><li><a href="#">Applications</a></li><li><a href="#">Communauté</a></li></ul></div>
-      <div><div class="fcol-title">Informations</div><ul class="flinks"><li><a href="#">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Partenariats</a></li><li><a href="#">Contact</a></li></ul></div>
-      <div><div class="fcol-title">Légal</div><ul class="flinks"><li><a href="#">Conditions d'utilisation</a></li><li><a href="#">Politique de confidentialité</a></li><li><a href="#">Mentions légales</a></li></ul></div>
+      <div><div class="fcol-title" data-i18n="foot_eco">L'écosystème</div><ul class="flinks"><li><a href="science-quest.html" data-i18n="nav_sq">Science Quest</a></li><li><a href="infinitia.html" data-i18n="nav_inf">INFINITIA</a></li><li><a href="#" data-i18n="nav_sap">SAPIENTIA</a></li><li><a href="#" data-i18n="nav_books">Livres</a></li><li><a href="#" data-i18n="svc2_t">Applications</a></li><li><a href="#" data-i18n="nav_community">Communauté</a></li></ul></div>
+      <div><div class="fcol-title" data-i18n="foot_info">Informations</div><ul class="flinks"><li><a href="#" data-i18n="foot_about">À propos</a></li><li><a href="#" data-i18n="nav_blog">Blog</a></li><li><a href="#" data-i18n="foot_partners">Partenariats</a></li><li><a href="#" data-i18n="foot_contact">Contact</a></li></ul></div>
+      <div><div class="fcol-title" data-i18n="foot_legal">Légal</div><ul class="flinks"><li><a href="#" data-i18n="foot_terms">Conditions d'utilisation</a></li><li><a href="#" data-i18n="foot_privacy">Politique de confidentialité</a></li><li><a href="#" data-i18n="foot_legals">Mentions légales</a></li></ul></div>
     </div>
     <div class="ftr-bottom">
       <span class="fcopy">© 2025 <span class="or">Kotchami.com</span> · kotchami.org — <span class="sdg">Soli Deo Gloria</span></span>
@@ -377,88 +504,16 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
 
 <nav id="mnav">
   <div class="mn-row">
-    <a href="index.html" class="mn-item"><div class="mn-k"><img src="data:image/png;base64,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" alt="K"/></div><span class="mn-lbl">Accueil</span></a>
-    <a href="science-quest.html" class="mn-item"><span class="mn-icon">🧪</span><span class="mn-lbl">Science Quest</span></a>
-    <a href="infinitia.html" class="mn-item"><span class="mn-icon">🔭</span><span class="mn-lbl">INFINITIA</span></a>
-    <a href="#" class="mn-item act"><span class="mn-icon">🏛</span><span class="mn-lbl">SAPIENTIA</span></a>
-    <a href="#" class="mn-item"><span class="mn-icon">👤</span><span class="mn-lbl">Profil</span></a>
+    <a href="index.html" class="mn-item"><div class="mn-k"><img src="data:image/png;base64,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" alt="K"/></div><span class="mn-lbl" data-i18n="nav_home">Accueil</span></a>
+    <a href="science-quest.html" class="mn-item"><span class="mn-icon">🧪</span><span class="mn-lbl" data-i18n="nav_sq">Science Quest</span></a>
+    <a href="infinitia.html" class="mn-item"><span class="mn-icon">🔭</span><span class="mn-lbl" data-i18n="nav_inf">INFINITIA</span></a>
+    <a href="#" class="mn-item act"><span class="mn-icon">🏛</span><span class="mn-lbl" data-i18n="nav_sap">SAPIENTIA</span></a>
+    <a href="#" class="mn-item"><span class="mn-icon">👤</span><span class="mn-lbl" data-i18n="nav_profile">Profil</span></a>
   </div>
 </nav>
 
-<script>
-const hdr=document.getElementById('hdr');
-window.addEventListener('scroll',()=>{hdr.classList.toggle('scrolled',scrollY>40);},{passive:true});
-/* ÉTOILES : CONSTELLATION PERMANENTE + ANTI-GRAVITÉ */
-const sf=document.getElementById('starfield'),sfx=sf.getContext('2d');
-let SW,SH,stars=[];let pointer={x:-9999,y:-9999,active:false};let tilt={x:0,y:0};
-function sfResize(){
-  SW=sf.width=window.innerWidth;SH=sf.height=Math.max(document.body.scrollHeight,window.innerHeight);
-  const n=Math.floor((SW*SH)/5200);stars=[];
-  for(let i=0;i<n;i++){
-    const big=Math.random()<0.14;const ox=Math.random()*SW,oy=Math.random()*SH;
-    stars.push({ox,oy,x:ox,y:oy,r:big?Math.random()*1.6+1.4:Math.random()*1.1+0.5,base:big?Math.random()*0.35+0.55:Math.random()*0.4+0.4,tw:Math.random()*Math.PI*2,tws:Math.random()*0.02+0.006,dx:(Math.random()-0.5)*0.18,dy:(Math.random()-0.5)*0.18,depth:Math.random()*0.8+0.2,big});
-  }
-}
-function sfDraw(){
-  sfx.clearRect(0,0,SW,SH);
-  const col=getComputedStyle(document.documentElement).getPropertyValue('--star-color').trim()||'255,255,255';
-  const R=140;
-  // calcul des positions courantes
-  for(const s of stars){
-    s.ox+=s.dx;s.oy+=s.dy;
-    if(s.ox<0)s.ox=SW;if(s.ox>SW)s.ox=0;if(s.oy<0)s.oy=SH;if(s.oy>SH)s.oy=0;
-    let tx=s.ox+tilt.x*s.depth*18,ty=s.oy+tilt.y*s.depth*18;
-    s.glow=0;
-    if(pointer.active){
-      const dx=tx-pointer.x,dy=ty-pointer.y,dist=Math.hypot(dx,dy);
-      if(dist<R){const force=(1-dist/R);tx+=(dx/dist||0)*force*30*s.depth;ty+=(dy/dist||0)*force*30*s.depth;s.glow=force;}
-    }
-    s.x+=(tx-s.x)*0.12;s.y+=(ty-s.y)*0.12;
-    s.tw+=s.tws;
-  }
-  // CONSTELLATION : lignes permanentes entre étoiles proches (réseau atome/univers)
-  const LINK=118;
-  for(let i=0;i<stars.length;i++){
-    const a=stars[i];
-    for(let j=i+1;j<stars.length;j++){
-      const b=stars[j];
-      const dx=a.x-b.x,dy=a.y-b.y;
-      if(Math.abs(dx)>LINK||Math.abs(dy)>LINK)continue;
-      const d=Math.hypot(dx,dy);
-      if(d<LINK){
-        // les lignes près du curseur s'illuminent en or
-        const near=Math.max(a.glow,b.glow);
-        const baseOp=0.10*(1-d/LINK);
-        if(near>0.05){
-          sfx.strokeStyle=`rgba(197,158,80,${(baseOp+near*0.35)})`;
-          sfx.lineWidth=0.7;
-        }else{
-          sfx.strokeStyle=`rgba(${col},${baseOp})`;
-          sfx.lineWidth=0.5;
-        }
-        sfx.beginPath();sfx.moveTo(a.x,a.y);sfx.lineTo(b.x,b.y);sfx.stroke();
-      }
-    }
-  }
-  // étoiles par-dessus les lignes
-  for(const s of stars){
-    const a=Math.min(1,s.base+Math.sin(s.tw)*0.3+s.glow*0.5);
-    if(s.big||s.glow>0.3){const halo=s.r*(s.big?4:3)*(1+s.glow);const g=sfx.createRadialGradient(s.x,s.y,0,s.x,s.y,halo);g.addColorStop(0,`rgba(${col},${Math.max(0,a)*0.5})`);g.addColorStop(1,`rgba(${col},0)`);sfx.beginPath();sfx.arc(s.x,s.y,halo,0,Math.PI*2);sfx.fillStyle=g;sfx.fill();}
-    sfx.beginPath();sfx.arc(s.x,s.y,s.r*(1+s.glow*0.6),0,Math.PI*2);sfx.fillStyle=`rgba(${col},${Math.max(0,a)})`;sfx.fill();
-  }
-  requestAnimationFrame(sfDraw);
-}
-window.addEventListener('scroll',()=>{sf.style.transform=`translateY(${-window.scrollY}px)`;},{passive:true});
-window.addEventListener('mousemove',(e)=>{pointer.x=e.clientX;pointer.y=e.clientY+window.scrollY;pointer.active=true;},{passive:true});
-window.addEventListener('mouseout',()=>{pointer.active=false;});
-window.addEventListener('touchmove',(e)=>{if(e.touches[0]){pointer.x=e.touches[0].clientX;pointer.y=e.touches[0].clientY+window.scrollY;pointer.active=true;}},{passive:true});
-window.addEventListener('touchend',()=>{setTimeout(()=>{pointer.active=false;},400);});
-window.addEventListener('deviceorientation',(e)=>{if(e.gamma!=null&&e.beta!=null){tilt.x=Math.max(-1,Math.min(1,e.gamma/30));tilt.y=Math.max(-1,Math.min(1,(e.beta-45)/30));}},true);
-window.addEventListener('resize',sfResize,{passive:true});
-window.addEventListener('load',()=>{setTimeout(sfResize,100);});
-sfResize();sfDraw();
-const obs=new IntersectionObserver(es=>{es.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*60);obs.unobserve(e.target);}});},{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-</script>
+<script src="ui.js?v=20260618b"></script>
+<script src="cosmos.js?v=20260618b"></script>
+<script src="i18n.js?v=20260618b"></script>
 </body>
 </html>

@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://kotchami.com/</loc>
-    <lastmod>2026-06-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://kotchami.com/confidentialite.html</loc>
-    <lastmod>2026-06-12</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://kotchami.com/conditions.html</loc>
-    <lastmod>2026-06-12</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://kotchami.com/mentions-legales.html</loc>
-    <lastmod>2026-06-12</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
+  <url><loc>https://kotchami.com/</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://kotchami.com/science-quest.html</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://kotchami.com/infinitia.html</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://kotchami.com/sapientia.html</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://kotchami.com/sq-niveaux.html</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kotchami.com/sq-terminale.html</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kotchami.com/sq-svt-terminale.html</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kotchami.com/sq-univers-diversite.html</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kotchami.com/chromosoma.html</loc><lastmod>2026-06-18</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>
