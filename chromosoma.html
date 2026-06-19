@@ -217,7 +217,35 @@ body{background:linear-gradient(170deg,var(--bg-grad-1) 0%,var(--bg-grad-2) 50%,
 /* ═══ Stabilité d'affichage + RTL (corrige écran vide / décalage latéral) ═══ */
 html,body{overflow-x:hidden;max-width:100%;}
 [class*="glow"]{max-width:100vw;max-width:100svw;}
+/* ── Header : sélecteur de langue TOUJOURS visible (LTR & RTL) ── */
+.hdr-top{align-items:center;}
+.h-brand{order:1;}
+.hdr-nav-wrap{order:2;flex:1 1 0;min-width:0;overflow:hidden;}
+.hdr-nav{overflow-x:auto;}
+.h-actions{order:3;position:relative;z-index:6;flex-shrink:0;}
 .hdr-nav,#mnav,.hdr-nav-wrap{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+
+.cm-course{background:linear-gradient(135deg,rgba(12,26,77,.5),rgba(10,23,69,.3));border:1px solid rgba(197,158,80,.18);border-radius:18px;padding:30px 30px;}
+.course-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--or,#C59E50);display:block;margin-bottom:10px;}
+.cm-course h2{font-family:'Cormorant Garamond',serif;color:#F5D98B;font-size:1.8rem;margin:.1em 0 .6em;}
+.cm-course h3{color:#7EB4FF;font-size:1.1rem;margin:1.25em 0 .3em;font-family:'Space Grotesk',sans-serif;}
+.cm-course p,.cm-course li{color:#c8d4e6;line-height:1.7;font-size:1rem;}
+.cm-course b{color:#F5D98B;font-weight:600;}
+.cm-course ul{padding-inline-start:1.2em;}
+.course-key{background:rgba(126,180,255,.08);border-left:3px solid #3D7EFF;border-radius:8px;padding:14px 16px;}
+.course-sign{margin-top:1.4em;font-style:italic;color:var(--gris2,#8a98b5);font-size:.85rem;}
+.redac-head{text-align:center;margin-bottom:8px;}
+.redac-title{font-family:'Cormorant Garamond',serif;color:#F5D98B;font-size:1.8rem;margin:.2em 0;}
+.redac-intro{color:#9fb0c8;max-width:580px;margin:0 auto;}
+.redac-card{background:var(--card-bg,rgba(10,23,69,.5));border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px 22px;margin:16px 0;}
+.redac-q{color:#e8eefb;font-size:1.02rem;line-height:1.6;margin-bottom:12px;}
+.redac-ta{width:100%;min-height:90px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;padding:12px;font-family:'Inter',sans-serif;font-size:.95rem;resize:vertical;box-sizing:border-box;}
+.redac-ta:focus{outline:none;border-color:rgba(197,158,80,.5);}
+.redac-btn{margin-top:12px;padding:9px 18px;border-radius:9px;border:1px solid rgba(197,158,80,.4);background:rgba(197,158,80,.1);color:#F5D98B;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:.85rem;}
+.redac-btn:hover{background:rgba(197,158,80,.18);}
+.redac-model{display:none;margin-top:14px;padding:16px 18px;background:rgba(34,208,110,.07);border-left:3px solid #22D06E;border-radius:8px;color:#cdeed9;line-height:1.65;font-size:.95rem;}
+.redac-model.show{display:block;}
+.redac-model-lbl{display:block;font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:#22D06E;margin-bottom:8px;}
 </style>
 </head>
 <body>
@@ -255,8 +283,8 @@ html,body{overflow-x:hidden;max-width:100%;}
   <h1 class="cm-title">CHROMOSOMA <span class="bl" data-i18n="chr_mission_no">— Mission 1</span></h1>
   <p class="cm-sub" data-i18n="chr_lead">Reproduction sexuée & brassage génétique. Comprends comment la méiose et la fécondation créent l'infinie diversité du vivant.</p>
   <div class="cm-meta">
-    <div class="cm-chip" data-i18n="chr_meta_q">🎯 6 questions</div>
-    <div class="cm-chip" data-i18n="chr_meta_pts">⭐ 600 pts à gagner</div>
+    <div class="cm-chip" data-i18n="chr_meta_q">🎯 12 QCM + 4 rédactions</div>
+    <div class="cm-chip" data-i18n="chr_meta_pts">⭐ 1200 pts à gagner</div>
     <div class="cm-chip" data-i18n="chr_meta_badge">🎖️ 1 badge</div>
     <div class="cm-chip" data-i18n="chr_meta_prog">🇳🇪 Programme nigérien</div>
   </div>
@@ -266,6 +294,34 @@ html,body{overflow-x:hidden;max-width:100%;}
   <div class="narration reveal">
     <span class="speaker" data-i18n="chr_briefing">Briefing de mission</span>
     <p>« Chaque être vivant est unique. Pourtant, tous naissent des mêmes lois. Ta mission, Visionnaire : percer le secret du brassage génétique — ce mécanisme qui, depuis une seule espèce, engendre des milliards de combinaisons jamais vues. Prêt à décoder le hasard ? »</p>
+  </div>
+</section>
+
+<section class="cm-sec">
+  <div class="cm-course reveal">
+    <span class="course-eyebrow">📚 Le cours — l'essentiel à maîtriser</span>
+    <h2>Reproduction sexuée &amp; brassage génétique</h2>
+    <h3>🎯 Objectifs</h3>
+    <p>À la fin de ce cours, je serai capable de :</p>
+    <ul>
+      <li><b>définir</b> : reproduction sexuée, méiose, brassage inter- et intrachromosomique, fécondation ;</li>
+      <li><b>expliquer</b> les mécanismes qui produisent la diversité génétique ;</li>
+      <li><b>calculer</b> le nombre de combinaisons chromosomiques possibles ;</li>
+      <li><b>analyser et interpréter</b> des résultats de croisements (gènes liés, taux de recombinaison).</li>
+    </ul>
+    <h3>1 · La méiose, usine à diversité</h3>
+    <p>La <b>méiose</b> enchaîne <b>deux divisions</b> qui transforment une cellule mère diploïde (<b>2n</b>) en quatre cellules haploïdes (<b>n</b>) : les gamètes. C'est pendant cette réduction que se jouent les brassages d'allèles.</p>
+    <h3>2 · Le brassage interchromosomique</h3>
+    <p>En <b>anaphase I</b>, les <b>chromosomes homologues</b> de chaque paire migrent <b>au hasard</b> vers l'un ou l'autre pôle, <b>indépendamment</b> des autres paires. Pour <b>n</b> paires : <b>2<sup>n</sup></b> combinaisons. Chez l'humain (n = 23) → <b>2<sup>23</sup> ≈ 8,4 millions</b> de gamètes possibles, rien que par ce brassage.</p>
+    <h3>3 · Le brassage intrachromosomique</h3>
+    <p>En <b>prophase I</b>, les homologues s'apparient et échangent des segments : c'est le <b>crossing-over</b> (enjambement). Il recombine les <b>allèles d'un même chromosome</b> et crée des chromosomes <b>recombinés</b> inédits — la diversité devient quasi infinie.</p>
+    <h3>4 · La fécondation</h3>
+    <p>La <b>fécondation</b> réunit <b>au hasard</b> deux gamètes parmi des millions. Pour un couple : (2<sup>n</sup>)² combinaisons par le seul brassage interchromosomique, encore démultipliées par le crossing-over.</p>
+    <h3>5 · Gènes liés &amp; recombinaison</h3>
+    <p>Deux gènes sur le <b>même chromosome</b> sont <b>liés</b> : souvent transmis ensemble. Plus ils sont <b>proches</b>, plus le crossing-over entre eux est <b>rare</b> → faible <b>taux de recombinaison</b>. Ce taux mesure la <b>distance génétique</b> (en centimorgans) et sert à dresser des <b>cartes génétiques</b>.</p>
+    <h3>🧠 À retenir</h3>
+    <p class="course-key">Trois sources se combinent : <b>brassage interchromosomique</b> (anaphase I) + <b>brassage intrachromosomique</b> (crossing-over, prophase I) + <b>fécondation</b> aléatoire.<br>Phrase-clé : <i>« La méiose mélange, la fécondation combine. »</i></p>
+    <p class="course-sign">Kotchami Ogougbe / Le Passeur de sciences — Comprendre avant de mémoriser.</p>
   </div>
 </section>
 
@@ -303,6 +359,15 @@ html,body{overflow-x:hidden;max-width:100%;}
   </div>
 </div>
 
+<section class="cm-sec" id="redaction">
+  <div class="redac-head reveal">
+    <span class="speaker">✍️ Réflexion &amp; Rédaction</span>
+    <h2 class="redac-title">À toi de rédiger</h2>
+    <p class="redac-intro">Ici, pas de QCM : on réfléchit et on rédige, comme au BAC. Écris ta réponse, puis compare-la à la correction modèle.</p>
+  </div>
+  <div id="redacList"></div>
+</section>
+
 <footer id="ftr">
   <div class="ftr-inner">
     <span class="fcopy">© 2025 <span class="or">Kotchami.com</span> · kotchami.org — <span class="sdg">Soli Deo Gloria</span></span>
@@ -322,12 +387,18 @@ html,body{overflow-x:hidden;max-width:100%;}
 <script>
 /* CHROMOSOMA — logique du quiz (le fond et les reveals sont gérés par cosmos.js + ui.js) */
 var QUESTIONS=[
-{q:"Où se déroule le brassage interchromosomique lors de la méiose ?",o:["En anaphase I, lors de la séparation aléatoire des chromosomes homologues","En métaphase II uniquement","Pendant la fécondation","En interphase, avant la réplication"],c:0,e:"Le brassage interchromosomique a lieu en anaphase I : les chromosomes homologues de chaque paire migrent indépendamment vers les pôles, créant des combinaisons aléatoires."},
-{q:"Le brassage intrachromosomique résulte de quel phénomène ?",o:["La duplication de l'ADN","Le crossing-over (enjambement) en prophase I","La séparation des chromatides en anaphase II","La fusion des gamètes"],c:1,e:"Le crossing-over, ou enjambement, se produit en prophase I entre chromatides homologues : il échange des segments et recombine les allèles d'un même chromosome."},
-{q:"Pour n paires de chromosomes, combien de combinaisons chromosomiques différentes le brassage interchromosomique peut-il produire dans les gamètes ?",o:["n²","2n","2ⁿ","n!"],c:2,e:"Chaque paire se répartit indépendamment selon 2 possibilités, donc 2ⁿ combinaisons. Chez l'humain (n=23), cela donne 2²³ ≈ 8,4 millions de combinaisons."},
-{q:"Quel est le rôle de la fécondation dans la diversité génétique ?",o:["Elle réduit le nombre de chromosomes de moitié","Elle réunit au hasard deux gamètes, amplifiant la diversité","Elle empêche tout brassage","Elle clone le patrimoine du père"],c:1,e:"La fécondation réunit aléatoirement un gamète mâle parmi des millions et un gamète femelle parmi des millions : elle multiplie encore la diversité issue de la méiose."},
-{q:"Au cours de la méiose, le passage de 2n à n chromosomes a lieu :",o:["À la première division (réductionnelle)","À la deuxième division (équationnelle)","Lors de la fécondation","En interphase"],c:0,e:"La première division de méiose est dite réductionnelle : elle sépare les chromosomes homologues et fait passer la cellule de 2n à n chromosomes (à 2 chromatides)."},
-{q:"Deux gènes situés sur le même chromosome et très proches sont dits :",o:["Indépendants","Liés (linkage), avec faible taux de recombinaison","Homozygotes","Récessifs"],c:1,e:"Des gènes proches sur un même chromosome sont liés : ils ont tendance à être transmis ensemble, et leur taux de recombinaison (crossing-over entre eux) est faible."}
+{q:"Où se déroule le brassage interchromosomique lors de la méiose ?",o:["En anaphase I, lors de la séparation aléatoire des chromosomes homologues","En prophase II","Pendant la réplication de l'ADN","Au moment de la fécondation"],c:0,e:"Le brassage interchromosomique a lieu en anaphase I : chaque paire d'homologues se répartit indépendamment vers les pôles."},
+{q:"Le brassage intrachromosomique résulte de quel phénomène ?",o:["La duplication de l'ADN","Le crossing-over (enjambement) en prophase I","La séparation des chromatides en anaphase II","La fécondation"],c:1,e:"Il provient du crossing-over : échange de segments entre chromatides homologues, en prophase I."},
+{q:"Pour n paires de chromosomes, combien de combinaisons le brassage interchromosomique peut-il produire ?",o:["n²","2n","2^n","n!"],c:2,e:"Deux possibilités par paire, indépendamment : 2^n combinaisons."},
+{q:"Quel est le rôle de la fécondation dans la diversité génétique ?",o:["Elle réduit le nombre de chromosomes de moitié","Elle réunit au hasard deux gamètes, combinant leurs patrimoines","Elle provoque le crossing-over","Elle duplique l'ADN"],c:1,e:"La fécondation réunit aléatoirement deux gamètes parmi des millions, démultipliant les combinaisons."},
+{q:"Au cours de la méiose, le passage de 2n à n chromosomes a lieu :",o:["À la première division (réductionnelle)","À la deuxième division (équationnelle)","Lors de la fécondation","Pendant l'interphase"],c:0,e:"La réduction 2n→n se fait en division I, par séparation des chromosomes homologues."},
+{q:"Deux gènes situés sur le même chromosome et très proches sont dits :",o:["Indépendants","Liés (linkage), avec faible taux de recombinaison","Homozygotes","Récessifs"],c:1,e:"Des gènes proches sont liés : souvent transmis ensemble, faible taux de recombinaison."},
+{q:"Une cellule à 2n = 6 achève sa méiose. Combien de chromosomes contient chaque gamète ?",o:["6","3","12","2"],c:1,e:"La méiose réduit de moitié : 2n = 6 → n = 3 chromosomes par gamète."},
+{q:"Le crossing-over se produit précisément :",o:["En métaphase II","En prophase I, entre chromatides homologues (chiasmas)","En anaphase II","Pendant la fécondation"],c:1,e:"Le crossing-over a lieu en prophase I, lors de l'appariement des homologues (formation des chiasmas)."},
+{q:"Chez une espèce à 2n = 8, le nombre de gamètes différents par brassage interchromosomique est :",o:["8","16","4","256"],c:1,e:"n = 4 paires → 2^4 = 16 combinaisons interchromosomiques."},
+{q:"Croisement-test : 4 phénotypes en proportions 45 % / 45 % / 5 % / 5 %. On en déduit que les deux gènes sont :",o:["Indépendants","Liés, avec crossing-over peu fréquent","Sur des chromosomes différents","Létaux"],c:1,e:"Majorité de parentaux + minorité de recombinés = gènes liés. Les 10 % de recombinés viennent du crossing-over."},
+{q:"Le taux de recombinaison entre deux gènes liés correspond :",o:["Au % de descendants parentaux","Au % de descendants recombinés","Au nombre de chromosomes","À la taille des gamètes"],c:1,e:"Taux = (recombinés / total) × 100. Il mesure la distance génétique (en centimorgans)."},
+{q:"Pourquoi les vrais jumeaux sont-ils génétiquement identiques ?",o:["Ils viennent de deux ovules fécondés séparément","Ils proviennent d'un seul œuf (zygote) qui s'est divisé en deux","Ils ont subi le même crossing-over","Le hasard a produit des gamètes identiques"],c:1,e:"Les vrais jumeaux (monozygotes) viennent d'un même zygote divisé : même patrimoine. La reproduction sexuée n'a eu lieu qu'une fois."}
 ];
 var idx=0,score=0,answered=false,badges=[];
 var elQ=document.getElementById('quizQ'),elOpts=document.getElementById('quizOpts'),elFb=document.getElementById('quizFb'),elNext=document.getElementById('quizNext'),elProg=document.getElementById('quizProg'),elScore=document.getElementById('quizScore'),elStage=document.getElementById('quizStage'),elEnd=document.getElementById('quizEnd');
@@ -386,6 +457,32 @@ function showEnd(){
 }
 document.getElementById('quizRetry').onclick=function(){idx=0;score=0;badges=[];elEnd.style.display='none';elStage.style.display='block';renderQuestion();window.scrollTo({top:document.getElementById('quizStage').offsetTop-90,behavior:'smooth'});};
 renderQuestion();
+
+/* ── Réflexion & Rédaction ── */
+var REDAC=[
+ {p:"Explique pourquoi deux enfants d'un même couple (hors vrais jumeaux) ne sont jamais génétiquement identiques. Cite et situe les trois sources de diversité.",
+  m:"Trois mécanismes se combinent. <b>(1) Le brassage interchromosomique</b> (anaphase I) répartit au hasard les paires d'homologues → 2<sup>n</sup> combinaisons. <b>(2) Le brassage intrachromosomique</b> (crossing-over, prophase I) recombine les allèles d'un même chromosome. <b>(3) La fécondation</b> réunit au hasard deux gamètes parmi des millions. La probabilité que deux enfants reçoivent exactement les mêmes gamètes est donc quasi nulle — sauf vrais jumeaux, issus d'un même zygote."},
+ {p:"Un camarade affirme : « le crossing-over et le brassage interchromosomique, c'est la même chose ». Rédige une réponse argumentée pour le corriger.",
+  m:"C'est faux : ce sont deux brassages <b>distincts</b>. <b>Le crossing-over</b> (brassage <i>intra</i>chromosomique) a lieu en <b>prophase I</b> et échange des segments <b>entre chromatides homologues</b> : il recombine les allèles <b>d'un même chromosome</b>. <b>Le brassage interchromosomique</b> a lieu en <b>anaphase I</b> et répartit <b>au hasard les paires entières</b> d'homologues (2<sup>n</sup> combinaisons). En bref : l'un mélange <i>à l'intérieur</i> d'un chromosome, l'autre <i>entre</i> les chromosomes."},
+ {p:"Une espèce possède 2n = 10. (a) Combien de types de gamètes le brassage interchromosomique produit-il ? (b) Pourquoi le nombre réel de gamètes différents est-il bien supérieur ?",
+  m:"(a) n = 5 paires → <b>2<sup>5</sup> = 32</b> types de gamètes par brassage interchromosomique. (b) Le nombre réel est bien plus grand car s'ajoute le <b>crossing-over</b> (brassage intrachromosomique), qui crée des chromosomes recombinés inédits : la diversité devient pratiquement infinie. La <b>fécondation</b> la démultiplie encore."},
+ {p:"Croisement-test : un individu hétérozygote pour deux gènes est croisé avec un double récessif. On obtient 420 / 420 / 80 / 80 descendants. (a) Les gènes sont-ils liés ou indépendants ? Justifie. (b) Calcule le taux de recombinaison et la distance génétique.",
+  m:"(a) Les gènes sont <b>liés</b> : on observe une nette majorité de phénotypes <b>parentaux</b> (420 + 420) et une minorité de <b>recombinés</b> (80 + 80). S'ils étaient indépendants, on attendrait 4 classes égales (25 % chacune). (b) Taux de recombinaison = recombinés / total = (80 + 80) / (420 + 420 + 80 + 80) = 160 / 1000 = <b>16 %</b>, soit une distance de <b>16 centimorgans (cM)</b> entre les deux gènes."}
+];
+(function(){
+  var rl=document.getElementById('redacList'); if(!rl)return;
+  REDAC.forEach(function(ex,i){
+    var c=document.createElement('div'); c.className='redac-card reveal';
+    c.innerHTML='<div class="redac-q"><b>Exercice '+(i+1)+'.</b> '+ex.p+'</div>'+
+      '<textarea class="redac-ta" placeholder="Rédige ta réponse ici…"></textarea>'+
+      '<button class="redac-btn" type="button">Voir la correction</button>'+
+      '<div class="redac-model"><span class="redac-model-lbl">✓ Correction modèle</span>'+ex.m+'</div>';
+    var b=c.querySelector('.redac-btn'), m=c.querySelector('.redac-model');
+    b.onclick=function(){var o=m.classList.toggle('show'); b.textContent=o?'Masquer la correction':'Voir la correction';};
+    rl.appendChild(c);
+  });
+})();
+
 
 </script>
 <script src="ui.js?v=20260618g"></script>
