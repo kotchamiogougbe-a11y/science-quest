@@ -42,6 +42,13 @@
     accept.addEventListener('click', function(){ set('granted'); grant(); dismiss(bar); });
     refuse.addEventListener('click', function(){ set('denied'); dismiss(bar); });
     btns.appendChild(refuse); btns.appendChild(accept);
+    var moreTxt={fr:'Politique cookies',en:'Cookie policy',ar:'سياسة الارتباط',es:'Política de cookies',pt:'Política de cookies',sw:'Sera ya vidakuzi'};
+    var _l=(window.getLang&&window.getLang())||'fr';
+    var more=document.createElement('a');
+    more.href='mentions-legales.html#cookies';
+    more.textContent=moreTxt[_l]||moreTxt.fr;
+    more.style.cssText='color:#F5D98B;text-decoration:underline;margin-inline-start:6px;font-size:.82rem;white-space:nowrap;';
+    txt.appendChild(document.createTextNode(' ')); txt.appendChild(more);
     bar.appendChild(txt); bar.appendChild(btns);
     document.body.appendChild(bar);
     setTimeout(function(){ accept.focus(); }, 50);
