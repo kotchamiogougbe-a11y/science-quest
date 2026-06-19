@@ -87,9 +87,15 @@
 
   function buildGraph(){
     master = ctx.createGain(); master.gain.value = 0.0001;
-    master.connect(ctx.destination);
+    var limiter = ctx.createDynamicsCompressor();
+    limiter.threshold.setValueAtTime(-3, ctx.currentTime);
+    limiter.knee.setValueAtTime(0, ctx.currentTime);
+    limiter.ratio.setValueAtTime(20, ctx.currentTime);
+    limiter.attack.setValueAtTime(0.003, ctx.currentTime);
+    limiter.release.setValueAtTime(0.25, ctx.currentTime);
+    master.connect(limiter); limiter.connect(ctx.destination);
     dry = ctx.createGain(); dry.gain.value = 0.82; dry.connect(master);
-    wet = ctx.createGain(); wet.gain.value = 0.45;
+    wet = ctx.createGain(); wet.gain.value = 0.35;
     var conv = ctx.createConvolver(); conv.buffer = makeImpulse(2.8, 2.6);
     conv.connect(wet); wet.connect(master);
     bus = ctx.createGain(); bus.gain.value = 1.0;
