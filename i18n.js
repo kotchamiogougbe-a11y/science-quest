@@ -6,6 +6,9 @@
 
 window.KI18N = {
   fr: {
+    consent_text:"Ce site utilise des cookies pour mesurer l'audience et améliorer ton expérience.",
+    consent_accept:"Accepter",
+    consent_refuse:"Refuser",
     menu_label:"Menu",
     menu_nav:"Navigation",
     menu_close:"Fermer le menu",
@@ -331,12 +334,15 @@ window.KI18N = {
     cta_title:"Ton téléphone t'a volé des heures.||Il est temps qu'il t'en rende.",
     cta_sub:"Rejoins l'écosystème Kotchami — transforme chaque minute d'écran en une minute qui compte.",
     cta_btn1:"Créer mon compte gratuitement", cta_btn2:"Explorer d'abord",
-    foot_brand:"L'Univers des Passeurs. Un écosystème éducatif, scientifique et créatif destiné à former une génération de découvreurs, d'inventeurs et de bâtisseurs.",
+    foot_brand:"Écosystème éducatif, scientifique et créatif destiné à former une génération de découvreurs, d'inventeurs et de bâtisseurs.",
     foot_eco:"L'écosystème", foot_info:"Informations", foot_legal:"Légal",
     foot_about:"À propos", foot_partners:"Partenariats", foot_contact:"Contact",
     foot_terms:"Conditions d'utilisation", foot_privacy:"Politique de confidentialité", foot_legals:"Mentions légales"
   },
   en: {
+    consent_text:"This site uses cookies to measure traffic and improve your experience.",
+    consent_accept:"Accept",
+    consent_refuse:"Decline",
     menu_label:"Menu",
     menu_nav:"Navigation",
     menu_close:"Close menu",
@@ -662,12 +668,15 @@ window.KI18N = {
     cta_title:"Your phone stole hours from you.||Time it gave them back.",
     cta_sub:"Join the Kotchami ecosystem — turn every minute of screen time into a minute that counts.",
     cta_btn1:"Create my free account", cta_btn2:"Explore first",
-    foot_brand:"The Universe of Passeurs. An educational, scientific and creative ecosystem built to form a generation of discoverers, inventors and builders.",
+    foot_brand:"An educational, scientific and creative ecosystem built to form a generation of discoverers, inventors and builders.",
     foot_eco:"The ecosystem", foot_info:"Information", foot_legal:"Legal",
     foot_about:"About", foot_partners:"Partnerships", foot_contact:"Contact",
     foot_terms:"Terms of use", foot_privacy:"Privacy policy", foot_legals:"Legal notice"
   },
   ar: {
+    consent_text:"يستخدم هذا الموقع ملفات تعريف الارتباط لقياس الزيارات وتحسين تجربتك.",
+    consent_accept:"موافق",
+    consent_refuse:"رفض",
     menu_label:"القائمة",
     menu_nav:"التنقل",
     menu_close:"إغلاق القائمة",
@@ -995,7 +1004,7 @@ window.KI18N = {
     premium_sub:"هذا المحتوى مجاني مع حساب كوتشامي. أنشئ حسابك في 30 ثانية — دون بطاقة بنكية.",
     premium_cta:"أنشئ حسابي — مجانًا",
     premium_skip:"متابعة الاستكشاف",
-    foot_brand:"عالم الـ Passeurs. منظومة تعليمية وعلمية وإبداعية تهدف إلى إعداد جيل من المكتشفين والمخترعين والبنّائين.",
+    foot_brand:"منظومة تعليمية وعلمية وإبداعية تهدف إلى إعداد جيل من المكتشفين والمخترعين والبنّائين.",
     foot_eco:"المنظومة",
     foot_info:"معلومات",
     foot_legal:"قانوني",
@@ -1007,6 +1016,9 @@ window.KI18N = {
     foot_legals:"إشعار قانوني"
   },
   es: {
+    consent_text:"Este sitio usa cookies para medir la audiencia y mejorar tu experiencia.",
+    consent_accept:"Aceptar",
+    consent_refuse:"Rechazar",
     menu_label:"Menú",
     menu_nav:"Navegación",
     menu_close:"Cerrar el menú",
@@ -1334,7 +1346,7 @@ window.KI18N = {
     premium_sub:"Este contenido es gratis con una cuenta Kotchami. Crea la tuya en 30 segundos — sin tarjeta de crédito.",
     premium_cta:"Crear mi cuenta — es gratis",
     premium_skip:"Seguir explorando",
-    foot_brand:"El Universo de los Passeurs. Un ecosistema educativo, científico y creativo destinado a formar una generación de descubridores, inventores y constructores.",
+    foot_brand:"Un ecosistema educativo, científico y creativo destinado a formar una generación de descubridores, inventores y constructores.",
     foot_eco:"El ecosistema",
     foot_info:"Información",
     foot_legal:"Legal",
@@ -1346,6 +1358,9 @@ window.KI18N = {
     foot_legals:"Aviso legal"
   },
   pt: {
+    consent_text:"Este site usa cookies para medir o tráfego e melhorar a tua experiência.",
+    consent_accept:"Aceitar",
+    consent_refuse:"Recusar",
     menu_label:"Menu",
     menu_nav:"Navegação",
     menu_close:"Fechar o menu",
@@ -1673,7 +1688,7 @@ window.KI18N = {
     premium_sub:"Este conteúdo é gratuito com uma conta Kotchami. Cria a tua em 30 segundos — sem cartão de crédito.",
     premium_cta:"Criar a minha conta — é grátis",
     premium_skip:"Continuar a explorar",
-    foot_brand:"O Universo dos Passeurs. Um ecossistema educativo, científico e criativo destinado a formar uma geração de descobridores, inventores e construtores.",
+    foot_brand:"Um ecossistema educativo, científico e criativo destinado a formar uma geração de descobridores, inventores e construtores.",
     foot_eco:"O ecossistema",
     foot_info:"Informações",
     foot_legal:"Legal",
@@ -1685,6 +1700,9 @@ window.KI18N = {
     foot_legals:"Aviso legal"
   },
   sw: {
+    consent_text:"Tovuti hii hutumia vidakuzi kupima watumiaji na kuboresha tajriba yako.",
+    consent_accept:"Kubali",
+    consent_refuse:"Kataa",
     menu_label:"Menyu",
     menu_nav:"Urambazaji",
     menu_close:"Funga menyu",
@@ -2012,7 +2030,7 @@ window.KI18N = {
     premium_sub:"Maudhui haya ni bure ukiwa na akaunti ya Kotchami. Fungua yako kwa sekunde 30 — bila kadi ya benki.",
     premium_cta:"Fungua akaunti yangu — ni bure",
     premium_skip:"Endelea kuchunguza",
-    foot_brand:"Ulimwengu wa Passeurs. Mfumo wa elimu, sayansi na ubunifu uliokusudiwa kuandaa kizazi cha wagunduzi, wavumbuzi na wajenzi.",
+    foot_brand:"Mfumo wa elimu, sayansi na ubunifu uliokusudiwa kuandaa kizazi cha wagunduzi, wavumbuzi na wajenzi.",
     foot_eco:"Mfumo",
     foot_info:"Taarifa",
     foot_legal:"Kisheria",
