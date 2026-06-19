@@ -1,7 +1,7 @@
 /* ============================================================================
    ambience.js — Ambiance sonore générative (Web Audio) + lecteur flottant
    Module partagé de l'écosystème Kotchami. Une seule source de vérité.
-   - 3 ambiances : Cosmos · Concentration · Racines
+   - 6 ambiances : Cosmos · Concentration · Racines · Aube · Zen · Nuit
    - Coupé par défaut (politique d'autoplay), activé au clic, choix mémorisé.
    - Aucun fichier audio : tout est synthétisé → léger, sans droits d'auteur.
    Soli Deo Gloria
@@ -16,7 +16,7 @@
   function get(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:v; }catch(e){ return d; } }
   function save(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
 
-  var THEMES = ['cosmos','focus','roots'];
+  var THEMES = ['cosmos','focus','roots','aube','zen','nuit'];
   var state = {
     theme: (THEMES.indexOf(get(K.theme,'cosmos'))<0?'cosmos':get(K.theme,'cosmos')),
     vol: Math.min(1, Math.max(0, parseFloat(get(K.vol,'0.35'))||0.35)),
@@ -29,6 +29,9 @@
     amb_cosmos:'Cosmos', amb_cosmos_d:'Nappes spatiales, vastes et contemplatives',
     amb_focus:'Concentration', amb_focus_d:'Arpèges doux, pour étudier',
     amb_roots:'Racines', amb_roots_d:'Sonorités chaleureuses, inspiration africaine',
+    amb_aube:'Aube', amb_aube_d:'Lumineux et doux, comme un matin qui se lève',
+    amb_zen:'Zen', amb_zen_d:'Très calme et épuré, pour méditer ou respirer',
+    amb_nuit:'Nuit', amb_nuit_d:'Profond et lent, pour la concentration du soir',
     amb_vol:'Volume', amb_play:'Activer le son', amb_pause:'Couper le son', amb_close:'Fermer'
   };
   function lang(){ try{ return (window.getLang && window.getLang()) || 'fr'; }catch(e){ return 'fr'; } }
@@ -52,18 +55,27 @@
   var CHORDS = {
     cosmos: [[45,52,57,64],[41,48,53,60],[43,50,55,62],[40,47,52,59]],
     focus:  [[48,55,60,67],[45,52,57,64],[53,60,65,72],[50,57,62,69]],
-    roots:  [[48,55,60,64],[53,60,65,69],[50,57,62,67],[45,52,57,64]]
+    roots:  [[48,55,60,64],[53,60,65,69],[50,57,62,67],[45,52,57,64]],
+    aube:   [[50,57,62,66],[55,62,67,71],[48,55,60,64],[53,60,64,67]],
+    zen:    [[45,52,57,64],[43,50,55,62],[48,55,60,67],[41,48,53,60]],
+    nuit:   [[36,43,48,55],[38,45,50,57],[33,40,45,52],[40,47,52,59]]
   };
   // gammes pentatoniques pour mélodies (MIDI, octave haute)
   var PENTA = {
     cosmos: [69,72,74,76,79,81,84],          // A min penta
     focus:  [72,74,76,79,81,84,86],           // C maj penta
-    roots:  [60,62,64,67,69,72,74]            // C maj penta chaleureuse
+    roots:  [60,62,64,67,69,72,74],            // C maj penta chaleureuse
+    aube:   [74,76,79,81,83,86,88],
+    zen:    [69,72,74,76,79,81],
+    nuit:   [60,63,65,67,70,72]
   };
   var CFG = {
     cosmos: { padType:'triangle', padGain:0.085, cutoff:760,  chordMs:16000, noteMs:2600, twinkle:0.75 },
     focus:  { padType:'sine',     padGain:0.05,  cutoff:1400, chordMs:7680,  noteMs:480 },
-    roots:  { padType:'triangle', padGain:0.045, cutoff:1100, chordMs:8400,  noteMs:430 }
+    roots:  { padType:'triangle', padGain:0.045, cutoff:1100, chordMs:8400,  noteMs:430 },
+    aube:   { padType:'sine',     padGain:0.05,  cutoff:1500, chordMs:9000,  noteMs:560 },
+    zen:    { padType:'sine',     padGain:0.06,  cutoff:900,  chordMs:14000, noteMs:3200, twinkle:0.6 },
+    nuit:   { padType:'triangle', padGain:0.07,  cutoff:680,  chordMs:18000, noteMs:3000, twinkle:0.7 }
   };
 
   function makeImpulse(sec, decay){
@@ -223,7 +235,7 @@
       '.amb-dock.playing .amb-btn{animation:ambpulse 2.4s ease-in-out infinite;border-color:rgba(245,217,139,.8);}',
       '@keyframes ambpulse{0%,100%{box-shadow:0 0 0 0 rgba(245,217,139,.0),0 6px 22px rgba(0,0,0,.35);}50%{box-shadow:0 0 0 7px rgba(245,217,139,.10),0 6px 22px rgba(0,0,0,.35);}}',
       '@media(prefers-reduced-motion:reduce){.amb-dock.playing .amb-btn{animation:none;}}',
-      '.amb-panel{position:absolute;left:0;bottom:60px;width:268px;background:rgba(8,17,46,.96);',
+      '.amb-panel{position:absolute;right:0;left:auto;bottom:60px;width:268px;max-width:calc(100vw - 32px);max-height:calc(100vh - 90px);overflow-y:auto;background:rgba(8,17,46,.96);',
         'border:1px solid rgba(197,158,80,.25);border-radius:16px;padding:16px;opacity:0;visibility:hidden;',
         'transform:translateY(10px);transition:opacity .2s,visibility .2s,transform .2s;box-shadow:0 18px 50px rgba(0,0,0,.5);}',
       '.amb-panel.open{opacity:1;visibility:visible;transform:translateY(0);}',
@@ -246,7 +258,7 @@
         'border-radius:11px;padding:10px;cursor:pointer;font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.82rem;transition:background .15s;}',
       '.amb-toggle:hover{background:rgba(197,158,80,.2);}',
       '[dir="rtl"] .amb-dock{right:auto;left:16px;}',
-      '[dir="rtl"] .amb-panel{left:auto;right:0;}',
+      '[dir="rtl"] .amb-panel{right:auto;left:0;}',
       '[dir="rtl"] .amb-theme,[dir="rtl"] .amb-hint{text-align:right;}'
     ].join('');
     document.head.appendChild(s);
@@ -285,6 +297,9 @@
     themes.appendChild(themeRow('cosmos','🌌'));
     themes.appendChild(themeRow('focus','🎐'));
     themes.appendChild(themeRow('roots','🪘'));
+    themes.appendChild(themeRow('aube','🌅'));
+    themes.appendChild(themeRow('zen','🧘'));
+    themes.appendChild(themeRow('nuit','🌙'));
     panel.appendChild(themes);
     var vol=el('label','amb-vol');
     vol.appendChild(i18nspan('amb_vol'));
