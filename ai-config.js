@@ -9,5 +9,5 @@
    Dès que l'URL est renseignée, le tuteur IA s'active.
    ============================================================ */
 window.KOTCHAMI_AI = {
-  endpoint: ""   // ex : "https://europe-west1-science-quest-1487c.cloudfunctions.net/tuteurIA"
+  endpoint: "https://tuteur-i2mxs6k4cq-uc.a.run.app"   // ex : "https://europe-west1-science-quest-1487c.cloudfunctions.net/tuteurIA"
 };
