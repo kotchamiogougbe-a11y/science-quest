@@ -34,24 +34,26 @@
   var btn, panel, backdrop, lastFocus;
 
   /* ── PWA : installation + service worker (partagé sur toutes les pages) ── */
-  var deferredPrompt = null;
+  var deferredPrompt = (typeof window!=='undefined' && window.__bip) ? window.__bip : null;
   window.addEventListener('beforeinstallprompt', function(e){
     e.preventDefault();
-    deferredPrompt = e;
+    deferredPrompt = e; window.__bip = e;
     var b = document.getElementById('navInstall') || document.getElementById('btnInstall');
     if(b){ b.classList.add('show'); b.style.display='inline-flex'; }
   });
+  function getPrompt(){ return deferredPrompt || (window.__bip || null); }
   function doInstall(){
-    if(!deferredPrompt) return;
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.finally(function(){
-      deferredPrompt=null;
+    var p = getPrompt();
+    if(!p) return;
+    p.prompt();
+    p.userChoice.finally(function(){
+      deferredPrompt=null; window.__bip=null;
       var b=document.getElementById('navInstall'); if(b) b.classList.remove('show');
     });
   }
   // Clic sur le bouton d'installation : invite native si dispo, sinon menu + instructions
   function installClick(){
-    if(deferredPrompt){ doInstall(); return; }
+    if(getPrompt()){ doInstall(); return; }
     if(typeof open==='function') open();
     var h = panel && panel.querySelector('.nav-install-hint');
     if(h) h.classList.add('show');
@@ -145,7 +147,7 @@
       ib.innerHTML='⬇ <span data-i18n="btn_install">'+tr('btn_install')+'</span>';
       ib.addEventListener('click', installClick);
       actions.insertBefore(ib, actions.firstChild);
-      if(deferredPrompt) ib.classList.add('show');
+      if(getPrompt()) ib.classList.add("show");
     }
 
     backdrop=document.createElement('div'); backdrop.className='nav-backdrop';
