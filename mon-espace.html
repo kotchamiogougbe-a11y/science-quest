@@ -225,6 +225,31 @@ a{color:inherit;text-decoration:none;}
 
     <!-- ÉTAT 1 : NON CONNECTÉ -->
     <div id="viewAuth" class="card">
+      <!-- Aperçu Premium (affiché si on arrive via « Découvrir Premium ») -->
+      <div id="premiumPreview" class="hidden" style="margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,0.08)">
+        <div class="offres-title" data-i18n="me_offers_title">Passe au Premium</div>
+        <div class="offres-sub" data-i18n="me_offers_sub">L'accompagnement et l'émerveillement, au-delà des quiz.</div>
+        <div class="offres">
+          <div class="offre sel">
+            <div class="periode" data-i18n="me_monthly">Mensuel</div>
+            <div class="prix">2 500<span class="dev"> FCFA</span></div>
+            <div class="alt">3,99 € · 4,99 $</div>
+          </div>
+          <div class="offre">
+            <div class="tag" data-i18n="me_yearly_tag">2 mois offerts</div>
+            <div class="periode" data-i18n="me_yearly">Annuel</div>
+            <div class="prix">25 000<span class="dev"> FCFA</span></div>
+            <div class="alt">39,99 € · 49,99 $</div>
+          </div>
+        </div>
+        <ul class="avantages">
+          <li><span class="chk">✓</span> <span data-i18n="me_adv1">Correction de tes rédactions par le tuteur IA</span></li>
+          <li><span class="chk">✓</span> <span data-i18n="me_adv2">Simulations d'examen chronométrées</span></li>
+          <li><span class="chk">✓</span> <span data-i18n="me_adv3">Suivi de progression et certificats</span></li>
+          <li><span class="chk">✓</span> <span data-i18n="me_adv4">Tableau de bord parent / enseignant</span></li>
+        </ul>
+        <p style="font-size:13px;color:var(--or2);text-align:center;margin:4px 0 0" data-i18n="me_prem_login_note">Connecte-toi ou crée ton compte ci-dessous pour t'abonner au Premium.</p>
+      </div>
       <div class="tabs">
         <button class="tab active" id="tabLogin" onclick="switchTab('login')" data-i18n="me_tab_login">Se connecter</button>
         <button class="tab" id="tabSignup" onclick="switchTab('signup')" data-i18n="me_tab_signup">Créer un compte</button>
@@ -390,6 +415,17 @@ function switchTab(which){
   if(which==='login'){ tl.classList.add('active');ts.classList.remove('active');fl.classList.remove('hidden');fs.classList.add('hidden'); }
   else { ts.classList.add('active');tl.classList.remove('active');fs.classList.remove('hidden');fl.classList.add('hidden'); }
 }
+
+// Si on arrive via « Découvrir Premium » (?premium=1), on montre l'aperçu des offres
+(function(){
+  try{
+    if(/[?&]premium=1\b/.test(location.search)){
+      var pv=document.getElementById('premiumPreview');
+      if(pv) pv.classList.remove('hidden');
+      switchTab('signup');
+    }
+  }catch(e){}
+})();
 function showMsg(id,text,type){
   var el=document.getElementById(id);
   el.className='msg '+(type||'err');el.textContent=text;
@@ -568,7 +604,7 @@ function payer(){
 </script>
 
 <!-- Multilingue : i18n partagé -->
-<script src="i18n.js?v=20260621"></script>
+<script src="i18n.js?v=20260622b"></script>
 <script>
   // Applique la langue sauvegardée (ou détecte), puis re-traduit les textes dynamiques
   (function(){

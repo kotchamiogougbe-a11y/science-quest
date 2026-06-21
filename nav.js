@@ -14,7 +14,8 @@
     menu_label:'Menu', menu_nav:'Navigation', menu_close:'Fermer le menu',
     nav_home:'Accueil', nav_sq:'Science Quest', nav_inf:'INFINITIA', nav_sap:'SAPIENTIA',
     nav_books:'Livres', nav_community:'Communauté', nav_blog:'Blog', nav_about:'À propos',
-    btn_connect:'Se connecter', btn_create:'Créer un compte', btn_install:'Installer l\'app'
+    btn_connect:'Se connecter', btn_create:'Créer un compte', btn_install:'Installer l\'app',
+    install_hint:'📱 Android : menu ⋮ du navigateur → « Installer l\'application ». 🍏 iPhone : bouton Partager → « Sur l\'écran d\'accueil ».'
   };
   function lang(){ try{ return (window.getLang && window.getLang()) || 'fr'; }catch(e){ return 'fr'; } }
   function tr(key){ try{ var d=window.KI18N && window.KI18N[lang()]; if(d && d[key]!=null) return d[key]; }catch(e){} return FALLBACK[key]||key; }
@@ -48,6 +49,13 @@
       var b=document.getElementById('navInstall'); if(b) b.classList.remove('show');
     });
   }
+  // Clic sur le bouton d'installation : invite native si dispo, sinon menu + instructions
+  function installClick(){
+    if(deferredPrompt){ doInstall(); return; }
+    if(typeof open==='function') open();
+    var h = panel && panel.querySelector('.nav-install-hint');
+    if(h) h.classList.add('show');
+  }
   window.addEventListener('appinstalled', function(){
     deferredPrompt=null;
     var b=document.getElementById('navInstall'); if(b) b.classList.remove('show');
@@ -71,7 +79,16 @@
         'font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.78rem;cursor:pointer;white-space:nowrap;',
         'transition:background .2s,border-color .2s;flex-shrink:0;}',
       '.nav-install.show{display:inline-flex;}',
+      '@media(max-width:920px){.nav-install{display:inline-flex;}}',
+      '@media(display-mode:standalone){.nav-install,.nav-cta-install,.nav-install-hint{display:none !important;}}',
       '.nav-install:hover{background:rgba(61,126,255,.2);border-color:rgba(61,126,255,.8);}',
+      '.nav-cta-install{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;',
+        'padding:12px;border-radius:12px;border:1px solid rgba(61,126,255,.5);background:rgba(61,126,255,.1);',
+        'color:#7EB4FF;font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;}',
+      '.nav-cta-install:hover{background:rgba(61,126,255,.2);}',
+      '.nav-install-hint{display:none;color:#9fb0d8;font-size:.76rem;line-height:1.55;margin:8px 4px 0;',
+        'font-family:"Inter",sans-serif;background:rgba(255,255,255,.04);border-radius:10px;padding:11px 13px;}',
+      '.nav-install-hint.show{display:block;}',
       '@media(max-width:920px){.nav-burger{display:inline-flex;}',
         '.h-actions .btn-connect,.h-actions .btn-start{display:none !important;}}',
       '.nav-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);',
@@ -126,7 +143,7 @@
       ib.className='nav-install'; ib.id='navInstall';
       ib.setAttribute('data-i18n','btn_install');
       ib.innerHTML='⬇ <span data-i18n="btn_install">'+tr('btn_install')+'</span>';
-      ib.addEventListener('click', doInstall);
+      ib.addEventListener('click', installClick);
       actions.insertBefore(ib, actions.firstChild);
       if(deferredPrompt) ib.classList.add('show');
     }
@@ -164,6 +181,17 @@
     c1.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
     c2.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
     cta.appendChild(c1); cta.appendChild(c2); panel.appendChild(cta);
+
+    // Bouton « Installer l'application » — toujours visible dans le menu
+    var inst=document.createElement('button'); inst.className='nav-cta-install';
+    inst.innerHTML='📲 <span data-i18n="btn_install">'+tr('btn_install')+'</span>';
+    var hint=document.createElement('p'); hint.className='nav-install-hint';
+    hint.setAttribute('data-i18n','install_hint'); hint.textContent=tr('install_hint');
+    inst.addEventListener('click', function(){
+      if(deferredPrompt){ doInstall(); }
+      else { hint.classList.toggle('show'); }
+    });
+    panel.appendChild(inst); panel.appendChild(hint);
     var sdg=document.createElement('div'); sdg.className='nav-sdg'; sdg.textContent='Soli Deo Gloria'; panel.appendChild(sdg);
 
     document.body.appendChild(backdrop);

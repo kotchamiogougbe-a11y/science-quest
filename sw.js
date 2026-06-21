@@ -6,7 +6,7 @@
    Soli Deo Gloria
 ═══════════════════════════════════════════════════════════ */
 
-var CACHE = "kotchami-v3";
+var CACHE = "kotchami-v5";
 
 // Ressources de base mises en cache dès l'installation
 var CORE = [

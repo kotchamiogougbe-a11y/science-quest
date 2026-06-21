@@ -234,6 +234,7 @@
     var s=document.createElement('style');
     s.textContent = [
       '.amb-dock{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:400;font-family:"Space Grotesk","Inter",sans-serif;}',
+      '@media(max-width:960px){.amb-dock{bottom:calc(96px + env(safe-area-inset-bottom));right:14px;}}',
       '.amb-btn{width:48px;height:48px;border-radius:50%;border:1px solid rgba(197,158,80,.45);',
         'background:rgba(10,23,69,.78);color:#F5D98B;font-size:1.15rem;cursor:pointer;backdrop-filter:blur(8px);',
         '-webkit-backdrop-filter:blur(8px);box-shadow:0 6px 22px rgba(0,0,0,.35);transition:transform .2s,border-color .2s;display:flex;align-items:center;justify-content:center;}',
@@ -345,6 +346,12 @@
     var tspan=panel.querySelector('#ambToggle span');
     if(tspan){ var key = state.playing?'amb_pause':'amb_play'; tspan.setAttribute('data-i18n',key); tspan.textContent=tr(key); }
   }
+
+  // ── Le lecteur de musique n'apparaît QUE dans Science Quest ──
+  // (chaque pilier aura ses propres ambiances ; INFINITIA / SAPIENTIA viendront plus tard)
+  var __path = (location.pathname || '').toLowerCase();
+  var __isScienceQuest = /science-quest|sq-|chromosoma/.test(__path);
+  if(!__isScienceQuest) return;
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', build);
   else build();

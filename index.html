@@ -734,8 +734,8 @@ html,body{overflow-x:hidden;max-width:100%;}
   <div class="hero-glow"></div>
   <div class="hero-content">
     <h1 class="hero-h1" data-i18n="hero_h1">On t'a appris à éteindre<br><span class="dim">ton téléphone</span> pour apprendre.<br><span class="or">Et si c'était dessus que tu apprenais le mieux ?</span></h1>
-    <p class="hero-welcome" data-i18n="hero_welcome">✨ Bienvenue sur Kotchami ✨</p>
     <p class="hero-sub" data-i18n="hero_sub">Le même réflexe qui te ramène vers une appli<br>peut te ramener vers une équation.</p>
+    <p class="hero-welcome" data-i18n="hero_welcome">✨ Bienvenue sur Kotchami ✨</p>
     <p class="hero-q" data-i18n="hero_q">Un écosystème pour <span class="ac">apprendre</span>, <span class="ac">explorer</span>, <span class="ac">créer</span> et <span class="ac">transformer le monde.</span></p>
     <div class="hero-cta">
       <button class="btn-hero" onclick="location.href='mon-espace.html'">
@@ -922,13 +922,13 @@ html,body{overflow-x:hidden;max-width:100%;}
     <h3 class="premium-title" data-i18n="premium_title">Pour aller plus loin</h3>
     <p class="premium-sub" data-i18n="premium_sub">Ce contenu est disponible gratuitement avec un compte Kotchami. Crée le tien en 30 secondes — pas de carte bancaire requise.</p>
     <div class="premium-btns">
-      <button class="btn-premium-cta" onclick="closePremium();location.href='mon-espace.html'" data-i18n="premium_cta">Créer mon compte — c'est gratuit</button>
+      <button class="btn-premium-cta" onclick="closePremium();location.href='mon-espace.html?premium=1'" data-i18n="premium_cta">Créer mon compte — c'est gratuit</button>
       <button class="btn-premium-skip" onclick="closePremium()" data-i18n="premium_skip">Continuer à explorer</button>
     </div>
   </div>
 </div>
 
-<script src="cosmos.js?v=20260621"></script>
+<script src="cosmos.js?v=20260622b"></script>
 
 <script>
 window.addEventListener('load', () => {
@@ -1022,10 +1022,10 @@ const obs = new IntersectionObserver(es => {
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 
-<script src="i18n.js?v=20260621"></script>
-<script src="nav.js?v=20260621"></script>
-<script src="consent.js?v=20260621"></script>
-<script src="ambience.js?v=20260621"></script>
+<script src="i18n.js?v=20260622b"></script>
+<script src="nav.js?v=20260622b"></script>
+<script src="consent.js?v=20260622b"></script>
+<script src="ambience.js?v=20260622b"></script>
 
 <!-- PWA : service worker + bouton Installer -->
 <script>
