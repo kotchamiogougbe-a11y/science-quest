@@ -236,6 +236,16 @@
       transition:background .2s,border-color .2s;cursor:pointer;background:transparent;
     }
     .btn-connect:hover{background:rgba(197,158,80,0.08);border-color:rgba(197,158,80,0.55);}
+    .btn-install{
+      border:1px solid rgba(61,126,255,0.45);color:var(--cosmos);
+      padding:7px 14px;border-radius:8px;
+      font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.78rem;
+      white-space:nowrap;cursor:pointer;background:rgba(61,126,255,0.08);
+      transition:background .2s,border-color .2s,transform .2s;
+      display:inline-flex;align-items:center;gap:6px;
+    }
+    .btn-install::before{content:'⬇';font-size:0.85rem;}
+    .btn-install:hover{background:rgba(61,126,255,0.16);border-color:rgba(61,126,255,0.7);transform:translateY(-1px);}
     .btn-start{
       background:linear-gradient(135deg,var(--or3),var(--or),var(--or2));
       color:#07090F;padding:8px 18px;border-radius:8px;
@@ -690,8 +700,9 @@ html,body{overflow-x:hidden;max-width:100%;}
         <button class="lang-current" id="langCurrent" onclick="document.getElementById('langMenu').classList.toggle('open')">🌐 FR</button>
         <div class="lang-menu" id="langMenu"></div>
       </div>
-      <button class="btn-connect" onclick="openModal()" data-i18n="btn_connect">Se connecter</button>
-      <button class="btn-start" onclick="openModal()" data-i18n="btn_create">Créer un compte</button>
+      <button class="btn-install" id="btnInstall" onclick="kotchamiInstall()" data-i18n="btn_install" style="display:none">Installer l'app</button>
+      <button class="btn-connect" onclick="location.href='mon-espace.html'" data-i18n="btn_connect">Se connecter</button>
+      <button class="btn-start" onclick="location.href='mon-espace.html'" data-i18n="btn_create">Créer un compte</button>
     </div>
   </div>
   <div class="hdr-nav-wrap">
@@ -908,7 +919,7 @@ html,body{overflow-x:hidden;max-width:100%;}
   </div>
 </div>
 
-<script src="cosmos.js?v=20260619c"></script>
+<script src="cosmos.js?v=20260620"></script>
 
 <script>
 window.addEventListener('load', () => {
@@ -1003,10 +1014,50 @@ const obs = new IntersectionObserver(es => {
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 
-<script src="i18n.js?v=20260619c"></script>
-<script src="nav.js?v=20260619c"></script>
-<script src="consent.js?v=20260619c"></script>
-<script src="ambience.js?v=20260619c"></script>
+<script src="i18n.js?v=20260620"></script>
+<script src="nav.js?v=20260620"></script>
+<script src="consent.js?v=20260620"></script>
+<script src="ambience.js?v=20260620"></script>
+
+<!-- PWA : service worker + bouton Installer -->
+<script>
+(function(){
+  // 1) Enregistrer le service worker (rend le site installable + hors-ligne)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(e){
+        console.warn('SW non enregistré :', e);
+      });
+    });
+  }
+
+  // 2) Capturer l'événement d'installation et afficher le bouton
+  var deferredPrompt = null;
+  var btn = document.getElementById('btnInstall');
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    if (btn) btn.style.display = 'inline-flex';
+  });
+
+  // 3) Au clic : lancer l'invite native d'installation
+  window.kotchamiInstall = function(){
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.finally(function(){
+      deferredPrompt = null;
+      if (btn) btn.style.display = 'none';
+    });
+  };
+
+  // 4) Une fois installée, masquer le bouton
+  window.addEventListener('appinstalled', function(){
+    deferredPrompt = null;
+    if (btn) btn.style.display = 'none';
+  });
+})();
+</script>
 
 </body>
 </html>
