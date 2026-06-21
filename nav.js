@@ -14,7 +14,7 @@
     menu_label:'Menu', menu_nav:'Navigation', menu_close:'Fermer le menu',
     nav_home:'Accueil', nav_sq:'Science Quest', nav_inf:'INFINITIA', nav_sap:'SAPIENTIA',
     nav_books:'Livres', nav_community:'Communauté', nav_blog:'Blog', nav_about:'À propos',
-    btn_connect:'Se connecter', btn_create:'Créer un compte'
+    btn_connect:'Se connecter', btn_create:'Créer un compte', btn_install:'Installer l\'app'
   };
   function lang(){ try{ return (window.getLang && window.getLang()) || 'fr'; }catch(e){ return 'fr'; } }
   function tr(key){ try{ var d=window.KI18N && window.KI18N[lang()]; if(d && d[key]!=null) return d[key]; }catch(e){} return FALLBACK[key]||key; }
@@ -32,6 +32,33 @@
 
   var btn, panel, backdrop, lastFocus;
 
+  /* ── PWA : installation + service worker (partagé sur toutes les pages) ── */
+  var deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    var b = document.getElementById('navInstall') || document.getElementById('btnInstall');
+    if(b){ b.classList.add('show'); b.style.display='inline-flex'; }
+  });
+  function doInstall(){
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.finally(function(){
+      deferredPrompt=null;
+      var b=document.getElementById('navInstall'); if(b) b.classList.remove('show');
+    });
+  }
+  window.addEventListener('appinstalled', function(){
+    deferredPrompt=null;
+    var b=document.getElementById('navInstall'); if(b) b.classList.remove('show');
+  });
+  if('serviceWorker' in navigator && !window.__swNav){
+    window.__swNav=true;
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }
+
   function css(){
     var s=document.createElement('style');
     s.textContent = [
@@ -39,6 +66,12 @@
         'border:1px solid rgba(197,158,80,.4);background:rgba(10,23,69,.6);color:#F5D98B;font-size:1.15rem;cursor:pointer;',
         'transition:border-color .2s,background .2s;flex-shrink:0;}',
       '.nav-burger:hover{border-color:rgba(197,158,80,.9);background:rgba(10,23,69,.85);}',
+      '.nav-install{display:none;align-items:center;gap:6px;height:42px;padding:0 13px;border-radius:11px;',
+        'border:1px solid rgba(61,126,255,.5);background:rgba(61,126,255,.1);color:#7EB4FF;',
+        'font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.78rem;cursor:pointer;white-space:nowrap;',
+        'transition:background .2s,border-color .2s;flex-shrink:0;}',
+      '.nav-install.show{display:inline-flex;}',
+      '.nav-install:hover{background:rgba(61,126,255,.2);border-color:rgba(61,126,255,.8);}',
       '@media(max-width:920px){.nav-burger{display:inline-flex;}',
         '.h-actions .btn-connect,.h-actions .btn-start{display:none !important;}}',
       '.nav-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);',
@@ -87,6 +120,17 @@
     btn.addEventListener('click', open);
     actions.insertBefore(btn, actions.firstChild);
 
+    // Bouton « Installer l'application » (ajouté seulement si la page n'en a pas déjà un)
+    if(!document.getElementById('btnInstall')){
+      var ib=document.createElement('button');
+      ib.className='nav-install'; ib.id='navInstall';
+      ib.setAttribute('data-i18n','btn_install');
+      ib.innerHTML='⬇ <span data-i18n="btn_install">'+tr('btn_install')+'</span>';
+      ib.addEventListener('click', doInstall);
+      actions.insertBefore(ib, actions.firstChild);
+      if(deferredPrompt) ib.classList.add('show');
+    }
+
     backdrop=document.createElement('div'); backdrop.className='nav-backdrop';
     backdrop.addEventListener('click', close);
 
@@ -117,6 +161,8 @@
     var cta=document.createElement('div'); cta.className='nav-cta';
     var c1=document.createElement('button'); c1.className='nc-ghost'; c1.setAttribute('data-i18n','btn_connect'); c1.textContent=tr('btn_connect');
     var c2=document.createElement('button'); c2.className='nc-solid'; c2.setAttribute('data-i18n','btn_create'); c2.textContent=tr('btn_create');
+    c1.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
+    c2.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
     cta.appendChild(c1); cta.appendChild(c2); panel.appendChild(cta);
     var sdg=document.createElement('div'); sdg.className='nav-sdg'; sdg.textContent='Soli Deo Gloria'; panel.appendChild(sdg);
 
