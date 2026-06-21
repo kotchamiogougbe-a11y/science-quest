@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mon Espace — Kotchami</title>
+<meta name="description" content="Connecte-toi à ton espace Kotchami : suis ta progression et débloque le Premium."/>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+<!-- Firebase (même version que l'app Science Quest) -->
+<script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore-compat.js"></script>
+<!-- Widget de paiement FedaPay -->
+<script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+
+<style>
+:root{
+  --nuit:#0A1745;--nuit2:#0C1A4D;--nuit3:#122463;--nuit4:#193080;
+  --or:#C59E50;--or2:#F5D98B;--or3:#8A6520;
+  --cosmos:#3D7EFF;--vert:#22D06E;
+  --blanc:#EEF0F5;--gris:#9AA8C8;--gris2:#5A6A92;
+  --bg-grad-1:#0A1745;--bg-grad-2:#060D2E;--bg-grad-3:#0E2168;
+  --card-bg:rgba(12,26,77,0.55);--card-bg2:rgba(18,36,99,0.6);
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Inter',sans-serif;color:var(--blanc);min-height:100vh;
+  background:radial-gradient(ellipse at top,var(--bg-grad-3),var(--bg-grad-1) 45%,var(--bg-grad-2));
+  background-attachment:fixed;display:flex;flex-direction:column;
+}
+a{color:inherit;text-decoration:none;}
+
+/* Header */
+.hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px;border-bottom:1px solid rgba(197,158,80,0.18);
+  background:rgba(8,16,52,0.55);backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:50;
+}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-k{
+  width:42px;height:42px;border-radius:11px;
+  background:linear-gradient(135deg,var(--nuit3),var(--nuit));
+  border:1.5px solid var(--or);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;
+  color:var(--or2);
+}
+.logo-txt{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;letter-spacing:0.02em;}
+.logo-txt span{color:var(--or);}
+.back-link{
+  font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--gris);
+  display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;
+  border:1px solid rgba(154,168,200,0.2);transition:all .2s;
+}
+.back-link:hover{color:var(--or2);border-color:rgba(197,158,80,0.4);}
+
+/* Contenu */
+.wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.espace{width:100%;max-width:520px;}
+.welcome{text-align:center;margin-bottom:32px;}
+.welcome h1{
+  font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(2rem,6vw,2.8rem);line-height:1.1;margin-bottom:10px;
+}
+.welcome .spark{
+  background:linear-gradient(90deg,var(--or),var(--or2),var(--or));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.welcome p{font-size:15px;color:var(--gris);max-width:380px;margin:0 auto;line-height:1.5;}
+
+/* Cartes */
+.card{
+  background:var(--card-bg);border:1px solid rgba(197,158,80,0.2);
+  border-radius:var(--radius);padding:28px;backdrop-filter:blur(14px);
+  box-shadow:0 8px 40px rgba(0,0,0,0.25);
+}
+.card + .card{margin-top:18px;}
+
+/* Onglets connexion */
+.tabs{display:flex;gap:8px;margin-bottom:22px;background:rgba(8,16,52,0.5);padding:5px;border-radius:11px;}
+.tab{
+  flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;color:var(--gris);
+  border:none;background:transparent;transition:all .2s;
+}
+.tab.active{background:linear-gradient(135deg,var(--nuit4),var(--nuit3));color:var(--or2);}
+
+/* Bouton Google */
+.btn-google{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:11px;
+  padding:13px;border-radius:11px;cursor:pointer;font-size:14px;font-weight:600;
+  font-family:'Space Grotesk',sans-serif;
+  background:#fff;color:#1f2937;border:none;transition:transform .15s,box-shadow .15s;
+}
+.btn-google:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.3);}
+.btn-google svg{width:19px;height:19px;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--gris2);font-size:12px;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(154,168,200,0.18);}
+
+/* Champs */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;color:var(--gris);margin-bottom:6px;font-family:'Space Grotesk',sans-serif;}
+.field input{
+  width:100%;padding:12px 14px;border-radius:10px;font-size:14px;
+  background:rgba(8,16,52,0.6);border:1px solid rgba(154,168,200,0.22);
+  color:var(--blanc);font-family:'Inter',sans-serif;transition:border .2s;
+}
+.field input:focus{outline:none;border-color:var(--or);}
+.btn-primary{
+  width:100%;padding:13px;border-radius:11px;cursor:pointer;font-size:14px;font-weight:600;
+  font-family:'Space Grotesk',sans-serif;border:none;margin-top:4px;
+  background:linear-gradient(135deg,var(--or3),var(--or),var(--or2));color:#0A1745;
+  transition:transform .15s,box-shadow .15s;
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(197,158,80,0.35);}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.msg{font-size:13px;margin-top:12px;padding:10px 12px;border-radius:9px;line-height:1.4;}
+.msg.err{background:rgba(239,68,68,0.12);color:#fca5a5;border:1px solid rgba(239,68,68,0.25);}
+.msg.ok{background:rgba(34,208,110,0.1);color:#86efac;border:1px solid rgba(34,208,110,0.25);}
+
+/* Profil connecté */
+.profil{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.avatar{
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--or),var(--or3));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:700;color:#0A1745;border:2px solid rgba(245,217,139,0.5);
+}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+.profil-info h3{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;}
+.profil-info p{font-size:12px;color:var(--gris2);word-break:break-all;}
+.btn-logout{
+  font-size:12px;color:#fca5a5;background:rgba(239,68,68,0.1);
+  border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:6px 12px;
+  cursor:pointer;font-family:'Space Grotesk',sans-serif;
+}
+
+/* Badge statut */
+.statut{
+  display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:11px;
+  margin-bottom:22px;font-family:'Space Grotesk',sans-serif;
+}
+.statut.free{background:rgba(154,168,200,0.08);border:1px solid rgba(154,168,200,0.18);}
+.statut.prem{background:linear-gradient(135deg,rgba(197,158,80,0.15),rgba(245,217,139,0.08));border:1px solid rgba(197,158,80,0.4);}
+.statut .ico{font-size:24px;}
+.statut .lbl{font-size:14px;font-weight:600;}
+.statut.free .lbl{color:var(--gris);}
+.statut.prem .lbl{color:var(--or2);}
+.statut .sub{font-size:12px;color:var(--gris2);font-weight:400;}
+
+/* Offres */
+.offres-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:4px;}
+.offres-sub{font-size:13px;color:var(--gris);margin-bottom:18px;}
+.offres{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.offre{
+  position:relative;padding:18px 16px;border-radius:12px;cursor:pointer;
+  background:rgba(8,16,52,0.5);border:1.5px solid rgba(154,168,200,0.2);
+  transition:all .2s;text-align:center;
+}
+.offre:hover{border-color:rgba(197,158,80,0.4);}
+.offre.sel{border-color:var(--or);background:rgba(197,158,80,0.1);}
+.offre .periode{font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--gris);margin-bottom:8px;}
+.offre .prix{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;color:var(--blanc);}
+.offre .prix .dev{font-size:13px;color:var(--or2);}
+.offre .alt{font-size:11px;color:var(--gris2);margin-top:6px;font-family:'JetBrains Mono',monospace;}
+.offre .tag{
+  position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--or),var(--or2));color:#0A1745;
+  font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;
+  font-family:'Space Grotesk',sans-serif;white-space:nowrap;
+}
+.avantages{list-style:none;margin:0 0 20px;padding:0;}
+.avantages li{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--gris);margin-bottom:9px;line-height:1.4;}
+.avantages li .chk{color:var(--or);flex-shrink:0;font-weight:700;}
+
+.foot-note{text-align:center;font-size:11px;color:var(--gris2);margin-top:14px;line-height:1.5;}
+
+/* Explorer gratuitement */
+.explore-libre{
+  margin-top:22px;padding-top:20px;border-top:1px solid rgba(154,168,200,0.15);
+  text-align:center;
+}
+.explore-libre span{display:block;font-size:12px;color:var(--gris2);margin-bottom:10px;}
+.btn-explore{
+  display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;
+  color:var(--vert);padding:9px 18px;border-radius:10px;
+  border:1px solid rgba(34,208,110,0.3);background:rgba(34,208,110,0.06);
+  transition:all .2s;
+}
+.btn-explore:hover{background:rgba(34,208,110,0.12);border-color:rgba(34,208,110,0.5);transform:translateY(-1px);}
+
+/* Spinner */
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg);}}
+.hidden{display:none !important;}
+
+@media(max-width:480px){
+  .card{padding:22px;}
+  .offres{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a href="index.html" class="logo">
+    <div class="logo-k">K</div>
+    <div class="logo-txt">Kotchami<span> · <span data-i18n="me_title">Mon Espace</span></span></div>
+  </a>
+  <a href="index.html" class="back-link" data-i18n="me_back">← Accueil</a>
+</header>
+
+<div class="wrap">
+  <div class="espace">
+
+    <div class="welcome">
+      <h1><span class="spark" data-i18n="me_title">Mon Espace</span></h1>
+      <p data-i18n="me_welcome_sub">Connecte-toi pour suivre ta progression et débloquer l'accompagnement Premium.</p>
+    </div>
+
+    <!-- ÉTAT 1 : NON CONNECTÉ -->
+    <div id="viewAuth" class="card">
+      <div class="tabs">
+        <button class="tab active" id="tabLogin" onclick="switchTab('login')" data-i18n="me_tab_login">Se connecter</button>
+        <button class="tab" id="tabSignup" onclick="switchTab('signup')" data-i18n="me_tab_signup">Créer un compte</button>
+      </div>
+
+      <button class="btn-google" onclick="googleSignIn()">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        <span data-i18n="me_google">Continuer avec Google</span>
+      </button>
+
+      <div class="sep" data-i18n="me_or">ou</div>
+
+      <!-- Formulaire LOGIN -->
+      <div id="formLogin">
+        <div class="field">
+          <label data-i18n="me_email">Adresse e-mail</label>
+          <input type="email" id="loginEmail" placeholder="ton@email.com" autocomplete="email"/>
+        </div>
+        <div class="field">
+          <label data-i18n="me_password">Mot de passe</label>
+          <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+        <button class="btn-primary" id="btnLogin" onclick="emailLogin()" data-i18n="me_btn_login">Se connecter</button>
+      </div>
+
+      <!-- Formulaire SIGNUP -->
+      <div id="formSignup" class="hidden">
+        <div class="field">
+          <label data-i18n="me_firstname">Ton prénom</label>
+          <input type="text" id="signupName" placeholder="Prénom" autocomplete="given-name"/>
+        </div>
+        <div class="field">
+          <label data-i18n="me_email">Adresse e-mail</label>
+          <input type="email" id="signupEmail" placeholder="ton@email.com" autocomplete="email"/>
+        </div>
+        <div class="field">
+          <label data-i18n="me_password_min">Mot de passe (6 caractères min.)</label>
+          <input type="password" id="signupPass" placeholder="••••••••" autocomplete="new-password"/>
+        </div>
+        <button class="btn-primary" id="btnSignup" onclick="emailSignup()" data-i18n="me_btn_signup">Créer mon compte</button>
+      </div>
+
+      <div id="authMsg"></div>
+
+      <div class="explore-libre">
+        <span data-i18n="me_explore_q">Pas envie de créer un compte tout de suite ?</span>
+        <a href="science-quest.html" class="btn-explore" data-i18n="me_explore_btn">Explorer gratuitement →</a>
+      </div>
+    </div>
+
+    <!-- ÉTAT 2 : CONNECTÉ -->
+    <div id="viewAccount" class="card hidden">
+      <div class="profil">
+        <div class="avatar" id="acAvatar">?</div>
+        <div class="profil-info" style="flex:1">
+          <h3 id="acName">—</h3>
+          <p id="acEmail">—</p>
+        </div>
+        <button class="btn-logout" onclick="doSignOut()" data-i18n="me_logout">Déconnexion</button>
+      </div>
+
+      <!-- Statut premium -->
+      <div id="statutFree" class="statut free">
+        <span class="ico">✨</span>
+        <div>
+          <div class="lbl" data-i18n="me_free_lbl">Compte gratuit</div>
+          <div class="sub" data-i18n="me_free_sub">Accès aux cours et quiz essentiels — pour toujours</div>
+        </div>
+      </div>
+      <div id="statutPrem" class="statut prem hidden">
+        <span class="ico">👑</span>
+        <div>
+          <div class="lbl" data-i18n="me_prem_lbl">Premium actif</div>
+          <div class="sub" data-i18n="me_prem_sub">Merci pour ton soutien — tout est débloqué</div>
+        </div>
+      </div>
+
+      <!-- Offres (cachées si déjà premium) -->
+      <div id="offresBloc">
+        <div class="offres-title" data-i18n="me_offers_title">Passe au Premium</div>
+        <div class="offres-sub" data-i18n="me_offers_sub">L'accompagnement et l'émerveillement, au-delà des quiz.</div>
+
+        <div class="offres">
+          <div class="offre sel" id="offreM" onclick="selectOffre('mensuel')">
+            <div class="periode" data-i18n="me_monthly">Mensuel</div>
+            <div class="prix">2 500<span class="dev"> FCFA</span></div>
+            <div class="alt">3,99 € · 4,99 $</div>
+          </div>
+          <div class="offre" id="offreA" onclick="selectOffre('annuel')">
+            <div class="tag" data-i18n="me_yearly_tag">2 mois offerts</div>
+            <div class="periode" data-i18n="me_yearly">Annuel</div>
+            <div class="prix">25 000<span class="dev"> FCFA</span></div>
+            <div class="alt">39,99 € · 49,99 $</div>
+          </div>
+        </div>
+
+        <ul class="avantages">
+          <li><span class="chk">✓</span> <span data-i18n="me_adv1">Correction de tes rédactions par le tuteur IA</span></li>
+          <li><span class="chk">✓</span> <span data-i18n="me_adv2">Simulations d'examen chronométrées</span></li>
+          <li><span class="chk">✓</span> <span data-i18n="me_adv3">Suivi de progression et certificats</span></li>
+          <li><span class="chk">✓</span> <span data-i18n="me_adv4">Tableau de bord parent / enseignant</span></li>
+        </ul>
+
+        <button class="btn-primary" id="btnPay" onclick="payer()" data-i18n="me_btn_pay">Activer mon Premium</button>
+        <div id="payMsg"></div>
+        <div class="foot-note"><span data-i18n="me_pay_secure">Paiement sécurisé par FedaPay · Mobile Money ou carte bancaire.</span><br/><span data-i18n="me_pay_cancel">Tu peux résilier à tout moment.</span></div>
+
+        <div class="explore-libre">
+          <span data-i18n="me_explore_free">Le contenu essentiel reste toujours gratuit.</span>
+          <a href="science-quest.html" class="btn-explore" data-i18n="me_explore_btn">Explorer gratuitement →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   CONFIG — Firebase + FedaPay
+   (identique à l'app Science Quest)
+════════════════════════════════════════ */
+var firebaseConfig = {
+  apiKey: "AIzaSyC8W4zE5gLg0Aph62cqG8WLcOAqybr5xG8",
+  authDomain: "science-quest-1487c.firebaseapp.com",
+  projectId: "science-quest-1487c",
+  storageBucket: "science-quest-1487c.firebasestorage.app",
+  messagingSenderId: "610282035066",
+  appId: "1:610282035066:web:b83dcd182fb7f49eeea8c3"
+};
+
+var FEDAPAY = {
+  publicKey: "pk_sandbox_xGgcn6XwmIwVXZNLs0foptB1",
+  environment: "sandbox",
+  currency: "XOF",
+  prix: { mensuel: 2500, annuel: 25000 },
+  label: { mensuel: "Premium — 1 mois", annuel: "Premium — 1 an" }
+};
+
+var AUTH=null, DB=null, CURRENT_USER=null, OFFRE_SEL='mensuel';
+
+/* Init Firebase */
+(function(){
+  try{
+    if(typeof firebase!=="undefined" && firebase.initializeApp){
+      firebase.initializeApp(firebaseConfig);
+      AUTH=firebase.auth();
+      DB=firebase.firestore();
+      try{ DB.settings({experimentalForceLongPolling:true}); }catch(e){}
+      try{ AUTH.getRedirectResult().catch(function(){}); }catch(e){}
+      AUTH.onAuthStateChanged(onAuthChange);
+    }
+  }catch(e){ console.warn("Firebase init:",e); }
+})();
+
+/* ════════════════════════════════════════
+   UI — bascule onglets / messages
+════════════════════════════════════════ */
+function switchTab(which){
+  var tl=document.getElementById('tabLogin'), ts=document.getElementById('tabSignup');
+  var fl=document.getElementById('formLogin'), fs=document.getElementById('formSignup');
+  clearMsg('authMsg');
+  if(which==='login'){ tl.classList.add('active');ts.classList.remove('active');fl.classList.remove('hidden');fs.classList.add('hidden'); }
+  else { ts.classList.add('active');tl.classList.remove('active');fs.classList.remove('hidden');fl.classList.add('hidden'); }
+}
+function showMsg(id,text,type){
+  var el=document.getElementById(id);
+  el.className='msg '+(type||'err');el.textContent=text;
+}
+function clearMsg(id){ var el=document.getElementById(id); el.className='';el.textContent=''; }
+
+/* ════════════════════════════════════════
+   Traduction des textes dynamiques (JS)
+════════════════════════════════════════ */
+function T(key, fallbackFr){
+  try{
+    var code=(window.getLang&&window.getLang())||'fr';
+    var dict=(window.KI18N&&window.KI18N[code])?window.KI18N[code]:null;
+    if(dict&&dict[key]) return dict[key];
+    var fr=(window.KI18N&&window.KI18N['fr'])?window.KI18N['fr']:null;
+    if(fr&&fr[key]) return fr[key];
+  }catch(e){}
+  return fallbackFr||key;
+}
+
+// Met à jour les textes/placeholders dynamiques quand la langue change
+function retranslateDynamic(){
+  // Placeholders (non couverts par data-i18n simple)
+  var le=document.getElementById('loginEmail'); if(le) le.placeholder=T('me_email','Adresse e-mail').toLowerCase().indexOf('mail')>=0?'ton@email.com':'ton@email.com';
+}
+
+function frError(code){
+  var m={
+    'auth/invalid-email':T('me_err_email'),
+    'auth/user-not-found':T('me_err_notfound'),
+    'auth/wrong-password':T('me_err_wrongpass'),
+    'auth/invalid-credential':T('me_err_cred'),
+    'auth/email-already-in-use':T('me_err_inuse'),
+    'auth/weak-password':T('me_err_weak'),
+    'auth/popup-closed-by-user':T('me_err_generic'),
+    'auth/network-request-failed':T('me_err_network')
+  };
+  return m[code] || T('me_err_generic');
+}
+
+/* ════════════════════════════════════════
+   AUTH
+════════════════════════════════════════ */
+function googleSignIn(){
+  if(!AUTH){ showMsg('authMsg',T('me_err_generic'));return; }
+  clearMsg('authMsg');
+  var provider=new firebase.auth.GoogleAuthProvider();
+  AUTH.signInWithPopup(provider).catch(function(e){
+    if(e && e.code==='auth/popup-blocked' || (e&&e.code==='auth/cancelled-popup-request')){
+      AUTH.signInWithRedirect(provider).catch(function(e2){ showMsg('authMsg',frError(e2.code)); });
+    } else if(e && e.code!=='auth/popup-closed-by-user'){
+      showMsg('authMsg',frError(e.code));
+    }
+  });
+}
+
+function emailLogin(){
+  if(!AUTH) return;
+  var em=document.getElementById('loginEmail').value.trim();
+  var pw=document.getElementById('loginPass').value;
+  if(!em||!pw){ showMsg('authMsg',T('me_msg_login_fields'));return; }
+  var btn=document.getElementById('btnLogin');btn.disabled=true;btn.textContent=T('me_msg_connecting');
+  AUTH.signInWithEmailAndPassword(em,pw).catch(function(e){
+    showMsg('authMsg',frError(e.code));
+  }).finally(function(){ btn.disabled=false;btn.textContent=T('me_btn_login'); });
+}
+
+function emailSignup(){
+  if(!AUTH) return;
+  var nm=document.getElementById('signupName').value.trim();
+  var em=document.getElementById('signupEmail').value.trim();
+  var pw=document.getElementById('signupPass').value;
+  if(!nm||!em||!pw){ showMsg('authMsg',T('me_msg_fields'));return; }
+  if(pw.length<6){ showMsg('authMsg',T('me_msg_pass_short'));return; }
+  var btn=document.getElementById('btnSignup');btn.disabled=true;btn.textContent=T('me_msg_creating');
+  AUTH.createUserWithEmailAndPassword(em,pw).then(function(cred){
+    return cred.user.updateProfile({displayName:nm});
+  }).catch(function(e){
+    showMsg('authMsg',frError(e.code));
+  }).finally(function(){ btn.disabled=false;btn.textContent=T('me_btn_signup'); });
+}
+
+function doSignOut(){ if(AUTH){ AUTH.signOut(); } }
+
+/* ════════════════════════════════════════
+   RÉACTION au changement d'état + lecture premium
+════════════════════════════════════════ */
+var unsubPrem=null;
+function onAuthChange(user){
+  CURRENT_USER=user||null;
+  var vAuth=document.getElementById('viewAuth'), vAcc=document.getElementById('viewAccount');
+  if(unsubPrem){ try{unsubPrem();}catch(e){} unsubPrem=null; }
+
+  if(!user){
+    vAuth.classList.remove('hidden');vAcc.classList.add('hidden');
+    return;
+  }
+  // Connecté
+  vAuth.classList.add('hidden');vAcc.classList.remove('hidden');
+  var name=user.displayName||(user.email?user.email.split('@')[0]:'Mon compte');
+  document.getElementById('acName').textContent=name;
+  document.getElementById('acEmail').textContent=user.email||'';
+  var av=document.getElementById('acAvatar');
+  if(user.photoURL){ av.innerHTML='<img src="'+user.photoURL+'" referrerpolicy="no-referrer" alt=""/>'; }
+  else { av.textContent=(name||'?').charAt(0).toUpperCase(); }
+
+  // Écoute le premium en temps réel
+  if(DB){
+    var ref=DB.collection('entitlements').doc(user.uid);
+    unsubPrem=ref.onSnapshot(function(snap){
+      var d=snap.exists?snap.data():null;
+      setPremiumUI(!!(d && d.premium===true));
+    },function(){});
+  }
+}
+
+function setPremiumUI(isPrem){
+  var sFree=document.getElementById('statutFree');
+  var sPrem=document.getElementById('statutPrem');
+  var offres=document.getElementById('offresBloc');
+  if(isPrem){
+    sFree.classList.add('hidden');sPrem.classList.remove('hidden');offres.classList.add('hidden');
+  } else {
+    sFree.classList.remove('hidden');sPrem.classList.add('hidden');offres.classList.remove('hidden');
+  }
+}
+
+/* ════════════════════════════════════════
+   OFFRES + PAIEMENT
+════════════════════════════════════════ */
+function selectOffre(o){
+  OFFRE_SEL=o;
+  document.getElementById('offreM').classList.toggle('sel',o==='mensuel');
+  document.getElementById('offreA').classList.toggle('sel',o==='annuel');
+}
+
+function payer(){
+  clearMsg('payMsg');
+  var FP=window.FedaPay;
+  if(!CURRENT_USER){ showMsg('payMsg',T('me_msg_pay_login'));return; }
+  if(!FP||!FEDAPAY.publicKey){ showMsg('payMsg',T('me_msg_pay_module'));return; }
+
+  var email=CURRENT_USER.email||'';
+  var dn=(CURRENT_USER.displayName||'').trim();
+  var parts=dn?dn.split(/\s+/):[];
+  var firstname=parts.length?parts[0]:'Eleve';
+  var lastname=parts.length>1?parts.slice(1).join(' '):'Kotchami';
+  var montant=FEDAPAY.prix[OFFRE_SEL];
+  var libelle=FEDAPAY.label[OFFRE_SEL];
+
+  try{
+    var widget=FP.init({
+      public_key:FEDAPAY.publicKey,
+      environment:FEDAPAY.environment,
+      locale:'fr',
+      transaction:{
+        amount:montant,
+        description:libelle+' - '+(email||CURRENT_USER.uid),
+        custom_metadata:{ uid:CURRENT_USER.uid, email:email, produit:'premium', offre:OFFRE_SEL }
+      },
+      customer:{ email:email, firstname:firstname, lastname:lastname },
+      currency:{ iso:FEDAPAY.currency },
+      onComplete:function(resp){
+        try{
+          var reason=resp&&resp.reason;
+          if(FP.DIALOG_DISMISSED && reason===FP.DIALOG_DISMISSED){ return; }
+        }catch(e){}
+        showMsg('payMsg',T('me_msg_pay_received'),'ok');
+      }
+    });
+    widget.open();
+  }catch(e){
+    showMsg('payMsg',T('me_msg_pay_start'));
+  }
+}
+</script>
+
+<!-- Multilingue : i18n partagé -->
+<script src="i18n.js?v=20260620"></script>
+<script>
+  // Applique la langue sauvegardée (ou détecte), puis re-traduit les textes dynamiques
+  (function(){
+    try{
+      if(window.initLang){ window.initLang(); }
+      else if(window.getLang && window.applyLang){
+        var s=window.getLang(); window.applyLang(s||'fr');
+      }
+    }catch(e){}
+    // Re-traduit l'UI dynamique au chargement et à chaque changement de langue
+    if(window.applyLang){
+      var _orig=window.applyLang;
+      window.applyLang=function(code){ _orig(code); try{ retranslateDynamic(); }catch(e){} };
+    }
+    try{ retranslateDynamic(); }catch(e){}
+  })();
+
+  // Sens droite-à-gauche pour l'arabe
+  (function(){
+    function applyDir(){
+      try{
+        var code=(window.getLang&&window.getLang())||'fr';
+        document.documentElement.setAttribute('dir', code==='ar'?'rtl':'ltr');
+        document.documentElement.setAttribute('lang', code);
+      }catch(e){}
+    }
+    applyDir();
+    if(window.applyLang){
+      var _o2=window.applyLang;
+      window.applyLang=function(code){ _o2(code); applyDir(); };
+    }
+  })();
+</script>
+
+</body>
+</html>
