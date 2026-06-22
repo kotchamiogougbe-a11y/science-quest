@@ -13,7 +13,7 @@
   var FALLBACK = {
     menu_label:'Menu', menu_nav:'Navigation', menu_close:'Fermer le menu',
     nav_home:'Accueil', nav_sq:'Science Quest', nav_inf:'INFINITIA', nav_sap:'SAPIENTIA',
-    nav_books:'Livres', nav_community:'Communauté', nav_blog:'Blog', nav_about:'À propos', nav_manifesto:'Manifeste', nav_account:'Mon espace', nav_signout:'Se déconnecter',
+    nav_books:'Livres', nav_community:'Communauté', nav_blog:'Blog', nav_about:'À propos', nav_manifesto:'Manifeste', nav_account:'Mon espace', nav_signout:'Se déconnecter', sq_premium_active:'Premium actif 👑',
     btn_connect:'Se connecter', btn_create:'Créer un compte', btn_install:'Installer l\'app',
     install_hint:'📱 Android : menu ⋮ du navigateur → « Installer l\'application ». 🍏 iPhone : bouton Partager → « Sur l\'écran d\'accueil ».'
   };
@@ -21,6 +21,19 @@
   function tr(key){ try{ var d=window.KI18N && window.KI18N[lang()]; if(d && d[key]!=null) return d[key]; }catch(e){} return FALLBACK[key]||key; }
 
   function isSignedIn(){ try{ return !!localStorage.getItem('kotchami_auth'); }catch(e){ return false; } }
+  function isPremium(){ try{ return !!localStorage.getItem('kotchami_premium'); }catch(e){ return false; } }
+  function updatePremiumCTAs(){
+    try{
+      if(!isPremium()) return;
+      var btns=document.querySelectorAll('[data-i18n="sq_premium_cta"]');
+      Array.prototype.forEach.call(btns, function(b){
+        b.setAttribute('data-i18n','sq_premium_active');
+        b.textContent=tr('sq_premium_active');
+        b.onclick=function(){ window.location.href='mon-espace.html'; };
+        b.classList.add('is-premium-active');
+      });
+    }catch(e){}
+  }
   function updateHeaderAuth(){
     try{
       var on=isSignedIn();
@@ -225,6 +238,7 @@
     document.body.appendChild(backdrop);
     document.body.appendChild(panel);
     updateHeaderAuth();
+    updatePremiumCTAs();
 
     document.addEventListener('keydown', function(e){
       if(e.key==='Escape' && panel.classList.contains('open')) close();

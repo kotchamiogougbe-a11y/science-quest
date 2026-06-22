@@ -561,8 +561,10 @@ function setPremiumUI(isPrem){
   var offres=document.getElementById('offresBloc');
   if(isPrem){
     sFree.classList.add('hidden');sPrem.classList.remove('hidden');offres.classList.add('hidden');
+    try{ localStorage.setItem('kotchami_premium','1'); }catch(e){}
   } else {
     sFree.classList.remove('hidden');sPrem.classList.add('hidden');offres.classList.remove('hidden');
+    try{ localStorage.removeItem('kotchami_premium'); }catch(e){}
   }
 }
 
@@ -617,7 +619,7 @@ function payer(){
 </script>
 
 <!-- Multilingue : i18n partagé -->
-<script src="i18n.js?v=20260623a"></script>
+<script src="i18n.js?v=20260623b"></script>
 <script>
   // Applique la langue sauvegardée (ou détecte), puis re-traduit les textes dynamiques
   (function(){
