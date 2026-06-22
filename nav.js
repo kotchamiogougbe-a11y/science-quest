@@ -13,12 +13,28 @@
   var FALLBACK = {
     menu_label:'Menu', menu_nav:'Navigation', menu_close:'Fermer le menu',
     nav_home:'Accueil', nav_sq:'Science Quest', nav_inf:'INFINITIA', nav_sap:'SAPIENTIA',
-    nav_books:'Livres', nav_community:'Communauté', nav_blog:'Blog', nav_about:'À propos', nav_manifesto:'Manifeste',
+    nav_books:'Livres', nav_community:'Communauté', nav_blog:'Blog', nav_about:'À propos', nav_manifesto:'Manifeste', nav_account:'Mon espace', nav_signout:'Se déconnecter',
     btn_connect:'Se connecter', btn_create:'Créer un compte', btn_install:'Installer l\'app',
     install_hint:'📱 Android : menu ⋮ du navigateur → « Installer l\'application ». 🍏 iPhone : bouton Partager → « Sur l\'écran d\'accueil ».'
   };
   function lang(){ try{ return (window.getLang && window.getLang()) || 'fr'; }catch(e){ return 'fr'; } }
   function tr(key){ try{ var d=window.KI18N && window.KI18N[lang()]; if(d && d[key]!=null) return d[key]; }catch(e){} return FALLBACK[key]||key; }
+
+  function isSignedIn(){ try{ return !!localStorage.getItem('kotchami_auth'); }catch(e){ return false; } }
+  function updateHeaderAuth(){
+    try{
+      var on=isSignedIn();
+      var bc=document.querySelector('.h-actions .btn-connect');
+      var bs=document.querySelector('.h-actions .btn-start');
+      if(on){
+        if(bc){ bc.setAttribute('data-i18n','nav_account'); bc.textContent=tr('nav_account'); bc.onclick=function(){ window.location.href='mon-espace.html'; }; }
+        if(bs){ bs.style.display='none'; }
+      } else {
+        if(bc){ bc.setAttribute('data-i18n','btn_connect'); bc.textContent=tr('btn_connect'); bc.onclick=function(){ window.location.href='mon-espace.html'; }; }
+        if(bs){ bs.style.display=''; bs.setAttribute('data-i18n','btn_create'); bs.textContent=tr('btn_create'); }
+      }
+    }catch(e){}
+  }
 
   var LINKS = [
     ['🏠','nav_home','index.html'],
@@ -179,10 +195,19 @@
 
     var sep=document.createElement('div'); sep.className='nav-sep'; panel.appendChild(sep);
     var cta=document.createElement('div'); cta.className='nav-cta';
-    var c1=document.createElement('button'); c1.className='nc-ghost'; c1.setAttribute('data-i18n','btn_connect'); c1.textContent=tr('btn_connect');
-    var c2=document.createElement('button'); c2.className='nc-solid'; c2.setAttribute('data-i18n','btn_create'); c2.textContent=tr('btn_create');
-    c1.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
-    c2.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
+    var c1=document.createElement('button'); c1.className='nc-ghost';
+    var c2=document.createElement('button'); c2.className='nc-solid';
+    if(isSignedIn()){
+      c1.setAttribute('data-i18n','nav_account'); c1.textContent=tr('nav_account');
+      c1.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
+      c2.setAttribute('data-i18n','nav_signout'); c2.textContent=tr('nav_signout');
+      c2.addEventListener('click', function(){ window.location.href='mon-espace.html?logout=1'; });
+    } else {
+      c1.setAttribute('data-i18n','btn_connect'); c1.textContent=tr('btn_connect');
+      c1.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
+      c2.setAttribute('data-i18n','btn_create'); c2.textContent=tr('btn_create');
+      c2.addEventListener('click', function(){ window.location.href='mon-espace.html'; });
+    }
     cta.appendChild(c1); cta.appendChild(c2); panel.appendChild(cta);
 
     // Bouton « Installer l'application » — toujours visible dans le menu
@@ -199,6 +224,7 @@
 
     document.body.appendChild(backdrop);
     document.body.appendChild(panel);
+    updateHeaderAuth();
 
     document.addEventListener('keydown', function(e){
       if(e.key==='Escape' && panel.classList.contains('open')) close();

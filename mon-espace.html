@@ -407,6 +407,7 @@ var AUTH=null, DB=null, CURRENT_USER=null, OFFRE_SEL='mensuel';
       try{ DB.settings({experimentalForceLongPolling:true}); }catch(e){}
       try{ AUTH.getRedirectResult().catch(function(){}); }catch(e){}
       AUTH.onAuthStateChanged(onAuthChange);
+      try{ if(location.search.indexOf('logout=1')>=0){ AUTH.signOut(); history.replaceState(null,'',location.pathname); } }catch(e){}
     }
   }catch(e){ console.warn("Firebase init:",e); }
 })();
@@ -527,6 +528,9 @@ function onAuthChange(user){
 
   if(!user){
     vAuth.classList.remove('hidden');vAcc.classList.add('hidden');
+    try{ localStorage.removeItem('kotchami_auth'); }catch(e){}
+    var ws0=document.querySelector('[data-i18n="me_welcome_sub"],[data-i18n="me_welcome_in"]');
+    if(ws0){ ws0.setAttribute('data-i18n','me_welcome_sub'); ws0.textContent=T('me_welcome_sub',"Connecte-toi pour suivre ta progression et débloquer l'accompagnement Premium."); }
     return;
   }
   // Connecté
@@ -534,6 +538,9 @@ function onAuthChange(user){
   var name=user.displayName||(user.email?user.email.split('@')[0]:'Mon compte');
   document.getElementById('acName').textContent=name;
   document.getElementById('acEmail').textContent=user.email||'';
+  try{ localStorage.setItem('kotchami_auth', name||'1'); }catch(e){}
+  var ws1=document.querySelector('[data-i18n="me_welcome_sub"],[data-i18n="me_welcome_in"]');
+  if(ws1){ ws1.setAttribute('data-i18n','me_welcome_in'); ws1.textContent=T('me_welcome_in','Te voici dans ton espace — suis ta progression et gère ton Premium.'); }
   var av=document.getElementById('acAvatar');
   if(user.photoURL){ av.innerHTML='<img src="'+user.photoURL+'" referrerpolicy="no-referrer" alt=""/>'; }
   else { av.textContent=(name||'?').charAt(0).toUpperCase(); }
@@ -610,7 +617,7 @@ function payer(){
 </script>
 
 <!-- Multilingue : i18n partagé -->
-<script src="i18n.js?v=20260622e"></script>
+<script src="i18n.js?v=20260623a"></script>
 <script>
   // Applique la langue sauvegardée (ou détecte), puis re-traduit les textes dynamiques
   (function(){
