@@ -13,7 +13,7 @@
   var FALLBACK = {
     menu_label:'Menu', menu_nav:'Navigation', menu_close:'Fermer le menu',
     nav_home:'Accueil', nav_sq:'Science Quest', nav_inf:'INFINITIA', nav_sap:'SAPIENTIA',
-    nav_books:'Livres', nav_community:'Communauté', nav_blog:'Blog', nav_about:'À propos',
+    nav_books:'Livres', nav_community:'Communauté', nav_blog:'Blog', nav_about:'À propos', nav_manifesto:'Manifeste',
     btn_connect:'Se connecter', btn_create:'Créer un compte', btn_install:'Installer l\'app',
     install_hint:'📱 Android : menu ⋮ du navigateur → « Installer l\'application ». 🍏 iPhone : bouton Partager → « Sur l\'écran d\'accueil ».'
   };
@@ -28,7 +28,8 @@
     ['📚','nav_books','index.html#services'],
     ['🤝','nav_community','index.html#services'],
     ['✍️','nav_blog','index.html'],
-    ['💡','nav_about','index.html#vision']
+    ['💡','nav_about','index.html#vision'],
+    ['📜','nav_manifesto','manifeste.html']
   ];
 
   var btn, panel, backdrop, lastFocus;

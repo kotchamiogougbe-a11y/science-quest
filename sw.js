@@ -6,12 +6,13 @@
    Soli Deo Gloria
 ═══════════════════════════════════════════════════════════ */
 
-var CACHE = "kotchami-v5";
+var CACHE = "kotchami-v6";
 
 // Ressources de base mises en cache dès l'installation
 var CORE = [
   "/",
   "/index.html",
+  "/manifeste.html",
   "/manifest.webmanifest",
   "/favicon.svg",
   "/icon-192.png",
