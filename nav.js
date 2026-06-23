@@ -34,6 +34,22 @@
       });
     }catch(e){}
   }
+  function updateSignupCTAs(){
+    try{
+      if(!isSignedIn()) return;
+      var keys=['cta_btn1','sq_final_cta','premium_cta','modal_create'];
+      keys.forEach(function(k){
+        var els=document.querySelectorAll('[data-i18n="'+k+'"]');
+        Array.prototype.forEach.call(els, function(el){
+          el.setAttribute('data-i18n','nav_account');
+          el.textContent=tr('nav_account');
+          var btn=(el.closest && (el.closest('button,a')||el)) || el;
+          if(btn.tagName==='A') btn.setAttribute('href','mon-espace.html');
+          btn.onclick=function(){ window.location.href='mon-espace.html'; };
+        });
+      });
+    }catch(e){}
+  }
   function updateHeaderAuth(){
     try{
       var on=isSignedIn();
@@ -239,6 +255,7 @@
     document.body.appendChild(panel);
     updateHeaderAuth();
     updatePremiumCTAs();
+    updateSignupCTAs();
 
     document.addEventListener('keydown', function(e){
       if(e.key==='Escape' && panel.classList.contains('open')) close();
