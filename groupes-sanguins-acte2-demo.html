@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Démo — Acte 2 Groupes sanguins | Science Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --nuit:#0A1745;--nuit2:#0C1A4D;--nuit3:#122463;--nuit4:#193080;
+  --or:#C59E50;--or2:#F5D98B;--or3:#8A6520;--cosmos:#3D7EFF;--cosmos2:#7EB4FF;
+  --vert:#22D06E;--blanc:#EEF0F5;--gris:#9AA8C8;--gris2:#5A6A92;
+  --card:rgba(12,26,77,0.55);--card2:rgba(18,36,99,0.6);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(170deg,#0A1745 0%,#060D2E 50%,#0E2168 100%);background-attachment:fixed;
+  color:var(--blanc);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:60px;overflow-x:hidden;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid rgba(197,158,80,0.14);flex-wrap:wrap;gap:10px;}
+.brand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.15rem;letter-spacing:0.12em;
+  background:linear-gradient(135deg,var(--or3),var(--or),var(--or2),var(--or));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.toggle{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--gris);}
+.toggle button{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.74rem;border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid rgba(197,158,80,0.35);background:transparent;color:var(--or);}
+.toggle button.on{background:linear-gradient(135deg,var(--or),var(--or2));color:#07090F;border-color:transparent;}
+.hero{padding:24px 0 6px;}
+.badge{display:inline-flex;gap:8px;background:rgba(197,158,80,0.1);border:1px solid rgba(197,158,80,0.25);border-radius:100px;padding:6px 16px;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.16em;color:var(--or);text-transform:uppercase;margin-bottom:16px;}
+.title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:600;line-height:1.06;margin-bottom:10px;}
+.title .g{background:linear-gradient(135deg,var(--or),var(--or2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:0.96rem;line-height:1.6;color:var(--gris);max-width:660px;}
+.problem{background:var(--card);border:1px solid rgba(197,158,80,0.14);border-left:3px solid var(--or);border-radius:12px;padding:18px 22px;margin:22px 0 6px;font-size:0.92rem;line-height:1.62;}
+.problem .h{font-family:'JetBrains Mono',monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--cosmos2);text-transform:uppercase;display:block;margin-bottom:8px;}
+.problem b{color:var(--or2);}
+.foot{text-align:center;font-size:0.72rem;color:var(--gris2);margin-top:30px;line-height:1.6;font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">KOTCHAMI · SCIENCE QUEST</span>
+    <div class="toggle">
+      <span>État :</span>
+      <button id="t-free" onclick="setPrem(false)">Gratuit</button>
+      <button id="t-prem" class="on" onclick="setPrem(true)">Premium 👑</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <span class="badge">🔬 Acte 2 · Analyse de documents · SVT Terminale D</span>
+    <h1 class="title">Groupes sanguins — <span class="g">l'analyse de documents</span></h1>
+    <p class="lead">Lis un test d'agglutination, détermine un groupe sanguin, déduis le génotype, comprends la codominance ABO, puis croise un échiquier et conclus sur la transfusion.</p>
+  </div>
+
+  <div class="problem">
+    <span class="h">Présentation du problème</span>
+    Un patient doit être transfusé : il faut d'abord déterminer son <b>groupe sanguin</b>. On dispose de son <b>test d'agglutination</b> (Document 1) face aux sérums anti-A et anti-B, et de celui d'un second individu (Document 2). Rappel : le système ABO comporte trois allèles — <b>A</b> et <b>B codominants</b>, <b>O récessif</b>.
+  </div>
+
+  <div id="enquete"></div>
+
+  <div class="foot">
+    Démo acte 2 · Science Quest Premium · « La science est pour toi »<br>
+    Kotchami Ogougbe / Le Passeur de sciences — Soli Deo Gloria
+  </div>
+</div>
+
+<script src="sq-docs.js"></script>
+<script>
+/* ====== SCÉNARIO ACTE 2 — GROUPES SANGUINS (système ABO) ====== */
+var GROUPES_A2 = {
+  mission:{fr:"Groupes sanguins"}, universe:{fr:"Les Architectes de la Diversité"}, level:"Terminale D",
+  badges:{ gold:{fr:"Badge — Maître des Groupes Sanguins"}, silver:{fr:"Badge — Analyste ABO"}, bronze:{fr:"Badge — Apprenti Transfuseur"} },
+
+  docs:{
+    test:{ type:"aggl", label:{fr:"📄 Doc 1 — Test du patient"}, viewBox:"0 0 760 240",
+      model:{ antisera:["anti-A","anti-B"], samples:[ {id:"Patient", react:[true,false]} ] } },
+    codom:{ type:"aggl", label:{fr:"📄 Doc 2 — Second individu"}, viewBox:"0 0 760 240",
+      model:{ antisera:["anti-A","anti-B"], samples:[ {id:"Individu X", react:[true,true]} ] } }
+  },
+
+  steps:[
+    { verb:{fr:"Lire"}, doc:"test",
+      q:{fr:"Le Doc 1 montre le test d'agglutination du patient : il agglutine (+) avec le sérum anti-A, mais pas (–) avec anti-B. Quel(s) antigène(s) ses globules rouges portent-ils ?"},
+      opts:[ {t:{fr:"l'antigène A seulement"},c:true},{t:{fr:"l'antigène B seulement"},c:false},
+             {t:{fr:"les antigènes A et B"},c:false},{t:{fr:"aucun antigène"},c:false} ],
+      hints:[{fr:"L'agglutination avec un sérum révèle l'antigène correspondant."},{fr:"Agglutine avec anti-A → antigène A ; pas avec anti-B → pas d'antigène B."}],
+      justif:{fr:"L'<b>agglutination</b> avec un sérum-test signale la présence de l'<b>antigène correspondant</b>. Agglutination avec anti-A → <b>antigène A</b> ; absence avec anti-B → pas d'antigène B."},
+      concl:{fr:"Globules rouges : <b>antigène A</b> uniquement."} },
+
+    { verb:{fr:"Déduire"}, doc:"test",
+      q:{fr:"Quel est donc le groupe sanguin du patient ?"},
+      opts:[ {t:{fr:"groupe A"},c:true},{t:{fr:"groupe B"},c:false},
+             {t:{fr:"groupe AB"},c:false},{t:{fr:"groupe O"},c:false} ],
+      hints:[{fr:"Le groupe est défini par les antigènes portés par les globules rouges."},{fr:"Antigène A seul → groupe A."}],
+      justif:{fr:"Un individu portant <b>seulement l'antigène A</b> est de <b>groupe A</b>."},
+      concl:{fr:"Le patient est de <b>groupe A</b>."} },
+
+    { verb:{fr:"Déduire"}, doc:"test",
+      q:{fr:"Dans le système ABO, l'allèle O est récessif ; A et B sont codominants. Le groupe A correspond aux génotypes :"},
+      opts:[ {t:{fr:"A//A ou A//O"},c:true},{t:{fr:"A//B"},c:false},
+             {t:{fr:"O//O"},c:false},{t:{fr:"B//B ou B//O"},c:false} ],
+      hints:[{fr:"L'allèle A domine l'allèle O."},{fr:"Un individu A peut être homozygote (A//A) ou porteur de O (A//O)."}],
+      justif:{fr:"L'allèle <b>A domine O</b> : un individu de groupe A est soit <b>A//A</b>, soit <b>A//O</b> (l'allèle O, récessif, est masqué)."},
+      concl:{fr:"Groupe A → génotype <b>A//A ou A//O</b>."} },
+
+    { verb:{fr:"Déduire"}, doc:"codom",
+      q:{fr:"Le Doc 2 montre un second individu : son sang agglutine avec anti-A ET avec anti-B. De génotype A//B, il exprime les deux antigènes. Cela illustre :"},
+      opts:[ {t:{fr:"la codominance des allèles A et B"},c:true},{t:{fr:"la dominance de A sur B"},c:false},
+             {t:{fr:"la récessivité de A et B"},c:false},{t:{fr:"une mutation"},c:false} ],
+      hints:[{fr:"Les deux antigènes s'expriment en même temps."},{fr:"Quand deux allèles s'expriment ensemble, ils sont codominants."}],
+      justif:{fr:"Le génotype <b>A//B</b> exprime <b>à la fois</b> l'antigène A et l'antigène B (groupe AB) : les allèles A et B sont <b>codominants</b> (aucun ne masque l'autre)."},
+      concl:{fr:"Groupe AB (A//B) → <b>codominance</b> de A et B."} },
+
+    { verb:{fr:"Croiser"}, doc:"punnett",
+      punnett:{ rows:["A","O"], cols:["B","O"], cells:[["A//B","A//O"],["B//O","O//O"]] },
+      q:{fr:"Un père de génotype A//O et une mère B//O ont des enfants. Quels groupes sanguins ces enfants peuvent-ils présenter ?"},
+      opts:[ {t:{fr:"uniquement A et B"},c:false},{t:{fr:"les quatre groupes : A, B, AB et O"},c:true},
+             {t:{fr:"uniquement AB"},c:false},{t:{fr:"uniquement O"},c:false} ],
+      hints:[{fr:"Le père produit des gamètes A ou O ; la mère, B ou O."},{fr:"Construis l'échiquier : quatre combinaisons distinctes."}],
+      justif:{fr:"Échiquier A//O × B//O → <b>A//B</b> (AB), <b>A//O</b> (A), <b>B//O</b> (B), <b>O//O</b> (O) : <b>les quatre groupes</b> sont possibles. Codominance (AB) et récessivité de O (O) apparaissent ensemble."},
+      concl:{fr:"A//O × B//O → enfants des <b>4 groupes</b> (A, B, AB, O)."} },
+
+    { verb:{fr:"Conclure"}, doc:"test",
+      q:{fr:"Le patient (groupe A) doit être transfusé en urgence. De quel groupe est le donneur universel de globules rouges ?"},
+      opts:[ {t:{fr:"groupe O"},c:true},{t:{fr:"groupe AB"},c:false},
+             {t:{fr:"groupe A"},c:false},{t:{fr:"groupe B"},c:false} ],
+      hints:[{fr:"Le donneur universel ne porte aucun antigène A ni B sur ses globules rouges."},{fr:"Pas d'antigène → pas d'agglutination chez le receveur."}],
+      justif:{fr:"Le <b>groupe O</b> ne porte <b>aucun antigène</b> A ou B : ses globules rouges ne sont pas agglutinés par les anticorps du receveur → <b>donneur universel</b>. (À l'inverse, AB = receveur universel.)"},
+      concl:{fr:"Donneur universel de globules rouges = <b>groupe O</b>."} }
+  ],
+
+  diagnosis:{fr:[
+    "<b>Test d'agglutination :</b> agglutine avec anti-A seul → antigène A → groupe A.",
+    "<b>Génotype :</b> A//A ou A//O (l'allèle A domine O).",
+    "<b>Codominance :</b> A//B exprime A et B (groupe AB).",
+    "<b>Transmission :</b> A//O × B//O → les quatre groupes possibles (A, B, AB, O).",
+    "<b>Transfusion :</b> O = donneur universel ; AB = receveur universel."
+  ]}
+};
+
+function mountIt(){ KotchamiDocs.mount(document.getElementById("enquete"), GROUPES_A2, { lang:"fr" }); }
+function setPrem(on){
+  try{ localStorage.setItem("kotchami_premium", on?"1":"0"); }catch(e){}
+  document.getElementById("t-prem").classList.toggle("on",on);
+  document.getElementById("t-free").classList.toggle("on",!on);
+  mountIt();
+}
+try{ localStorage.setItem("kotchami_premium","1"); }catch(e){}
+mountIt();
+</script>
+</body>
+</html>

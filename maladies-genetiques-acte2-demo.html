@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Démo — Acte 2 Maladies génétiques | Science Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --nuit:#0A1745;--nuit2:#0C1A4D;--nuit3:#122463;--nuit4:#193080;
+  --or:#C59E50;--or2:#F5D98B;--or3:#8A6520;--cosmos:#3D7EFF;--cosmos2:#7EB4FF;
+  --vert:#22D06E;--blanc:#EEF0F5;--gris:#9AA8C8;--gris2:#5A6A92;
+  --card:rgba(12,26,77,0.55);--card2:rgba(18,36,99,0.6);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(170deg,#0A1745 0%,#060D2E 50%,#0E2168 100%);background-attachment:fixed;
+  color:var(--blanc);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:60px;overflow-x:hidden;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid rgba(197,158,80,0.14);flex-wrap:wrap;gap:10px;}
+.brand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.15rem;letter-spacing:0.12em;
+  background:linear-gradient(135deg,var(--or3),var(--or),var(--or2),var(--or));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.toggle{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--gris);}
+.toggle button{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.74rem;border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid rgba(197,158,80,0.35);background:transparent;color:var(--or);}
+.toggle button.on{background:linear-gradient(135deg,var(--or),var(--or2));color:#07090F;border-color:transparent;}
+.hero{padding:24px 0 6px;}
+.badge{display:inline-flex;gap:8px;background:rgba(197,158,80,0.1);border:1px solid rgba(197,158,80,0.25);border-radius:100px;padding:6px 16px;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.16em;color:var(--or);text-transform:uppercase;margin-bottom:16px;}
+.title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:600;line-height:1.06;margin-bottom:10px;}
+.title .g{background:linear-gradient(135deg,var(--or),var(--or2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:0.96rem;line-height:1.6;color:var(--gris);max-width:660px;}
+.problem{background:var(--card);border:1px solid rgba(197,158,80,0.14);border-left:3px solid var(--or);border-radius:12px;padding:18px 22px;margin:22px 0 6px;font-size:0.92rem;line-height:1.62;}
+.problem .h{font-family:'JetBrains Mono',monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--cosmos2);text-transform:uppercase;display:block;margin-bottom:8px;}
+.problem b{color:var(--or2);}
+.foot{text-align:center;font-size:0.72rem;color:var(--gris2);margin-top:30px;line-height:1.6;font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">KOTCHAMI · SCIENCE QUEST</span>
+    <div class="toggle">
+      <span>État :</span>
+      <button id="t-free" onclick="setPrem(false)">Gratuit</button>
+      <button id="t-prem" class="on" onclick="setPrem(true)">Premium 👑</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <span class="badge">🔬 Acte 2 · Analyse de documents · SVT Terminale D</span>
+    <h1 class="title">Maladies génétiques — <span class="g">l'analyse de documents</span></h1>
+    <p class="lead">Analyse un caryotype, compte les chromosomes, repère l'anomalie, déduis son origine, puis oppose une aberration chromosomique à une maladie génique sur pédigree.</p>
+  </div>
+
+  <div class="problem">
+    <span class="h">Présentation du problème</span>
+    On cherche à caractériser deux maladies génétiques distinctes. Le Document 1 est le <b>caryotype</b> d'un patient ; le Document 2 est le <b>pédigree</b> d'une famille touchée par une autre maladie. Objectif : identifier l'anomalie du caryotype, en déduire l'origine, et distinguer les <b>deux grands types</b> de maladies génétiques.
+  </div>
+
+  <div id="enquete"></div>
+
+  <div class="foot">
+    Démo acte 2 · Science Quest Premium · « Construire sur du roc »<br>
+    Kotchami Ogougbe / Le Passeur de sciences — Soli Deo Gloria
+  </div>
+</div>
+
+<script src="sq-docs.js"></script>
+<script>
+/* ====== Construction du caryotype (données générées) ====== */
+function pair(n,count){ return { n:String(n), count:count||2, h:Math.max(16, Math.round(42 - n*1.2)) }; }
+var ROW1=[]; for(var i=1;i<=11;i++) ROW1.push(pair(i,2));
+var ROW2=[]; for(var j=12;j<=22;j++) ROW2.push(pair(j, j===21?3:2));
+ROW2.push({ n:"XY", heights:[28,16] });
+
+/* ====== SCÉNARIO ACTE 2 — MALADIES GÉNÉTIQUES ====== */
+var MALADIES_A2 = {
+  mission:{fr:"Maladies génétiques"}, universe:{fr:"Les Architectes de la Diversité"}, level:"Terminale D",
+  badges:{ gold:{fr:"Badge — Maître du Diagnostic Génétique"}, silver:{fr:"Badge — Cytogénéticien"}, bronze:{fr:"Badge — Apprenti en Génétique Médicale"} },
+
+  docs:{
+    caryotype:{ type:"karyotype", label:{fr:"📄 Doc 1 — Caryotype"}, viewBox:"0 0 760 330",
+      model:{ rows:[ROW1, ROW2], highlight:"21", y0:120, rowH:150 } },
+    pedigree:{ type:"pedigree", label:{fr:"📄 Doc 2 — Pédigree"}, viewBox:"0 0 760 300",
+      model:{ R:15,
+        people:{
+          "I-1":{s:"M",a:false,x:300,y:70},"I-2":{s:"F",a:false,x:420,y:70},
+          "II-1":{s:"M",a:true,x:300,y:210},"II-2":{s:"F",a:false,x:380,y:210},"II-3":{s:"M",a:false,x:460,y:210}
+        },
+        couples:[["I-1","I-2"]],
+        sibs:[ {mid:[360,70],kids:["II-1","II-2","II-3"],bus:150} ]
+      }
+    }
+  },
+
+  steps:[
+    { verb:{fr:"Lire"}, doc:"caryotype",
+      q:{fr:"Le Doc 1 est le caryotype d'un patient. En comptant tous les chromosomes, combien en présente-t-il ?"},
+      opts:[ {t:{fr:"46 (normal)"},c:false},{t:{fr:"47"},c:true},{t:{fr:"45"},c:false},{t:{fr:"48"},c:false} ],
+      hints:[{fr:"Un caryotype normal compte 23 paires, soit 46 chromosomes."},{fr:"Observe la paire 21 : combien de chromosomes y figurent ?"}],
+      justif:{fr:"Le caryotype normal compte <b>46 chromosomes</b> (23 paires). Ici, la paire 21 porte <b>3 chromosomes</b> → total <b>47 chromosomes</b>."},
+      concl:{fr:"Caryotype à <b>47 chromosomes</b> (un de trop)."} },
+
+    { verb:{fr:"Déduire"}, doc:"caryotype",
+      q:{fr:"La paire n°21 présente 3 chromosomes au lieu de 2. Quelle anomalie en déduis-tu ?"},
+      opts:[ {t:{fr:"une trisomie 21"},c:true},{t:{fr:"une monosomie 21"},c:false},
+             {t:{fr:"une trisomie 18"},c:false},{t:{fr:"un caryotype normal"},c:false} ],
+      hints:[{fr:"« Tri » = trois. Trois chromosomes sur une paire = ?"},{fr:"Trois chromosomes 21 = trisomie 21 (syndrome de Down)."}],
+      justif:{fr:"Trois chromosomes sur la paire 21 = <b>trisomie 21</b> (syndrome de Down), une <b>aberration chromosomique</b> (anomalie du nombre de chromosomes)."},
+      concl:{fr:"Anomalie = <b>trisomie 21</b> (3 chromosomes 21)."} },
+
+    { verb:{fr:"Lire"}, doc:"caryotype",
+      q:{fr:"Quels sont les chromosomes sexuels de cet individu, et quel est son sexe ?"},
+      opts:[ {t:{fr:"XY → garçon"},c:true},{t:{fr:"XX → fille"},c:false},
+             {t:{fr:"XXY → garçon"},c:false},{t:{fr:"X0 → fille"},c:false} ],
+      hints:[{fr:"Repère la dernière paire du caryotype (chromosomes sexuels)."},{fr:"XY = masculin ; XX = féminin."}],
+      justif:{fr:"La paire sexuelle est <b>XY</b> → l'individu est de sexe <b>masculin</b>."},
+      concl:{fr:"Chromosomes sexuels <b>XY</b> → garçon."} },
+
+    { verb:{fr:"Déduire"}, doc:"caryotype",
+      q:{fr:"La trisomie 21 provient le plus souvent d'une erreur lors de la méiose d'un parent. Laquelle ?"},
+      opts:[ {t:{fr:"une non-disjonction des chromosomes 21 (ils ne se séparent pas)"},c:true},{t:{fr:"un crossing-over"},c:false},
+             {t:{fr:"une réplication supplémentaire"},c:false},{t:{fr:"le brassage interchromosomique"},c:false} ],
+      hints:[{fr:"Pour qu'un gamète porte 2 chromosomes 21, que s'est-il passé lors de leur séparation ?"},{fr:"Les deux chromosomes 21 ne se sont pas séparés : c'est une non-disjonction."}],
+      justif:{fr:"Lors de la méiose, les deux chromosomes 21 peuvent ne pas se séparer : c'est une <b>non-disjonction</b>. Le gamète obtenu porte alors <b>2 chromosomes 21</b> ; après fécondation, l'individu en a <b>3</b>."},
+      concl:{fr:"Origine : <b>non-disjonction</b> des chromosomes 21 à la méiose."} },
+
+    { verb:{fr:"Comparer"}, doc:"pedigree",
+      q:{fr:"Le Doc 2 est le pédigree d'une autre maladie : deux parents sains ont un enfant atteint, et le caryotype est normal. Contrairement à la trisomie, cette maladie est :"},
+      opts:[ {t:{fr:"une maladie génique (mutation d'un gène), transmise selon Mendel"},c:true},{t:{fr:"une autre trisomie"},c:false},
+             {t:{fr:"une maladie non héréditaire"},c:false},{t:{fr:"une anomalie du nombre de chromosomes"},c:false} ],
+      hints:[{fr:"Le caryotype est normal : l'anomalie n'est donc pas chromosomique."},{fr:"Une mutation d'un seul gène se transmet de génération en génération (Mendel)."}],
+      justif:{fr:"Caryotype normal + transmission familiale (parents sains → enfant atteint) → <b>maladie génique</b> : une <b>mutation d'un gène</b>, transmise selon les lois de Mendel (ici récessive). Elle est <b>invisible sur le caryotype</b>."},
+      concl:{fr:"Doc 2 = <b>maladie génique</b> (mutation d'un gène), héréditaire."} },
+
+    { verb:{fr:"Conclure"}, doc:"caryotype",
+      q:{fr:"On distingue donc deux grands types de maladies génétiques. Lesquels ?"},
+      opts:[ {t:{fr:"les aberrations chromosomiques (caryotype anormal) et les maladies géniques (mutation d'un gène)"},c:true},
+             {t:{fr:"uniquement les trisomies"},c:false},{t:{fr:"uniquement les maladies héréditaires"},c:false},
+             {t:{fr:"les maladies virales et bactériennes"},c:false} ],
+      hints:[{fr:"L'une se voit sur le caryotype, l'autre non."},{fr:"Trisomie 21 = chromosomique ; drépanocytose = génique."}],
+      justif:{fr:"Deux grands types : les <b>aberrations chromosomiques</b> (nombre ou structure anormaux des chromosomes, visibles sur le caryotype — ex. trisomie 21) et les <b>maladies géniques</b> (mutation d'un gène, caryotype normal, transmission mendélienne — ex. drépanocytose)."},
+      concl:{fr:"Deux types : <b>aberrations chromosomiques</b> vs <b>maladies géniques</b>."} }
+  ],
+
+  diagnosis:{fr:[
+    "<b>Caryotype :</b> 47 chromosomes, 3 chromosomes 21 → trisomie 21 (aberration chromosomique).",
+    "<b>Sexe :</b> XY (garçon).",
+    "<b>Origine :</b> non-disjonction des chromosomes 21 lors de la méiose d'un parent.",
+    "<b>Maladie génique (Doc 2) :</b> mutation d'un gène, caryotype normal, transmission mendélienne.",
+    "<b>Bilan :</b> deux grands types de maladies génétiques — chromosomiques et géniques."
+  ]}
+};
+
+function mountIt(){ KotchamiDocs.mount(document.getElementById("enquete"), MALADIES_A2, { lang:"fr" }); }
+function setPrem(on){
+  try{ localStorage.setItem("kotchami_premium", on?"1":"0"); }catch(e){}
+  document.getElementById("t-prem").classList.toggle("on",on);
+  document.getElementById("t-free").classList.toggle("on",!on);
+  mountIt();
+}
+try{ localStorage.setItem("kotchami_premium","1"); }catch(e){}
+mountIt();
+</script>
+</body>
+</html>

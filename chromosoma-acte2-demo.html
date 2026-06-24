@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Démo — Acte 2 Chromosoma | Science Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --nuit:#0A1745;--nuit2:#0C1A4D;--nuit3:#122463;--nuit4:#193080;
+  --or:#C59E50;--or2:#F5D98B;--or3:#8A6520;--cosmos:#3D7EFF;--cosmos2:#7EB4FF;
+  --vert:#22D06E;--blanc:#EEF0F5;--gris:#9AA8C8;--gris2:#5A6A92;
+  --card:rgba(12,26,77,0.55);--card2:rgba(18,36,99,0.6);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(170deg,#0A1745 0%,#060D2E 50%,#0E2168 100%);background-attachment:fixed;
+  color:var(--blanc);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:60px;overflow-x:hidden;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid rgba(197,158,80,0.14);flex-wrap:wrap;gap:10px;}
+.brand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.15rem;letter-spacing:0.12em;
+  background:linear-gradient(135deg,var(--or3),var(--or),var(--or2),var(--or));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.toggle{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--gris);}
+.toggle button{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.74rem;border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid rgba(197,158,80,0.35);background:transparent;color:var(--or);}
+.toggle button.on{background:linear-gradient(135deg,var(--or),var(--or2));color:#07090F;border-color:transparent;}
+.hero{padding:24px 0 6px;}
+.badge{display:inline-flex;gap:8px;background:rgba(197,158,80,0.1);border:1px solid rgba(197,158,80,0.25);border-radius:100px;padding:6px 16px;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.16em;color:var(--or);text-transform:uppercase;margin-bottom:16px;}
+.title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:600;line-height:1.06;margin-bottom:10px;}
+.title .g{background:linear-gradient(135deg,var(--or),var(--or2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:0.96rem;line-height:1.6;color:var(--gris);max-width:660px;}
+.problem{background:var(--card);border:1px solid rgba(197,158,80,0.14);border-left:3px solid var(--or);border-radius:12px;padding:18px 22px;margin:22px 0 6px;font-size:0.92rem;line-height:1.62;}
+.problem .h{font-family:'JetBrains Mono',monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--cosmos2);text-transform:uppercase;display:block;margin-bottom:8px;}
+.problem b{color:var(--or2);}
+.foot{text-align:center;font-size:0.72rem;color:var(--gris2);margin-top:30px;line-height:1.6;font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">KOTCHAMI · SCIENCE QUEST</span>
+    <div class="toggle">
+      <span>État :</span>
+      <button id="t-free" onclick="setPrem(false)">Gratuit</button>
+      <button id="t-prem" class="on" onclick="setPrem(true)">Premium 👑</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <span class="badge">🔬 Acte 2 · Analyse de documents · SVT Terminale D</span>
+    <h1 class="title">Chromosoma — <span class="g">l'analyse de documents</span></h1>
+    <p class="lead">Toujours le même moteur, ici sur des <b>schémas de chromosomes</b> dessinés par code (donc exacts). Lis une métaphase I, déduis le brassage, calcule le nombre de gamètes (2ⁿ), puis comprends le crossing-over.</p>
+  </div>
+
+  <div class="problem">
+    <span class="h">Présentation du problème</span>
+    On étudie l'origine de la <b>diversité des gamètes</b> au cours de la méiose. Le Document 1 présente une cellule en <b>métaphase I</b> sous deux orientations possibles des bivalents ; le Document 2 montre le résultat d'un <b>crossing-over</b>. Objectif : identifier les deux mécanismes de brassage et évaluer le nombre de combinaisons génétiques produites.
+  </div>
+
+  <div id="enquete"></div>
+
+  <div class="foot">
+    Démo acte 2 · Science Quest Premium · « Plusieurs matières, une seule réalité »<br>
+    Kotchami Ogougbe / Le Passeur de sciences — Soli Deo Gloria
+  </div>
+</div>
+
+<script src="sq-docs.js"></script>
+<script>
+/* ====== SCÉNARIO ACTE 2 — CHROMOSOMA (brassage génétique) ====== */
+var OR="#C59E50", BLEU="#3D7EFF";
+
+var CHROMOSOMA_A2 = {
+  mission:{fr:"Chromosoma"}, universe:{fr:"Les Architectes de la Diversité"}, level:"Terminale D",
+  badges:{ gold:{fr:"Badge — Maître du Brassage"}, silver:{fr:"Badge — Architecte des Gamètes"}, bronze:{fr:"Badge — Explorateur de la Diversité"} },
+
+  docs:{
+    metaphase:{ type:"scene", label:{fr:"📄 Doc 1 — Métaphase I"}, viewBox:"0 0 760 440",
+      model:{
+        legend:[{color:OR,t:"chromosomes paternels"},{color:BLEU,t:"chromosomes maternels"}],
+        cells:[
+          { cx:200,cy:210,rx:140,ry:140,equator:true,caption:"Cellule a",
+            chromos:[
+              {x:145,y:176,h:64,color:OR},{x:145,y:244,h:64,color:BLEU},
+              {x:255,y:176,h:40,color:OR},{x:255,y:244,h:40,color:BLEU}
+            ]},
+          { cx:560,cy:210,rx:140,ry:140,equator:true,caption:"Cellule b",
+            chromos:[
+              {x:505,y:176,h:64,color:OR},{x:505,y:244,h:64,color:BLEU},
+              {x:615,y:176,h:40,color:BLEU},{x:615,y:244,h:40,color:OR}
+            ]}
+        ]
+      }
+    },
+    crossover:{ type:"scene", label:{fr:"📄 Doc 2 — Crossing-over"}, viewBox:"0 0 760 360",
+      model:{
+        legend:[{color:OR,t:"origine paternelle"},{color:BLEU,t:"origine maternelle"}],
+        bars:[
+          {x:140,top:120,h:130,color:OR,top1:"A",bot1:"B"},
+          {x:300,top:120,h:130,color:BLEU,top1:"a",bot1:"b"},
+          {x:460,top:120,h:130,segs:[{frac:0.5,color:OR},{frac:0.5,color:BLEU}],top1:"A",bot1:"b"},
+          {x:600,top:120,h:130,segs:[{frac:0.5,color:BLEU},{frac:0.5,color:OR}],top1:"a",bot1:"B"}
+        ],
+        labels:[
+          {x:226,y:300,t:"Chromatides parentales",anchor:"middle"},
+          {x:536,y:300,t:"Chromatides recombinées",anchor:"middle"}
+        ]
+      }
+    }
+  },
+
+  steps:[
+    { verb:{fr:"Lire"}, doc:"metaphase",
+      q:{fr:"Le Doc 1 montre une cellule en métaphase : les chromosomes sont groupés par paires d'homologues (bivalents) sur le plan équatorial. De quelle division s'agit-il ?"},
+      opts:[ {t:{fr:"la métaphase I de méiose"},c:true},{t:{fr:"la métaphase de mitose"},c:false},
+             {t:{fr:"la métaphase II de méiose"},c:false},{t:{fr:"l'anaphase I"},c:false} ],
+      hints:[{fr:"Les chromosomes sont appariés par deux (bivalents). Quand les homologues s'apparient-ils ?"},{fr:"L'appariement des homologues en bivalents est propre à la méiose I."}],
+      justif:{fr:"Les <b>bivalents</b> (paires d'homologues appariées) n'apparaissent qu'en <b>méiose I</b> : c'est la <b>métaphase I</b>. En mitose et en méiose II, les chromosomes sont alignés individuellement."},
+      concl:{fr:"Doc 1 = <b>métaphase I</b> de méiose (bivalents alignés)."} },
+
+    { verb:{fr:"Déduire"}, doc:"metaphase",
+      q:{fr:"Les cellules a et b montrent deux orientations possibles des bivalents de part et d'autre du plan équatorial. Cette disposition aléatoire et indépendante produit :"},
+      opts:[ {t:{fr:"un brassage interchromosomique"},c:true},{t:{fr:"un brassage intrachromosomique"},c:false},
+             {t:{fr:"une mitose"},c:false},{t:{fr:"la fécondation"},c:false} ],
+      hints:[{fr:"Les paires entières changent de côté indépendamment les unes des autres."},{fr:"Répartition au hasard de chromosomes entiers = brassage interchromosomique."}],
+      justif:{fr:"À la métaphase I, chaque bivalent s'oriente <b>au hasard et indépendamment</b> des autres. La répartition aléatoire de <b>chromosomes entiers</b> dans les gamètes est le <b>brassage interchromosomique</b>."},
+      concl:{fr:"Disposition aléatoire des bivalents = <b>brassage interchromosomique</b>."} },
+
+    { verb:{fr:"Calculer"}, doc:"metaphase",
+      q:{fr:"Cette cellule possède n = 2 paires de chromosomes. Combien de types de gamètes différents le seul brassage interchromosomique peut-il produire ?"},
+      opts:[ {t:{fr:"2"},c:false},{t:{fr:"4"},c:true},{t:{fr:"8"},c:false},{t:{fr:"16"},c:false} ],
+      hints:[{fr:"Chaque paire a 2 orientations possibles. Pour 2 paires : 2 × 2."},{fr:"Nombre de types de gamètes = 2ⁿ, avec n = nombre de paires."}],
+      justif:{fr:"Chaque paire s'oriente de 2 façons → pour <b>n</b> paires, <b>2ⁿ</b> types de gamètes. Ici n = 2 → <b>2² = 4</b> types de gamètes."},
+      concl:{fr:"n = 2 → <b>2² = 4</b> types de gamètes (brassage inter)."} },
+
+    { verb:{fr:"Calculer"}, doc:"metaphase",
+      q:{fr:"Chez l'être humain (n = 23 paires de chromosomes), le brassage interchromosomique produit un nombre de combinaisons de l'ordre de :"},
+      opts:[ {t:{fr:"2 × 23 = 46"},c:false},{t:{fr:"23² = 529"},c:false},
+             {t:{fr:"2²³ ≈ 8,4 millions"},c:true},{t:{fr:"23 combinaisons"},c:false} ],
+      hints:[{fr:"On applique la même formule 2ⁿ."},{fr:"2²³ se compte en millions."}],
+      justif:{fr:"2ⁿ avec n = 23 → <b>2²³ ≈ 8,4 millions</b> de combinaisons possibles, par le seul brassage interchromosomique."},
+      concl:{fr:"Humain : n = 23 → <b>2²³ ≈ 8,4 millions</b> de gamètes possibles."} },
+
+    { verb:{fr:"Déduire"}, doc:"crossover",
+      q:{fr:"Le Doc 2 montre quatre chromatides après un échange de segments entre homologues. Deux portent une combinaison d'allèles nouvelle (A-b et a-B). Ce mécanisme est :"},
+      opts:[ {t:{fr:"le crossing-over (brassage intrachromosomique)"},c:true},{t:{fr:"le brassage interchromosomique"},c:false},
+             {t:{fr:"la réplication"},c:false},{t:{fr:"la non-disjonction"},c:false} ],
+      hints:[{fr:"L'échange a lieu À L'INTÉRIEUR d'une paire, entre chromatides homologues."},{fr:"Échange de segments entre chromatides homologues = crossing-over."}],
+      justif:{fr:"L'échange de segments entre chromatides homologues (en prophase I) est le <b>crossing-over</b> : il recombine les allèles d'un <b>même</b> chromosome → <b>brassage intrachromosomique</b>. Il crée les chromatides recombinées A-b et a-B."},
+      concl:{fr:"Doc 2 = <b>crossing-over</b> (brassage intrachromosomique) : chromatides recombinées."} },
+
+    { verb:{fr:"Conclure"}, doc:"crossover",
+      q:{fr:"En combinant brassage interchromosomique, crossing-over, puis fécondation (rencontre au hasard de deux gamètes), on obtient :"},
+      opts:[ {t:{fr:"des gamètes tous identiques"},c:false},{t:{fr:"une diversité génétique immense, quasi illimitée"},c:true},
+             {t:{fr:"seulement 4 combinaisons"},c:false},{t:{fr:"des individus clones"},c:false} ],
+      hints:[{fr:"Chaque mécanisme multiplie le nombre de combinaisons."},{fr:"Deux brassages × fécondation au hasard = explosion combinatoire."}],
+      justif:{fr:"Le brassage interchromosomique (2ⁿ), le crossing-over (recombinaisons supplémentaires) et la <b>fécondation</b> (rencontre au hasard de deux gamètes parmi des millions) se multiplient : la diversité génétique devient <b>quasi illimitée</b>. C'est pourquoi chaque individu est unique."},
+      concl:{fr:"Inter × intra × fécondation = <b>diversité quasi illimitée</b> (chaque individu est unique)."} }
+  ],
+
+  diagnosis:{fr:[
+    "<b>Métaphase I :</b> les bivalents s'orientent au hasard → brassage interchromosomique → 2ⁿ types de gamètes (n=2 → 4 ; humain n=23 → ≈ 8,4 millions).",
+    "<b>Crossing-over (prophase I) :</b> échange de segments entre chromatides homologues → brassage intrachromosomique → nouvelles combinaisons d'allèles.",
+    "<b>Fécondation :</b> réunit deux gamètes au hasard → la diversité devient quasi illimitée.",
+    "<b>Conclusion :</b> ces mécanismes expliquent pourquoi chaque individu issu de reproduction sexuée est génétiquement unique."
+  ]}
+};
+
+function mountIt(){ KotchamiDocs.mount(document.getElementById("enquete"), CHROMOSOMA_A2, { lang:"fr" }); }
+function setPrem(on){
+  try{ localStorage.setItem("kotchami_premium", on?"1":"0"); }catch(e){}
+  document.getElementById("t-prem").classList.toggle("on",on);
+  document.getElementById("t-free").classList.toggle("on",!on);
+  mountIt();
+}
+try{ localStorage.setItem("kotchami_premium","1"); }catch(e){}
+mountIt();
+</script>
+</body>
+</html>

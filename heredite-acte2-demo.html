@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Démo moteur sq-docs — Hérédité | Science Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --nuit:#0A1745;--nuit2:#0C1A4D;--nuit3:#122463;--nuit4:#193080;
+  --or:#C59E50;--or2:#F5D98B;--or3:#8A6520;--cosmos:#3D7EFF;--cosmos2:#7EB4FF;
+  --vert:#22D06E;--blanc:#EEF0F5;--gris:#9AA8C8;--gris2:#5A6A92;
+  --card:rgba(12,26,77,0.55);--card2:rgba(18,36,99,0.6);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:linear-gradient(170deg,#0A1745 0%,#060D2E 50%,#0E2168 100%);background-attachment:fixed;
+  color:var(--blanc);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:60px;overflow-x:hidden;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid rgba(197,158,80,0.14);flex-wrap:wrap;gap:10px;}
+.brand{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.15rem;letter-spacing:0.12em;
+  background:linear-gradient(135deg,var(--or3),var(--or),var(--or2),var(--or));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.toggle{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--gris);}
+.toggle button{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.74rem;border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid rgba(197,158,80,0.35);background:transparent;color:var(--or);}
+.toggle button.on{background:linear-gradient(135deg,var(--or),var(--or2));color:#07090F;border-color:transparent;}
+.hero{padding:24px 0 6px;}
+.badge{display:inline-flex;gap:8px;background:rgba(197,158,80,0.1);border:1px solid rgba(197,158,80,0.25);border-radius:100px;padding:6px 16px;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.16em;color:var(--or);text-transform:uppercase;margin-bottom:16px;}
+.title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:600;line-height:1.06;margin-bottom:10px;}
+.title .g{background:linear-gradient(135deg,var(--or),var(--or2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lead{font-size:0.96rem;line-height:1.6;color:var(--gris);max-width:640px;}
+.problem{background:var(--card);border:1px solid rgba(197,158,80,0.14);border-left:3px solid var(--or);border-radius:12px;padding:18px 22px;margin:22px 0 6px;font-size:0.92rem;line-height:1.62;}
+.problem .h{font-family:'JetBrains Mono',monospace;font-size:0.64rem;letter-spacing:0.14em;color:var(--cosmos2);text-transform:uppercase;display:block;margin-bottom:8px;}
+.problem b{color:var(--or2);}
+.foot{text-align:center;font-size:0.72rem;color:var(--gris2);margin-top:30px;line-height:1.6;font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">KOTCHAMI · SCIENCE QUEST</span>
+    <div class="toggle">
+      <span>État :</span>
+      <button id="t-free" onclick="setPrem(false)">Gratuit</button>
+      <button id="t-prem" class="on" onclick="setPrem(true)">Premium 👑</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <span class="badge">🔬 Acte 2 · Analyse de documents · SVT Terminale D</span>
+    <h1 class="title">Hérédité — <span class="g">l'analyse de documents</span></h1>
+    <p class="lead">Démonstration du moteur <b>sq-docs.js</b> : le même module animera l'acte 2 de chaque mission. Bascule « Gratuit / Premium » en haut pour voir le verrou d'abonnement.</p>
+  </div>
+
+  <div class="problem">
+    <span class="h">Présentation du problème</span>
+    Transmission de la <b>drépanocytose</b> dans une famille (4 générations). Documents : arbre généalogique + électrophorèse de l'hémoglobine. Objectif : déterminer le mode de transmission, établir le statut de <b>III-2</b>, évaluer le risque pour sa descendance. Allèles : <b>A</b> (HbA) · <b>S</b> (HbS) ; A//A sain, A//S porteur, S//S malade.
+  </div>
+
+  <div id="enquete"></div>
+
+  <div class="foot">
+    Démo moteur réutilisable · Science Quest Premium<br>
+    Kotchami Ogougbe / Le Passeur de sciences — Soli Deo Gloria
+  </div>
+</div>
+
+<script src="sq-docs.js"></script>
+<script>
+/* ====== SCÉNARIO HÉRÉDITÉ (données déclaratives, multilingue-ready) ======
+   Ici en FR pour la démo ; chaque champ accepte {fr,en,ar,es,pt,sw}.
+   Les SVG (docs.model) sont langue-neutres. */
+var HEREDITE = {
+  mission:{fr:"Hérédité"}, universe:{fr:"Les Architectes de la Diversité"}, level:"Terminale D",
+  badges:{ gold:{fr:"Badge — Généticien-Conseil"}, silver:{fr:"Badge — Analyste de l'Hérédité"}, bronze:{fr:"Badge — Apprenti en Génétique"} },
+
+  docs:{
+    pedigree:{ type:"pedigree", label:{fr:"📄 Document 1 — Pédigree"}, viewBox:"0 0 880 600",
+      model:{ R:15,
+        people:{
+          "I-1":{s:"M",a:false,x:180,y:70},"I-2":{s:"F",a:false,x:260,y:70},
+          "I-3":{s:"M",a:false,x:620,y:70},"I-4":{s:"F",a:false,x:700,y:70},
+          "II-1":{s:"F",a:false,x:360,y:230,n:"Fatouma"},"II-2":{s:"M",a:false,x:540,y:230,n:"Idrissa"},
+          "III-1":{s:"M",a:true,x:300,y:390,n:"Boubacar"},"III-2":{s:"F",a:false,x:400,y:390,n:"Aminata"},
+          "III-3":{s:"F",a:true,x:500,y:390,n:"Zeinab"},"III-4":{s:"M",a:false,x:620,y:390},
+          "III-5":{s:"F",a:false,x:710,y:390},
+          "IV-1":{s:"M",a:false,x:620,y:530},"IV-2":{s:"F",a:true,x:710,y:530}
+        },
+        couples:[["I-1","I-2"],["I-3","I-4"],["II-1","II-2"],["III-4","III-5"]],
+        sibs:[
+          {mid:[220,70],kids:["II-1"],bus:155},
+          {mid:[660,70],kids:["II-2"],bus:155},
+          {mid:[450,230],kids:["III-1","III-2","III-3","III-4"],bus:315},
+          {mid:[665,390],kids:["IV-1","IV-2"],bus:475}
+        ]
+      }
+    },
+    electro:{ type:"electro", label:{fr:"📄 Document 2 — Électrophorèse"}, viewBox:"0 0 880 460",
+      model:{ levels:{HbS:150,HbA:300},
+        samples:[
+          {id:"II-1",n:"Fatouma",bands:["HbA","HbS"]},
+          {id:"II-2",n:"Idrissa",bands:["HbA","HbS"]},
+          {id:"III-1",n:"Boubacar",bands:["HbS"]},
+          {id:"III-2",n:"Aminata",bands:["HbA","HbS"]}
+        ]
+      }
+    }
+  },
+
+  steps:[
+    { verb:{fr:"Lire"}, doc:"pedigree", clickable:true, hl:{pedigree:[]},
+      q:{fr:"Avant de raisonner, décode le document. L'individu III-1 (Boubacar) est :"},
+      opts:[ {t:{fr:"une femme saine"},c:false},{t:{fr:"un homme atteint"},c:true},
+             {t:{fr:"un homme sain"},c:false},{t:{fr:"une femme atteinte"},c:false} ],
+      hints:[{fr:"Un carré = un homme ; un rond = une femme."},{fr:"Un symbole plein est atteint ; un symbole vide est sain."}],
+      justif:{fr:"III-1 est un <b>carré plein</b> → homme atteint. (De même, II-1 = rond vide = femme saine.)"},
+      concl:{fr:"<b>3 atteints</b> repérés (III-1, III-3, IV-2) ; leurs parents sont sains."} },
+
+    { verb:{fr:"Déduire"}, doc:"pedigree", hl:{pedigree:["II-1","II-2","III-1","III-3"]},
+      q:{fr:"Les parents II-1 et II-2 sont sains mais ont des enfants atteints (III-1, III-3). L'allèle responsable est :"},
+      opts:[ {t:{fr:"dominant"},c:false},{t:{fr:"récessif"},c:true},
+             {t:{fr:"indéterminable"},c:false},{t:{fr:"porté par Y"},c:false} ],
+      hints:[{fr:"L'allèle « malade » était-il visible chez les parents ?"},{fr:"Un allèle masqué chez les parents et réexprimé chez l'enfant est récessif."}],
+      justif:{fr:"Deux parents <b>sains</b> ayant des enfants <b>atteints</b> portent l'allèle sans l'exprimer : il ne s'exprime qu'à l'état homozygote. <b>L'allèle S est récessif</b> ; II-1 et II-2 sont <b>A//S</b> (porteurs sains)."},
+      concl:{fr:"Allèle S <b>récessif</b> ; II-1 et II-2 hétérozygotes (A//S)."} },
+
+    { verb:{fr:"Déduire"}, doc:"pedigree", hl:{pedigree:["III-3","II-2"]},
+      q:{fr:"III-3 (Zeinab) est une fille atteinte ; son père II-2 (Idrissa) est sain. Le gène est :"},
+      opts:[ {t:{fr:"lié à X"},c:false},{t:{fr:"autosomal"},c:true},
+             {t:{fr:"lié à Y"},c:false},{t:{fr:"indéterminable"},c:false} ],
+      hints:[{fr:"Si le gène était sur X (récessif), une fille atteinte (XˢXˢ) recevrait un Xˢ de son père…"},{fr:"…le père serait alors XˢY, donc atteint. Or Idrissa est sain : contradiction."}],
+      justif:{fr:"Pas lié à Y (des filles sont atteintes). Pas lié à X récessif : une fille atteinte recevrait un Xˢ de son père, qui serait donc atteint — or II-2 est sain. <b>Le gène est autosomal</b> → transmission <b>autosomale récessive</b>."},
+      concl:{fr:"Gène <b>autosomal</b> → transmission autosomale récessive."} },
+
+    { verb:{fr:"Lire"}, doc:"electro", hl:{electro:["III-1"]},
+      q:{fr:"Passe au Document 2. D'après l'électrophorèse, le génotype de Boubacar (III-1) est :"},
+      opts:[ {t:{fr:"A//A"},c:false},{t:{fr:"A//S"},c:false},
+             {t:{fr:"S//S"},c:true},{t:{fr:"indéterminable"},c:false} ],
+      hints:[{fr:"Combien de bandes pour Boubacar ?"},{fr:"Une seule bande, en position HbS : aucune HbA produite."}],
+      justif:{fr:"Boubacar ne montre qu'<b>une bande en position HbS</b> → <b>S//S</b>. Fatouma et Idrissa montrent <b>deux bandes</b> (HbA + HbS) → <b>A//S</b> : la biologie confirme l'étape 2."},
+      concl:{fr:"Génotypes confirmés : III-1 = S//S ; II-1, II-2 = A//S."} },
+
+    { verb:{fr:"Croiser"}, doc:"electro", hl:{electro:["III-2"]},
+      q:{fr:"Sur le pédigree, Aminata (III-2) paraît saine. Son électrophorèse montre deux bandes (HbA + HbS). Elle est :"},
+      opts:[ {t:{fr:"A//A, non porteuse"},c:false},{t:{fr:"A//S, porteuse saine"},c:true},
+             {t:{fr:"S//S, malade"},c:false},{t:{fr:"indéterminable"},c:false} ],
+      hints:[{fr:"Deux bandes = deux allèles présents."},{fr:"Phénotype sain + 2 bandes = hétérozygote porteur."}],
+      justif:{fr:"Deux bandes → présence des deux allèles → <b>A//S, porteuse saine</b>. Information <b>invisible sur le pédigree seul</b> : c'est le <b>croisement des deux documents</b> qui révèle son génotype."},
+      concl:{fr:"<b>III-2 (Aminata) = A//S</b>, porteuse — révélée par le croisement."} },
+
+    { verb:{fr:"Croiser"}, doc:"punnett",
+      punnett:{ rows:["A","S"], cols:["A","S"], cells:[["A//A","A//S"],["A//S","S//S"]], ill:["S//S"] },
+      q:{fr:"Si Aminata (A//S) s'unit à un homme porteur (A//S), le risque d'enfant malade à chaque naissance est :"},
+      opts:[ {t:{fr:"0"},c:false},{t:{fr:"1/2"},c:false},{t:{fr:"1/4"},c:true},{t:{fr:"1"},c:false} ],
+      hints:[{fr:"Construis l'échiquier de croisement A//S × A//S."},{fr:"Quatre combinaisons : A//A, A//S, A//S, S//S."}],
+      justif:{fr:"Échiquier A//S × A//S → 1/4 A//A, 1/2 A//S, <b>1/4 S//S (malade)</b>. <b>Risque = 1/4</b> à chaque naissance. Recommandation : dépistage du conjoint."},
+      concl:{fr:"Risque de transmission = <b>1/4</b> ; conseil génétique formulé."} }
+  ],
+
+  diagnosis:{fr:[
+    "<b>Mode de transmission :</b> autosomal récessif (allèle S récessif).",
+    "<b>Statut de III-2 (Aminata) :</b> porteuse saine A//S, établie par croisement pédigree × électrophorèse.",
+    "<b>Risque pour la descendance :</b> 1/4 d'enfant atteint à chaque naissance si le conjoint est porteur.",
+    "<b>Recommandation :</b> électrophorèse du conjoint avant projet parental."
+  ]}
+};
+
+function mountIt(){
+  KotchamiDocs.mount(document.getElementById("enquete"), HEREDITE, { lang:"fr" });
+}
+function setPrem(on){
+  try{ localStorage.setItem("kotchami_premium", on?"1":"0"); }catch(e){}
+  document.getElementById("t-prem").classList.toggle("on",on);
+  document.getElementById("t-free").classList.toggle("on",!on);
+  mountIt();
+}
+/* démarrage : Premium activé pour la démo */
+try{ localStorage.setItem("kotchami_premium","1"); }catch(e){}
+mountIt();
+</script>
+</body>
+</html>
